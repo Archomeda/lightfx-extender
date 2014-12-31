@@ -9,12 +9,12 @@ namespace lightfx {
         LinkedMem* linkedMemHandle = NULL;
 
         void init() {
-            hMapObject = CreateFileMappingW(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, sizeof(LFXLight), L"AlienFXFrameworkLink");
+            hMapObject = CreateFileMappingW(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, sizeof(LinkedMem), L"AlienFXFrameworkLink");
             if (hMapObject == NULL) {
                 return;
             }
 
-            linkedMemHandle = (LinkedMem*)MapViewOfFile(hMapObject, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(LFXLight));
+            linkedMemHandle = (LinkedMem*)MapViewOfFile(hMapObject, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(LinkedMem));
             if (linkedMemHandle == NULL) {
                 dispose();
             }
