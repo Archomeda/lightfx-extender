@@ -1,22 +1,29 @@
 #include <string>
+
+// Include Logitech LED API
+#include <Windows.h> // Windows.h is needed for some declarations inside LogitechLEDLib.h
+#include "LogitechLEDLib.h"
+
 #include "LightFX.h"
 #include "LinkedMemAPI.h"
 
+
 using namespace std;
 
-#define NUMDEVICES 1
+#define NUMDEVICES 2
 #define MAXNUMLIGHTS 1
 #define LFX_VERSION "2.2.0.0"
 
 namespace lightfx {
-    const string        _devDesc[NUMDEVICES]                    = { "AlienFX Keyboard Emulator" };
-    const unsigned int  _devType[NUMDEVICES]                    = { LFX_DEVTYPE_KEYBOARD };
-    const unsigned int  _devNumLights[NUMDEVICES]               = { 1 };
-    const string        _lightDesc[NUMDEVICES][MAXNUMLIGHTS]    = { { "All" } };
-    const unsigned char _lightPosX[NUMDEVICES][MAXNUMLIGHTS]    = { { 0 } };
-    const unsigned char _lightPosY[NUMDEVICES][MAXNUMLIGHTS]    = { { 0 } };
-    const unsigned char _lightPosZ[NUMDEVICES][MAXNUMLIGHTS]    = { { 0 } };
+    const string        _devDesc[NUMDEVICES]                    = { "AlienFX Keyboard Emulator", "Logitech LED" };
+    const unsigned int  _devType[NUMDEVICES]                    = { LFX_DEVTYPE_KEYBOARD, LFX_DEVTYPE_KEYBOARD };
+    const unsigned int  _devNumLights[NUMDEVICES]               = { 1, 1 };
+    const string        _lightDesc[NUMDEVICES][MAXNUMLIGHTS]    = { { "All" }, { "All" } };
+    const unsigned char _lightPosX[NUMDEVICES][MAXNUMLIGHTS]    = { { 0 }, { 0 } };
+    const unsigned char _lightPosY[NUMDEVICES][MAXNUMLIGHTS]    = { { 0 }, { 0 } };
+    const unsigned char _lightPosZ[NUMDEVICES][MAXNUMLIGHTS]    = { { 0 }, { 0 } };
 
+    bool logiInitialized = false;
 
     LFX_COLOR currPrimaryColor[NUMDEVICES][MAXNUMLIGHTS];
     LFX_COLOR nextPrimaryColor[NUMDEVICES][MAXNUMLIGHTS];
@@ -41,6 +48,10 @@ namespace lightfx {
 
     LFX_RESULT LightFX::Initialize() {
         if (!this->isInitialized) {
+            // Initialize Logitech LED API
+            logiInitialized = LogiLedInit();
+
+            // Initialize memory mapped file API
             api::init();
             api::linkedMemHandle->isInitialized = true;
             LFX_POSITION lightPos = LFX_POSITION();
@@ -50,6 +61,7 @@ namespace lightfx {
             api::linkedMemHandle->light.position = lightPos;
             api::linkedMemHandle->tick++;
 
+            // Finalize
             this->isInitialized = true;
             this->Reset();
         }
@@ -58,9 +70,17 @@ namespace lightfx {
 
     LFX_RESULT LightFX::Release() {
         if (this->isInitialized) {
+            // Shutdown Logitech LED API
+            if (logiInitialized) {
+                LogiLedShutdown();
+            }
+
+            // Shutdown memory mapped file API
             api::linkedMemHandle->isInitialized = false;
             api::linkedMemHandle->tick++;
             api::dispose();
+
+            // Finalize
             this->isInitialized = false;
         }
         return LFX_SUCCESS;
@@ -101,6 +121,16 @@ namespace lightfx {
             }
         }
 
+        // Update Logitech LED API
+        if (logiInitialized) {
+            float brightness = currPrimaryColor[1][0].brightness / (float)255;
+            int logiRed = int(currPrimaryColor[1][0].red / 2.55 * brightness);
+            int logiGreen = int(currPrimaryColor[1][0].green / 2.55 * brightness);
+            int logiBlue = int(currPrimaryColor[1][0].blue / 2.55 * brightness);
+            LogiLedSetLighting(logiRed, logiGreen, logiBlue);
+        }
+
+        // Update memory mapped file API
         api::linkedMemHandle->light.primaryColor = LFX_COLOR(currPrimaryColor[0][0]);
         api::linkedMemHandle->light.secondaryColor = LFX_COLOR(currSecondaryColor[0][0]);
         api::linkedMemHandle->light.actionType = currAction[0][0];
