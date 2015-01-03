@@ -81,16 +81,16 @@
     <ClCompile Include="DeviceMmf.cpp" />
     <ClCompile Include="LightFX.cpp" />
     <ClCompile Include="AlienFXExports.cpp" />
-    <ClCompile Include="LinkedMemAPI.cpp" />
     <ClCompile Include="Log.cpp" />
+    <ClCompile Include="MemoryMappedFileApi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="DeviceLogitech.h" />
     <ClInclude Include="DeviceMmf.h" />
+    <ClInclude Include="MemoryMappedFileApi.h" />
     <ClInclude Include="Structs.h" />
-    <ClInclude Include="LinkedMemAPI.h" />
     <ClInclude Include="LightFX.h" />
     <ClInclude Include="Log.h" />
   </ItemGroup>

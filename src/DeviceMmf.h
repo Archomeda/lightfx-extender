@@ -1,7 +1,15 @@
 #pragma once
+#include <memory>
 #include "Device.h"
+#include "MemoryMappedFileApi.h"
+
+#define MMFNAME "AlienFXFrameworkLink"
 
 namespace lightfx {
+
+    namespace mmf {
+        extern MemoryMappedFileApi MemoryMappedFile;
+    }
 
     class DeviceMmf : public Device {
 
