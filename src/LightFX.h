@@ -1,14 +1,17 @@
 #pragma once
+#include <memory>
 #include <string>
-#include "LFX2.h"
+#include <vector>
+#include "LFXDecl.h"
+
+#include "Config.h"
+#include "Device.h"
 
 namespace lightfx {
-
 
     class LightFX {
 
     public:
-        LightFX();
         ~LightFX();
 
         LFX_RESULT Initialize();
@@ -38,6 +41,9 @@ namespace lightfx {
 
     private:
         bool isInitialized = false;
+        Config config;
+        std::vector<std::unique_ptr<Device>> devices = {};
 
     };
+
 }

@@ -75,12 +75,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="Device.cpp" />
+    <ClCompile Include="DeviceLogitech.cpp" />
+    <ClCompile Include="DeviceMmf.cpp" />
     <ClCompile Include="LightFX.cpp" />
     <ClCompile Include="AlienFXExports.cpp" />
     <ClCompile Include="LinkedMemAPI.cpp" />
     <ClCompile Include="Log.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="Device.h" />
+    <ClInclude Include="DeviceLogitech.h" />
+    <ClInclude Include="DeviceMmf.h" />
+    <ClInclude Include="Structs.h" />
     <ClInclude Include="LinkedMemAPI.h" />
     <ClInclude Include="LightFX.h" />
     <ClInclude Include="Log.h" />

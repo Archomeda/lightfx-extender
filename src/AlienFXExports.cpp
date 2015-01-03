@@ -1,4 +1,6 @@
 #include <string>
+#include "LFX2.h"
+
 #include "LightFX.h"
 #include "Log.h"
 

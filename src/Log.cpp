@@ -3,7 +3,7 @@
 #include <time.h>
 #include "Log.h"
 
-#define LOGFILE "E:\\AlienFXFramework.log"
+#define LOGFILE "LightFX.log"
 
 using namespace std;
 using namespace lightfx;

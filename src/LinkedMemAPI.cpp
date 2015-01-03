@@ -1,7 +1,6 @@
 #include <windows.h>
 #include "LinkedMemAPI.h"
 
-
 namespace lightfx {
     namespace api {
 
