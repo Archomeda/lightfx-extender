@@ -4,13 +4,25 @@
 #include <Windows.h>
 #include "LFXDecl.h"
 
+#define MMF_MAXDEVICES 8
+#define MMF_MAXLIGHTSPERDEVICE 16
+#define MMF_MAXLENGTHNAME 32
+
 namespace lightfx {
 
     struct LFXLight {
+        char name[MMF_MAXLENGTHNAME];
         LFX_POSITION position;
         uint32_t actionType;
         LFX_COLOR primaryColor;
         LFX_COLOR secondaryColor;
+    };
+
+    struct LFXDevice {
+        char name[MMF_MAXLENGTHNAME];
+        char type;
+        uint32_t numLights;
+        LFXLight lights[MMF_MAXLIGHTSPERDEVICE];
     };
 
     struct LinkedMem {
@@ -20,7 +32,8 @@ namespace lightfx {
         uint32_t isInitialized;
         int32_t timing;
 
-        LFXLight light;
+        uint32_t numDevices;
+        LFXDevice devices[MMF_MAXDEVICES];
     };
 
     class MemoryMappedFileApi {

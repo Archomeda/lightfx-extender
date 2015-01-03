@@ -29,27 +29,50 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.labelVersion = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.labelTiming = new System.Windows.Forms.Label();
             this.labelTick = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.labelVersion = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.labelIsInitialized = new System.Windows.Forms.Label();
-            this.labelTiming = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.label9 = new System.Windows.Forms.Label();
-            this.labelSecondaryColor = new System.Windows.Forms.Label();
-            this.labelActionType = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.labelPosition = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.labelPrimaryColor = new System.Windows.Forms.Label();
-            this.panelPrimaryColor = new System.Windows.Forms.Panel();
-            this.panelSecondaryColor = new System.Windows.Forms.Panel();
+            this.panelPrimaryColor1 = new System.Windows.Forms.Panel();
+            this.labelInfo1 = new System.Windows.Forms.Label();
+            this.labelPrimaryColor1 = new System.Windows.Forms.Label();
+            this.comboBoxDevice = new System.Windows.Forms.ComboBox();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.panelPrimaryColor4 = new System.Windows.Forms.Panel();
+            this.labelInfo4 = new System.Windows.Forms.Label();
+            this.labelPrimaryColor4 = new System.Windows.Forms.Label();
+            this.panelPrimaryColor3 = new System.Windows.Forms.Panel();
+            this.labelInfo3 = new System.Windows.Forms.Label();
+            this.labelPrimaryColor3 = new System.Windows.Forms.Label();
+            this.panelPrimaryColor2 = new System.Windows.Forms.Panel();
+            this.labelInfo2 = new System.Windows.Forms.Label();
+            this.labelPrimaryColor2 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.panelSecondaryColor4 = new System.Windows.Forms.Panel();
+            this.labelSecondaryColor4 = new System.Windows.Forms.Label();
+            this.panelSecondaryColor3 = new System.Windows.Forms.Panel();
+            this.labelSecondaryColor3 = new System.Windows.Forms.Label();
+            this.panelSecondaryColor2 = new System.Windows.Forms.Panel();
+            this.labelSecondaryColor2 = new System.Windows.Forms.Label();
+            this.panelSecondaryColor1 = new System.Windows.Forms.Panel();
+            this.labelSecondaryColor1 = new System.Windows.Forms.Label();
+            this.labelNumDevices = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
+            this.panelPrimaryColor1.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
+            this.panelPrimaryColor4.SuspendLayout();
+            this.panelPrimaryColor3.SuspendLayout();
+            this.panelPrimaryColor2.SuspendLayout();
+            this.tableLayoutPanel4.SuspendLayout();
+            this.panelSecondaryColor4.SuspendLayout();
+            this.panelSecondaryColor3.SuspendLayout();
+            this.panelSecondaryColor2.SuspendLayout();
+            this.panelSecondaryColor1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -57,6 +80,8 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.labelNumDevices, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.label8, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.labelTiming, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.labelTick, 1, 1);
@@ -67,31 +92,42 @@
             this.tableLayoutPanel1.Controls.Add(this.labelIsInitialized, 1, 2);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 12);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowCount = 5;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(291, 81);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(291, 101);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
-            // label1
+            // label8
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(42, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Version";
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(3, 60);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(38, 13);
+            this.label8.TabIndex = 7;
+            this.label8.Text = "Timing";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // labelVersion
+            // labelTiming
             // 
-            this.labelVersion.AutoSize = true;
-            this.labelVersion.Location = new System.Drawing.Point(103, 0);
-            this.labelVersion.Name = "labelVersion";
-            this.labelVersion.Size = new System.Drawing.Size(16, 13);
-            this.labelVersion.TabIndex = 1;
-            this.labelVersion.Text = "...";
+            this.labelTiming.AutoSize = true;
+            this.labelTiming.Location = new System.Drawing.Point(103, 60);
+            this.labelTiming.Name = "labelTiming";
+            this.labelTiming.Size = new System.Drawing.Size(16, 13);
+            this.labelTiming.TabIndex = 6;
+            this.labelTiming.Text = "...";
+            // 
+            // labelTick
+            // 
+            this.labelTick.AutoSize = true;
+            this.labelTick.Location = new System.Drawing.Point(103, 20);
+            this.labelTick.Name = "labelTick";
+            this.labelTick.Size = new System.Drawing.Size(16, 13);
+            this.labelTick.TabIndex = 3;
+            this.labelTick.Text = "...";
             // 
             // label3
             // 
@@ -102,14 +138,23 @@
             this.label3.TabIndex = 2;
             this.label3.Text = "Tick";
             // 
-            // labelTick
+            // labelVersion
             // 
-            this.labelTick.AutoSize = true;
-            this.labelTick.Location = new System.Drawing.Point(103, 20);
-            this.labelTick.Name = "labelTick";
-            this.labelTick.Size = new System.Drawing.Size(16, 13);
-            this.labelTick.TabIndex = 3;
-            this.labelTick.Text = "...";
+            this.labelVersion.AutoSize = true;
+            this.labelVersion.Location = new System.Drawing.Point(103, 0);
+            this.labelVersion.Name = "labelVersion";
+            this.labelVersion.Size = new System.Drawing.Size(16, 13);
+            this.labelVersion.TabIndex = 1;
+            this.labelVersion.Text = "...";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(42, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Version";
             // 
             // label5
             // 
@@ -129,143 +174,255 @@
             this.labelIsInitialized.TabIndex = 5;
             this.labelIsInitialized.Text = "...";
             // 
-            // labelTiming
+            // panelPrimaryColor1
             // 
-            this.labelTiming.AutoSize = true;
-            this.labelTiming.Location = new System.Drawing.Point(103, 60);
-            this.labelTiming.Name = "labelTiming";
-            this.labelTiming.Size = new System.Drawing.Size(16, 13);
-            this.labelTiming.TabIndex = 6;
-            this.labelTiming.Text = "...";
+            this.panelPrimaryColor1.Controls.Add(this.labelInfo1);
+            this.panelPrimaryColor1.Controls.Add(this.labelPrimaryColor1);
+            this.panelPrimaryColor1.Location = new System.Drawing.Point(3, 3);
+            this.panelPrimaryColor1.Name = "panelPrimaryColor1";
+            this.panelPrimaryColor1.Size = new System.Drawing.Size(119, 119);
+            this.panelPrimaryColor1.TabIndex = 2;
             // 
-            // label8
+            // labelInfo1
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 60);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(38, 13);
-            this.label8.TabIndex = 7;
-            this.label8.Text = "Timing";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.labelInfo1.AutoSize = true;
+            this.labelInfo1.Location = new System.Drawing.Point(3, 0);
+            this.labelInfo1.Name = "labelInfo1";
+            this.labelInfo1.Size = new System.Drawing.Size(25, 13);
+            this.labelInfo1.TabIndex = 1;
+            this.labelInfo1.Text = "Info";
             // 
-            // tableLayoutPanel2
+            // labelPrimaryColor1
             // 
-            this.tableLayoutPanel2.ColumnCount = 2;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.Controls.Add(this.label9, 0, 3);
-            this.tableLayoutPanel2.Controls.Add(this.labelSecondaryColor, 0, 3);
-            this.tableLayoutPanel2.Controls.Add(this.labelActionType, 1, 1);
-            this.tableLayoutPanel2.Controls.Add(this.label12, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.labelPosition, 1, 0);
-            this.tableLayoutPanel2.Controls.Add(this.label14, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.label15, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.labelPrimaryColor, 1, 2);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(309, 12);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 4;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(291, 81);
-            this.tableLayoutPanel2.TabIndex = 1;
+            this.labelPrimaryColor1.AutoSize = true;
+            this.labelPrimaryColor1.Location = new System.Drawing.Point(3, 106);
+            this.labelPrimaryColor1.Name = "labelPrimaryColor1";
+            this.labelPrimaryColor1.Size = new System.Drawing.Size(77, 13);
+            this.labelPrimaryColor1.TabIndex = 0;
+            this.labelPrimaryColor1.Text = "Primary Color 1";
             // 
-            // label9
+            // comboBoxDevice
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(3, 60);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(82, 13);
-            this.label9.TabIndex = 7;
-            this.label9.Text = "SecondaryColor";
-            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.comboBoxDevice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxDevice.FormattingEnabled = true;
+            this.comboBoxDevice.Location = new System.Drawing.Point(317, 12);
+            this.comboBoxDevice.Name = "comboBoxDevice";
+            this.comboBoxDevice.Size = new System.Drawing.Size(283, 21);
+            this.comboBoxDevice.TabIndex = 4;
+            this.comboBoxDevice.SelectedIndexChanged += new System.EventHandler(this.comboBoxDevice_SelectedIndexChanged);
             // 
-            // labelSecondaryColor
+            // tableLayoutPanel3
             // 
-            this.labelSecondaryColor.AutoSize = true;
-            this.labelSecondaryColor.Location = new System.Drawing.Point(103, 60);
-            this.labelSecondaryColor.Name = "labelSecondaryColor";
-            this.labelSecondaryColor.Size = new System.Drawing.Size(16, 13);
-            this.labelSecondaryColor.TabIndex = 6;
-            this.labelSecondaryColor.Text = "...";
+            this.tableLayoutPanel3.ColumnCount = 2;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.Controls.Add(this.panelPrimaryColor4, 1, 1);
+            this.tableLayoutPanel3.Controls.Add(this.panelPrimaryColor3, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.panelPrimaryColor2, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.panelPrimaryColor1, 0, 0);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(32, 128);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 2;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(250, 250);
+            this.tableLayoutPanel3.TabIndex = 0;
             // 
-            // labelActionType
+            // panelPrimaryColor4
             // 
-            this.labelActionType.AutoSize = true;
-            this.labelActionType.Location = new System.Drawing.Point(103, 20);
-            this.labelActionType.Name = "labelActionType";
-            this.labelActionType.Size = new System.Drawing.Size(16, 13);
-            this.labelActionType.TabIndex = 3;
-            this.labelActionType.Text = "...";
+            this.panelPrimaryColor4.Controls.Add(this.labelInfo4);
+            this.panelPrimaryColor4.Controls.Add(this.labelPrimaryColor4);
+            this.panelPrimaryColor4.Location = new System.Drawing.Point(128, 128);
+            this.panelPrimaryColor4.Name = "panelPrimaryColor4";
+            this.panelPrimaryColor4.Size = new System.Drawing.Size(119, 119);
+            this.panelPrimaryColor4.TabIndex = 5;
             // 
-            // label12
+            // labelInfo4
             // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(3, 20);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(61, 13);
-            this.label12.TabIndex = 2;
-            this.label12.Text = "ActionType";
+            this.labelInfo4.AutoSize = true;
+            this.labelInfo4.Location = new System.Drawing.Point(3, 0);
+            this.labelInfo4.Name = "labelInfo4";
+            this.labelInfo4.Size = new System.Drawing.Size(25, 13);
+            this.labelInfo4.TabIndex = 4;
+            this.labelInfo4.Text = "Info";
             // 
-            // labelPosition
+            // labelPrimaryColor4
             // 
-            this.labelPosition.AutoSize = true;
-            this.labelPosition.Location = new System.Drawing.Point(103, 0);
-            this.labelPosition.Name = "labelPosition";
-            this.labelPosition.Size = new System.Drawing.Size(16, 13);
-            this.labelPosition.TabIndex = 1;
-            this.labelPosition.Text = "...";
+            this.labelPrimaryColor4.AutoSize = true;
+            this.labelPrimaryColor4.Location = new System.Drawing.Point(3, 106);
+            this.labelPrimaryColor4.Name = "labelPrimaryColor4";
+            this.labelPrimaryColor4.Size = new System.Drawing.Size(77, 13);
+            this.labelPrimaryColor4.TabIndex = 1;
+            this.labelPrimaryColor4.Text = "Primary Color 4";
             // 
-            // label14
+            // panelPrimaryColor3
             // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(3, 0);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(44, 13);
-            this.label14.TabIndex = 0;
-            this.label14.Text = "Position";
+            this.panelPrimaryColor3.Controls.Add(this.labelInfo3);
+            this.panelPrimaryColor3.Controls.Add(this.labelPrimaryColor3);
+            this.panelPrimaryColor3.Location = new System.Drawing.Point(3, 128);
+            this.panelPrimaryColor3.Name = "panelPrimaryColor3";
+            this.panelPrimaryColor3.Size = new System.Drawing.Size(119, 119);
+            this.panelPrimaryColor3.TabIndex = 4;
             // 
-            // label15
+            // labelInfo3
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(3, 40);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(65, 13);
-            this.label15.TabIndex = 4;
-            this.label15.Text = "PrimaryColor";
+            this.labelInfo3.AutoSize = true;
+            this.labelInfo3.Location = new System.Drawing.Point(3, 0);
+            this.labelInfo3.Name = "labelInfo3";
+            this.labelInfo3.Size = new System.Drawing.Size(25, 13);
+            this.labelInfo3.TabIndex = 3;
+            this.labelInfo3.Text = "Info";
             // 
-            // labelPrimaryColor
+            // labelPrimaryColor3
             // 
-            this.labelPrimaryColor.AutoSize = true;
-            this.labelPrimaryColor.Location = new System.Drawing.Point(103, 40);
-            this.labelPrimaryColor.Name = "labelPrimaryColor";
-            this.labelPrimaryColor.Size = new System.Drawing.Size(16, 13);
-            this.labelPrimaryColor.TabIndex = 5;
-            this.labelPrimaryColor.Text = "...";
+            this.labelPrimaryColor3.AutoSize = true;
+            this.labelPrimaryColor3.Location = new System.Drawing.Point(3, 106);
+            this.labelPrimaryColor3.Name = "labelPrimaryColor3";
+            this.labelPrimaryColor3.Size = new System.Drawing.Size(77, 13);
+            this.labelPrimaryColor3.TabIndex = 1;
+            this.labelPrimaryColor3.Text = "Primary Color 3";
             // 
-            // panelPrimaryColor
+            // panelPrimaryColor2
             // 
-            this.panelPrimaryColor.Location = new System.Drawing.Point(32, 119);
-            this.panelPrimaryColor.Name = "panelPrimaryColor";
-            this.panelPrimaryColor.Size = new System.Drawing.Size(250, 250);
-            this.panelPrimaryColor.TabIndex = 2;
+            this.panelPrimaryColor2.Controls.Add(this.labelInfo2);
+            this.panelPrimaryColor2.Controls.Add(this.labelPrimaryColor2);
+            this.panelPrimaryColor2.Location = new System.Drawing.Point(128, 3);
+            this.panelPrimaryColor2.Name = "panelPrimaryColor2";
+            this.panelPrimaryColor2.Size = new System.Drawing.Size(119, 119);
+            this.panelPrimaryColor2.TabIndex = 3;
             // 
-            // panelSecondaryColor
+            // labelInfo2
             // 
-            this.panelSecondaryColor.Location = new System.Drawing.Point(330, 119);
-            this.panelSecondaryColor.Name = "panelSecondaryColor";
-            this.panelSecondaryColor.Size = new System.Drawing.Size(250, 250);
-            this.panelSecondaryColor.TabIndex = 3;
+            this.labelInfo2.AutoSize = true;
+            this.labelInfo2.Location = new System.Drawing.Point(3, 0);
+            this.labelInfo2.Name = "labelInfo2";
+            this.labelInfo2.Size = new System.Drawing.Size(25, 13);
+            this.labelInfo2.TabIndex = 2;
+            this.labelInfo2.Text = "Info";
+            // 
+            // labelPrimaryColor2
+            // 
+            this.labelPrimaryColor2.AutoSize = true;
+            this.labelPrimaryColor2.Location = new System.Drawing.Point(3, 106);
+            this.labelPrimaryColor2.Name = "labelPrimaryColor2";
+            this.labelPrimaryColor2.Size = new System.Drawing.Size(77, 13);
+            this.labelPrimaryColor2.TabIndex = 1;
+            this.labelPrimaryColor2.Text = "Primary Color 2";
+            // 
+            // tableLayoutPanel4
+            // 
+            this.tableLayoutPanel4.ColumnCount = 2;
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.Controls.Add(this.panelSecondaryColor4, 1, 1);
+            this.tableLayoutPanel4.Controls.Add(this.panelSecondaryColor3, 0, 1);
+            this.tableLayoutPanel4.Controls.Add(this.panelSecondaryColor2, 1, 0);
+            this.tableLayoutPanel4.Controls.Add(this.panelSecondaryColor1, 0, 0);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(330, 128);
+            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+            this.tableLayoutPanel4.RowCount = 2;
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(250, 250);
+            this.tableLayoutPanel4.TabIndex = 5;
+            // 
+            // panelSecondaryColor4
+            // 
+            this.panelSecondaryColor4.Controls.Add(this.labelSecondaryColor4);
+            this.panelSecondaryColor4.Location = new System.Drawing.Point(128, 128);
+            this.panelSecondaryColor4.Name = "panelSecondaryColor4";
+            this.panelSecondaryColor4.Size = new System.Drawing.Size(119, 119);
+            this.panelSecondaryColor4.TabIndex = 5;
+            // 
+            // labelSecondaryColor4
+            // 
+            this.labelSecondaryColor4.AutoSize = true;
+            this.labelSecondaryColor4.Location = new System.Drawing.Point(3, 106);
+            this.labelSecondaryColor4.Name = "labelSecondaryColor4";
+            this.labelSecondaryColor4.Size = new System.Drawing.Size(94, 13);
+            this.labelSecondaryColor4.TabIndex = 3;
+            this.labelSecondaryColor4.Text = "Secondary Color 4";
+            // 
+            // panelSecondaryColor3
+            // 
+            this.panelSecondaryColor3.Controls.Add(this.labelSecondaryColor3);
+            this.panelSecondaryColor3.Location = new System.Drawing.Point(3, 128);
+            this.panelSecondaryColor3.Name = "panelSecondaryColor3";
+            this.panelSecondaryColor3.Size = new System.Drawing.Size(119, 119);
+            this.panelSecondaryColor3.TabIndex = 4;
+            // 
+            // labelSecondaryColor3
+            // 
+            this.labelSecondaryColor3.AutoSize = true;
+            this.labelSecondaryColor3.Location = new System.Drawing.Point(3, 106);
+            this.labelSecondaryColor3.Name = "labelSecondaryColor3";
+            this.labelSecondaryColor3.Size = new System.Drawing.Size(94, 13);
+            this.labelSecondaryColor3.TabIndex = 3;
+            this.labelSecondaryColor3.Text = "Secondary Color 3";
+            // 
+            // panelSecondaryColor2
+            // 
+            this.panelSecondaryColor2.Controls.Add(this.labelSecondaryColor2);
+            this.panelSecondaryColor2.Location = new System.Drawing.Point(128, 3);
+            this.panelSecondaryColor2.Name = "panelSecondaryColor2";
+            this.panelSecondaryColor2.Size = new System.Drawing.Size(119, 119);
+            this.panelSecondaryColor2.TabIndex = 3;
+            // 
+            // labelSecondaryColor2
+            // 
+            this.labelSecondaryColor2.AutoSize = true;
+            this.labelSecondaryColor2.Location = new System.Drawing.Point(3, 106);
+            this.labelSecondaryColor2.Name = "labelSecondaryColor2";
+            this.labelSecondaryColor2.Size = new System.Drawing.Size(94, 13);
+            this.labelSecondaryColor2.TabIndex = 2;
+            this.labelSecondaryColor2.Text = "Secondary Color 2";
+            // 
+            // panelSecondaryColor1
+            // 
+            this.panelSecondaryColor1.Controls.Add(this.labelSecondaryColor1);
+            this.panelSecondaryColor1.Location = new System.Drawing.Point(3, 3);
+            this.panelSecondaryColor1.Name = "panelSecondaryColor1";
+            this.panelSecondaryColor1.Size = new System.Drawing.Size(119, 119);
+            this.panelSecondaryColor1.TabIndex = 2;
+            // 
+            // labelSecondaryColor1
+            // 
+            this.labelSecondaryColor1.AutoSize = true;
+            this.labelSecondaryColor1.Location = new System.Drawing.Point(3, 106);
+            this.labelSecondaryColor1.Name = "labelSecondaryColor1";
+            this.labelSecondaryColor1.Size = new System.Drawing.Size(94, 13);
+            this.labelSecondaryColor1.TabIndex = 1;
+            this.labelSecondaryColor1.Text = "Secondary Color 1";
+            // 
+            // labelNumDevices
+            // 
+            this.labelNumDevices.AutoSize = true;
+            this.labelNumDevices.Location = new System.Drawing.Point(103, 80);
+            this.labelNumDevices.Name = "labelNumDevices";
+            this.labelNumDevices.Size = new System.Drawing.Size(16, 13);
+            this.labelNumDevices.TabIndex = 8;
+            this.labelNumDevices.Text = "...";
+            this.labelNumDevices.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(3, 80);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(46, 13);
+            this.label4.TabIndex = 9;
+            this.label4.Text = "Devices";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(623, 408);
-            this.Controls.Add(this.panelSecondaryColor);
-            this.Controls.Add(this.panelPrimaryColor);
-            this.Controls.Add(this.tableLayoutPanel2);
+            this.BackColor = System.Drawing.Color.White;
+            this.ClientSize = new System.Drawing.Size(611, 394);
+            this.Controls.Add(this.tableLayoutPanel4);
+            this.Controls.Add(this.tableLayoutPanel3);
+            this.Controls.Add(this.comboBoxDevice);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -273,8 +430,24 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            this.tableLayoutPanel2.ResumeLayout(false);
-            this.tableLayoutPanel2.PerformLayout();
+            this.panelPrimaryColor1.ResumeLayout(false);
+            this.panelPrimaryColor1.PerformLayout();
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.panelPrimaryColor4.ResumeLayout(false);
+            this.panelPrimaryColor4.PerformLayout();
+            this.panelPrimaryColor3.ResumeLayout(false);
+            this.panelPrimaryColor3.PerformLayout();
+            this.panelPrimaryColor2.ResumeLayout(false);
+            this.panelPrimaryColor2.PerformLayout();
+            this.tableLayoutPanel4.ResumeLayout(false);
+            this.panelSecondaryColor4.ResumeLayout(false);
+            this.panelSecondaryColor4.PerformLayout();
+            this.panelSecondaryColor3.ResumeLayout(false);
+            this.panelSecondaryColor3.PerformLayout();
+            this.panelSecondaryColor2.ResumeLayout(false);
+            this.panelSecondaryColor2.PerformLayout();
+            this.panelSecondaryColor1.ResumeLayout(false);
+            this.panelSecondaryColor1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -290,17 +463,31 @@
         private System.Windows.Forms.Label labelTiming;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label labelIsInitialized;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label labelSecondaryColor;
-        private System.Windows.Forms.Label labelActionType;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label labelPosition;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.Label labelPrimaryColor;
-        private System.Windows.Forms.Panel panelPrimaryColor;
-        private System.Windows.Forms.Panel panelSecondaryColor;
+        private System.Windows.Forms.Panel panelPrimaryColor1;
+        private System.Windows.Forms.ComboBox comboBoxDevice;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.Panel panelPrimaryColor4;
+        private System.Windows.Forms.Panel panelPrimaryColor3;
+        private System.Windows.Forms.Panel panelPrimaryColor2;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.Panel panelSecondaryColor4;
+        private System.Windows.Forms.Panel panelSecondaryColor3;
+        private System.Windows.Forms.Panel panelSecondaryColor2;
+        private System.Windows.Forms.Panel panelSecondaryColor1;
+        private System.Windows.Forms.Label labelPrimaryColor1;
+        private System.Windows.Forms.Label labelPrimaryColor4;
+        private System.Windows.Forms.Label labelPrimaryColor3;
+        private System.Windows.Forms.Label labelPrimaryColor2;
+        private System.Windows.Forms.Label labelSecondaryColor4;
+        private System.Windows.Forms.Label labelSecondaryColor3;
+        private System.Windows.Forms.Label labelSecondaryColor2;
+        private System.Windows.Forms.Label labelSecondaryColor1;
+        private System.Windows.Forms.Label labelInfo1;
+        private System.Windows.Forms.Label labelInfo4;
+        private System.Windows.Forms.Label labelInfo3;
+        private System.Windows.Forms.Label labelInfo2;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label labelNumDevices;
     }
 }
 
