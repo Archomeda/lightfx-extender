@@ -25,6 +25,7 @@ namespace lightfx {
             if (this->Lights.size() > 0) {
                 MemoryMappedFile.Handle->light.position = LFX_POSITION(this->Lights[0].Position);
             }
+            MemoryMappedFile.Handle->timing = this->CurrentTiming;
             MemoryMappedFile.Handle->tick++;
 
             return Device::Initialize();
@@ -51,6 +52,8 @@ namespace lightfx {
         if (result != LFX_SUCCESS) {
             return result;
         }
+
+        MemoryMappedFile.Handle->timing = this->CurrentTiming;
 
         // TODO: support for multiple MMF devices and lights
         if (this->Lights.size() > 0) {
