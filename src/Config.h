@@ -12,6 +12,10 @@ namespace lightfx {
         void Save();
 
         bool LogitechEnabled = true;
+        int LogitechColorRangeOutMin = 0;
+        int LogitechColorRangeOutMax = 255;
+        int LogitechColorRangeInMin = 0;
+        int LogitechColorRangeInMax = 100;
         bool MemoryMappedFileEnabled = false;
         std::vector<DeviceData> MemoryMappedFileDevices = {};
 

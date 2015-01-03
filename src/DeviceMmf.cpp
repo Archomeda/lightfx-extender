@@ -1,5 +1,4 @@
 #include "DeviceMmf.h"
-#include "Log.h"
 
 using namespace std;
 using namespace lightfx::mmf;

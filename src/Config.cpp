@@ -6,6 +6,12 @@
 #define CONFIGFILE "LightFX.txt"
 
 #define CONF_LOGITECHENABLED "LogitechEnabled"
+#define CONF_LOGITECHCOLORANGE "LogitechColorRange"
+#define CONF_LOGITECHCOLORRANGE_OUTMIN "AlienFxMin"
+#define CONF_LOGITECHCOLORRANGE_OUTMAX "AlienFxMax"
+#define CONF_LOGITECHCOLORRANGE_INMIN "LogitechMin"
+#define CONF_LOGITECHCOLORRANGE_INMAX "LogitechMax"
+
 #define CONF_MMFENABLED "MemoryMappedFileEnabled"
 #define CONF_MMFDEVICES "MemoryMappedFileDevices"
 #define CONF_MMFDEVICE_DESC "Description"
@@ -57,6 +63,10 @@ namespace lightfx {
     void Config::SetDefault() {
         this->LogitechEnabled = true;
         this->MemoryMappedFileEnabled = false;
+        this->LogitechColorRangeOutMin = 0;
+        this->LogitechColorRangeOutMax = 255;
+        this->LogitechColorRangeInMin = 0;
+        this->LogitechColorRangeInMax = 100;
 
         // Default MMF device
         DeviceData device;
@@ -76,6 +86,22 @@ namespace lightfx {
 
         if (this->doc.HasMember(CONF_LOGITECHENABLED) && this->doc[CONF_LOGITECHENABLED].IsBool()) {
             this->LogitechEnabled = this->doc[CONF_LOGITECHENABLED].GetBool();
+        }
+
+        if (this->doc.HasMember(CONF_LOGITECHCOLORANGE) && this->doc[CONF_LOGITECHCOLORANGE].IsObject()) {
+            const Value& colorRange = this->doc[CONF_LOGITECHCOLORANGE];
+            if (colorRange.HasMember(CONF_LOGITECHCOLORRANGE_OUTMIN) && colorRange[CONF_LOGITECHCOLORRANGE_OUTMIN].IsInt()) {
+                this->LogitechColorRangeOutMin = colorRange[CONF_LOGITECHCOLORRANGE_OUTMIN].GetInt();
+            }
+            if (colorRange.HasMember(CONF_LOGITECHCOLORRANGE_OUTMAX) && colorRange[CONF_LOGITECHCOLORRANGE_OUTMAX].IsInt()) {
+                this->LogitechColorRangeOutMax = colorRange[CONF_LOGITECHCOLORRANGE_OUTMAX].GetInt();
+            }
+            if (colorRange.HasMember(CONF_LOGITECHCOLORRANGE_INMIN) && colorRange[CONF_LOGITECHCOLORRANGE_INMIN].IsInt()) {
+                this->LogitechColorRangeInMin = colorRange[CONF_LOGITECHCOLORRANGE_INMIN].GetInt();
+            }
+            if (colorRange.HasMember(CONF_LOGITECHCOLORRANGE_INMAX) && colorRange[CONF_LOGITECHCOLORRANGE_INMAX].IsInt()) {
+                this->LogitechColorRangeInMax = colorRange[CONF_LOGITECHCOLORRANGE_INMAX].GetInt();
+            }
         }
 
         if (this->doc.HasMember(CONF_MMFENABLED) && this->doc[CONF_MMFENABLED].IsBool()) {
@@ -125,6 +151,12 @@ namespace lightfx {
 
         this->doc.SetObject();
         this->doc.AddMember(CONF_LOGITECHENABLED, this->LogitechEnabled, allocator);
+        Value logiRange(kObjectType);
+        logiRange.AddMember(CONF_LOGITECHCOLORRANGE_OUTMIN, this->LogitechColorRangeOutMin, allocator);
+        logiRange.AddMember(CONF_LOGITECHCOLORRANGE_OUTMAX, this->LogitechColorRangeOutMax, allocator);
+        logiRange.AddMember(CONF_LOGITECHCOLORRANGE_INMIN, this->LogitechColorRangeInMin, allocator);
+        logiRange.AddMember(CONF_LOGITECHCOLORRANGE_INMAX, this->LogitechColorRangeInMax, allocator);
+        this->doc.AddMember(CONF_LOGITECHCOLORANGE, logiRange, allocator);
         this->doc.AddMember(CONF_MMFENABLED, this->MemoryMappedFileEnabled, allocator);
         Value devs(kArrayType);
         for (size_t i = 0; i < this->MemoryMappedFileDevices.size(); i++) {

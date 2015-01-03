@@ -24,6 +24,7 @@ namespace lightfx {
             if (this->config.LogitechEnabled) {
                 // Add Logitech device
                 auto devLogi = unique_ptr<DeviceLogitech>(new DeviceLogitech());
+                devLogi->SetRange(this->config.LogitechColorRangeOutMin, this->config.LogitechColorRangeOutMax, this->config.LogitechColorRangeInMin, this->config.LogitechColorRangeInMax);
                 devLogi->Initialize();
                 this->devices.push_back(move(devLogi));
             }
