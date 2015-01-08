@@ -5,17 +5,16 @@
 #include "LFXDecl.h"
 
 #include "Config.h"
-#include "Device.h"
+#include "DeviceBase.h"
 
 namespace lightfx {
 
     class LightFX {
 
     public:
-        ~LightFX();
+        void AddDevice(std::shared_ptr<devices::DeviceBase> device);
+        void RemoveDevice(std::shared_ptr<devices::DeviceBase> device);
 
-        LFX_RESULT Initialize();
-        LFX_RESULT Release();
         LFX_RESULT Reset();
         LFX_RESULT Update();
         LFX_RESULT UpdateDefault();
@@ -41,8 +40,7 @@ namespace lightfx {
 
     private:
         bool isInitialized = false;
-        Config config;
-        std::vector<std::unique_ptr<Device>> devices = {};
+        std::vector<std::shared_ptr<devices::DeviceBase>> devices = {};
 
     };
 

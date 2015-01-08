@@ -76,8 +76,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Config.cpp" />
-    <ClCompile Include="Device.cpp" />
+    <ClCompile Include="DeviceBase.cpp" />
     <ClCompile Include="DeviceLogitech.cpp" />
+    <ClCompile Include="DeviceManager.cpp" />
     <ClCompile Include="DeviceMmf.cpp" />
     <ClCompile Include="LightFX.cpp" />
     <ClCompile Include="AlienFXExports.cpp" />
@@ -86,13 +87,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
-    <ClInclude Include="Device.h" />
+    <ClInclude Include="DeviceBase.h" />
     <ClInclude Include="DeviceLogitech.h" />
+    <ClInclude Include="DeviceManager.h" />
     <ClInclude Include="DeviceMmf.h" />
     <ClInclude Include="MemoryMappedFileApi.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Structs.h" />
     <ClInclude Include="LightFX.h" />
     <ClInclude Include="Log.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="AlienFXFramework.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="tray.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
