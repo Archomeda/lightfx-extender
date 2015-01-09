@@ -7,7 +7,7 @@ namespace lightfx {
 
     struct DeviceLightData {
         std::string Description = "";
-        LFX_POSITION Position = LFX_POSITION();
+        LFX_POSITION Position = {};
     };
 
     struct DeviceData {

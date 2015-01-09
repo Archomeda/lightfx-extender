@@ -60,6 +60,13 @@ namespace lightfx {
                 this->EnableLogitechDevice();
             }
 
+            // Lightpack
+            this->deviceLightpack = shared_ptr<DeviceLightpack>(new DeviceLightpack(this->config.LightpackHost, this->config.LightpackPort, this->config.LightpackKey));
+            this->lightFXManager.AddDevice(this->deviceLightpack);
+            if (this->config.LightpackEnabled) {
+                this->EnableLightpackDevice();
+            }
+
             // Memory mapped file
             for (DeviceData devData : this->config.MemoryMappedFileDevices) {
                 auto device = shared_ptr<DeviceMmf>(new DeviceMmf(devData.Description, devData.Type, devData.Lights));
@@ -84,6 +91,7 @@ namespace lightfx {
             this->config.Save();
 
             this->DisableLogitechDevice();
+            this->DisableLightpackDevice();
             this->DisableMmfDevice();
 
             this->isInitialized = false;
@@ -108,6 +116,30 @@ namespace lightfx {
             this->config.LogitechEnabled = false;
             if (this->deviceLogitech->DisableDevice()) {
                 Log("Logitech export disabled");
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    bool DeviceManager::EnableLightpackDevice() {
+        if (!this->deviceLightpack->IsEnabled()) {
+            this->config.LightpackEnabled = true;
+            if (this->deviceLightpack->EnableDevice()) {
+                Log("Lightpack export enabled");
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    bool DeviceManager::DisableLightpackDevice() {
+        if (this->deviceLightpack->IsEnabled()) {
+            this->config.LightpackEnabled = false;
+            if (this->deviceLightpack->DisableDevice()) {
+                Log("Lightpack export disabled");
                 return true;
             }
             return false;
@@ -149,7 +181,9 @@ namespace lightfx {
 
 #define MENU_LOGITECHENABLED 1
 #define MENU_LOGITECHENABLED_NAME "Logitech devices"
-#define MENU_MMFENABLED 2
+#define MENU_LIGHTPACKENABLED 2
+#define MENU_LIGHTPACKENABLED_NAME "Lightpack device"
+#define MENU_MMFENABLED 3
 #define MENU_MMFENABLED_NAME "Memory mapped file passthrough"
 
     bool DeviceManager::AddTrayIcon() {
@@ -228,6 +262,11 @@ namespace lightfx {
             } else {
                 InsertMenu(hMenu, MENU_LOGITECHENABLED, 0, MENU_LOGITECHENABLED, MENU_LOGITECHENABLED_NAME);
             }
+            if (this->deviceLightpack->IsEnabled()) {
+                InsertMenu(hMenu, MENU_LIGHTPACKENABLED, MF_CHECKED, MENU_LIGHTPACKENABLED, MENU_LIGHTPACKENABLED_NAME);
+            } else {
+                InsertMenu(hMenu, MENU_LIGHTPACKENABLED, 0, MENU_LIGHTPACKENABLED, MENU_LIGHTPACKENABLED_NAME);
+            }
             if (this->deviceMemoryMappedFileEnabled) {
                 InsertMenu(hMenu, MENU_MMFENABLED, MF_CHECKED, MENU_MMFENABLED, MENU_MMFENABLED_NAME);
             } else {
@@ -246,6 +285,14 @@ namespace lightfx {
                     this->DisableLogitechDevice();
                 } else {
                     this->EnableLogitechDevice();
+                }
+                break;
+
+            case MENU_LIGHTPACKENABLED:
+                if (this->deviceLightpack->IsEnabled()) {
+                    this->DisableLightpackDevice();
+                } else {
+                    this->EnableLightpackDevice();
                 }
                 break;
 

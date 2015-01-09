@@ -12,6 +12,12 @@
 #define CONF_LOGITECHCOLORRANGE_INMIN "LogitechMin"
 #define CONF_LOGITECHCOLORRANGE_INMAX "LogitechMax"
 
+#define CONF_LIGHTPACKENABLED "LightpackEnabled"
+#define CONF_LIGHTPACKAPI "LightpackAPI"
+#define CONF_LIGHTPACKHOST "Hostname"
+#define CONF_LIGHTPACKPORT "PortNumber"
+#define CONF_LIGHTPACKKEY "Key"
+
 #define CONF_MMFENABLED "MemoryMappedFileEnabled"
 #define CONF_MMFDEVICES "MemoryMappedFileDevices"
 #define CONF_MMFDEVICE_DESC "Description"
@@ -62,6 +68,7 @@ namespace lightfx {
 
     void Config::SetDefault() {
         this->LogitechEnabled = true;
+        this->LightpackEnabled = false;
         this->MemoryMappedFileEnabled = false;
         this->LogitechColorRangeOutMin = 0;
         this->LogitechColorRangeOutMax = 255;
@@ -101,6 +108,23 @@ namespace lightfx {
             }
             if (colorRange.HasMember(CONF_LOGITECHCOLORRANGE_INMAX) && colorRange[CONF_LOGITECHCOLORRANGE_INMAX].IsInt()) {
                 this->LogitechColorRangeInMax = colorRange[CONF_LOGITECHCOLORRANGE_INMAX].GetInt();
+            }
+        }
+
+        if (this->doc.HasMember(CONF_LIGHTPACKENABLED) && this->doc[CONF_LIGHTPACKENABLED].IsBool()) {
+            this->LightpackEnabled = this->doc[CONF_LIGHTPACKENABLED].GetBool();
+        }
+
+        if (this->doc.HasMember(CONF_LIGHTPACKAPI) && this->doc[CONF_LIGHTPACKAPI].IsObject()) {
+            const Value& api = this->doc[CONF_LIGHTPACKAPI];
+            if (api.HasMember(CONF_LIGHTPACKHOST) && api[CONF_LIGHTPACKHOST].IsString()) {
+                this->LightpackHost = api[CONF_LIGHTPACKHOST].GetString();
+            }
+            if (api.HasMember(CONF_LIGHTPACKPORT) && api[CONF_LIGHTPACKPORT].IsString()) {
+                this->LightpackPort = api[CONF_LIGHTPACKPORT].GetString();
+            }
+            if (api.HasMember(CONF_LIGHTPACKKEY) && api[CONF_LIGHTPACKKEY].IsString()) {
+                this->LightpackKey = api[CONF_LIGHTPACKKEY].GetString();
             }
         }
 
@@ -157,6 +181,20 @@ namespace lightfx {
         logiRange.AddMember(CONF_LOGITECHCOLORRANGE_INMIN, this->LogitechColorRangeInMin, allocator);
         logiRange.AddMember(CONF_LOGITECHCOLORRANGE_INMAX, this->LogitechColorRangeInMax, allocator);
         this->doc.AddMember(CONF_LOGITECHCOLORANGE, logiRange, allocator);
+
+        this->doc.AddMember(CONF_LIGHTPACKENABLED, this->LightpackEnabled, allocator);
+        Value lightpackApi(kObjectType);
+        Value host(kStringType);
+        host.SetString(this->LightpackHost.c_str(), allocator);
+        lightpackApi.AddMember(CONF_LIGHTPACKHOST, host, allocator);
+        Value port(kStringType);
+        port.SetString(this->LightpackPort.c_str(), allocator);
+        lightpackApi.AddMember(CONF_LIGHTPACKPORT, port, allocator);
+        Value key(kStringType);
+        key.SetString(this->LightpackKey.c_str(), allocator);
+        lightpackApi.AddMember(CONF_LIGHTPACKKEY, key, allocator);
+        this->doc.AddMember(CONF_LIGHTPACKAPI, lightpackApi, allocator);
+
         this->doc.AddMember(CONF_MMFENABLED, this->MemoryMappedFileEnabled, allocator);
         Value devs(kArrayType);
         for (size_t i = 0; i < this->MemoryMappedFileDevices.size(); i++) {
