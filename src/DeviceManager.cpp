@@ -1,5 +1,6 @@
 ﻿#include "DeviceManager.h"
 #include "Log.h"
+#include "FileIO.h"
 #include "resource.h"
 
 #include <CommCtrl.h>
@@ -8,6 +9,7 @@
 
 using namespace std;
 using namespace lightfx::devices;
+using namespace lightfx::fileio;
 using namespace lightfx::log;
 
 #pragma region Windows helper functions
@@ -186,6 +188,8 @@ namespace lightfx {
 #define MENU_LIGHTPACKENABLED_NAME "Lightpack device"
 #define MENU_MMFENABLED 3
 #define MENU_MMFENABLED_NAME "Memory mapped file passthrough"
+#define MENU_CONFFOLDER 100
+#define MENU_CONFFOLDER_NAME "Open configuration folder..."
 
     bool DeviceManager::AddTrayIcon() {
         this->hModuleInstance = GetCurrentModule();
@@ -264,6 +268,8 @@ namespace lightfx {
             InsertMenu(hMenu, MENU_LOGITECHENABLED, this->deviceLogitech->IsEnabled() ? MF_CHECKED : 0, MENU_LOGITECHENABLED, MENU_LOGITECHENABLED_NAME);
             InsertMenu(hMenu, MENU_LIGHTPACKENABLED, this->deviceLightpack->IsEnabled() ? MF_CHECKED : 0, MENU_LIGHTPACKENABLED, MENU_LIGHTPACKENABLED_NAME);
             InsertMenu(hMenu, MENU_MMFENABLED, this->deviceMemoryMappedFileEnabled ? MF_CHECKED : 0, MENU_MMFENABLED, MENU_MMFENABLED_NAME);
+            InsertMenu(hMenu, MENU_CONFFOLDER - 1, MF_SEPARATOR, 0, NULL);
+            InsertMenu(hMenu, MENU_CONFFOLDER, 0, MENU_CONFFOLDER, MENU_CONFFOLDER_NAME);
 
             POINT cursor;
             GetCursorPos(&cursor);
@@ -295,7 +301,16 @@ namespace lightfx {
                     this->EnableMmfDevice();
                 }
                 break;
+
+            case MENU_CONFFOLDER:
+                wstring folder;
+                if (GetRoamingAppDataFolder(folder)) {
+                    folder = folder + L"/" + APPDATA_FOLDER;
+                    ShellExecuteW(NULL, L"explore", folder.c_str(), NULL, NULL, SW_SHOWNORMAL);
+                }
+                break;
             }
+
         }
     }
 
