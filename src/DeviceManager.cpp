@@ -1,4 +1,4 @@
-#include "DeviceManager.h"
+﻿#include "DeviceManager.h"
 #include "Log.h"
 #include "resource.h"
 
@@ -8,6 +8,7 @@
 
 using namespace std;
 using namespace lightfx::devices;
+using namespace lightfx::log;
 
 #pragma region Windows helper functions
 

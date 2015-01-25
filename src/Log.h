@@ -2,5 +2,11 @@
 #include <string>
 
 namespace lightfx {
-    void Log(std::string line);
+    namespace log {
+        
+        void Log(std::string line);
+        void Log(std::wstring line);
+        void LogLastError();
+
+    }
 }

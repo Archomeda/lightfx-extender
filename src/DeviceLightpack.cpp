@@ -5,6 +5,7 @@
 #pragma comment(lib, "Ws2_32.lib")
 
 using namespace std;
+using namespace lightfx::log;
 
 #define DEVICENAME "Lightpack"
 #define DEVICETYPE LFX_DEVTYPE_DISPLAY

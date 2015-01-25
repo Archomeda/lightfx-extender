@@ -2,8 +2,12 @@
 #include "rapidjson\filewritestream.h"
 #include "rapidjson\prettywriter.h"
 #include "Config.h"
+#include "FileIO.h"
+#include "Log.h"
 
-#define CONFIGFILE "LightFX.txt"
+#include <ShlObj.h>
+
+#define APPDATA_CONFIGFILE L"settings.json"
 
 #define CONF_LOGITECHENABLED "LogitechEnabled"
 #define CONF_LOGITECHCOLORANGE "LogitechColorRange"
@@ -30,40 +34,69 @@
 
 using namespace std;
 using namespace rapidjson;
+using namespace lightfx::fileio;
+using namespace lightfx::log;
 
 namespace lightfx {
 
-    void Config::Load() {
+    bool Config::Load() {
         this->SetDefault();
         try {
             // TODO: Find a better way to read JSON from a file (with no manually managed buffer)
-            FILE* pFile;
-            if (fopen_s(&pFile, CONFIGFILE, "r") == 0) {
-                char buffer[65536];
-                FileReadStream frs(pFile, buffer, sizeof(buffer));
-                this->doc.ParseStream<0, UTF8<>, FileReadStream>(frs);
-                this->Parse();
-                fclose(pFile);
+            wstring configPath;
+            if (GetRoamingAppDataFolder(configPath)) {
+                configPath = configPath + L"/" + APPDATA_FOLDER;
+                if (DirExists(configPath)) {
+                    configPath = configPath + L"/" + APPDATA_CONFIGFILE;
+                    FILE* pFile;
+                    if (_wfopen_s(&pFile, configPath.c_str(), L"rb") == 0) {
+                        char buffer[65536];
+                        FileReadStream frs(pFile, buffer, sizeof(buffer));
+                        this->doc.ParseStream<0, UTF8<>, FileReadStream>(frs);
+                        this->Parse();
+                        fclose(pFile);
+                    }
+                    pFile = nullptr;
+                }
+                return true;
             }
-            pFile = nullptr;
-        } catch (...) {}
+            return false;
+        } catch (...) {
+            Log("Failed to load configuration");
+        }
     }
 
-    void Config::Save() {
+    bool Config::Save() {
         try {
             this->Commit();
 
             // TODO: Find a better way to write JSON to a file (with no manually managed buffer)
-            FILE* pFile;
-            if (fopen_s(&pFile, CONFIGFILE, "w") == 0) {
-                char buffer[65536];
-                FileWriteStream fws(pFile, buffer, sizeof(buffer));
-                PrettyWriter<FileWriteStream> writer(fws);
-                this->doc.Accept(writer);
-                fclose(pFile);
+            wstring configPath;
+            if (GetRoamingAppDataFolder(configPath)) {
+                configPath = configPath + L"/" + APPDATA_FOLDER;
+                if (!DirExists(configPath)) {
+                    if (CreateDirectoryW(configPath.c_str(), NULL) == FALSE) {
+                        Log("Failed to create folder in %APPDATA%");
+                        LogLastError();
+                        return false;
+                    }
+                }
+                configPath = configPath + L"/" + APPDATA_CONFIGFILE;
+                FILE* pFile;
+                if (_wfopen_s(&pFile, configPath.c_str(), L"wb") == 0) {
+                    char buffer[65536];
+                    FileWriteStream fws(pFile, buffer, sizeof(buffer));
+                    PrettyWriter<FileWriteStream> writer(fws);
+                    this->doc.Accept(writer);
+                    fclose(pFile);
+                }
+                pFile = nullptr;
+                return true;
             }
-            pFile = nullptr;
-        } catch (...) {}
+            return false;
+        } catch (...) {
+            Log("Failed to save configuration");
+        }
     }
 
     void Config::SetDefault() {

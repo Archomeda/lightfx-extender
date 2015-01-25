@@ -8,8 +8,8 @@ namespace lightfx {
     class Config {
 
     public:
-        void Load();
-        void Save();
+        bool Load();
+        bool Save();
 
         bool LogitechEnabled = true;
         int LogitechColorRangeOutMin = 0;
