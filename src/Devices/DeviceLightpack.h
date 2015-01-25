@@ -1,6 +1,7 @@
 #pragma once
 
 // Windows includes
+#include "../Common/Windows.h" // Since WinSock2.h includes Windows.h we need to make sure to configure some things first
 #include <WinSock2.h>
 
 // Project includes

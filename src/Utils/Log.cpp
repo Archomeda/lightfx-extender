@@ -7,6 +7,7 @@
 #include <codecvt>
 
 // Windows includes
+#include "../Common/Windows.h"
 #include <Windows.h>
 #include <time.h>
 

@@ -1,6 +1,7 @@
 #include "DeviceLogitech.h"
 
 // Windows includes
+#include "../Common/Windows.h"
 #include <Windows.h> // Windows.h is needed for some declarations inside LogitechLEDLib.h
 
 // 3rd party includes

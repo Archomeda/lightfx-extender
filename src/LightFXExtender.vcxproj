@@ -81,11 +81,13 @@
     <ClCompile Include="Devices\DeviceLogitech.cpp" />
     <ClCompile Include="DeviceManager.cpp" />
     <ClCompile Include="Devices\DeviceMmf.cpp" />
+    <ClCompile Include="TrayIcon.cpp" />
     <ClCompile Include="Utils\FileIO.cpp" />
     <ClCompile Include="LightFX.cpp" />
     <ClCompile Include="AlienFXExports.cpp" />
     <ClCompile Include="Utils\Log.cpp" />
     <ClCompile Include="MemoryMappedFileApi.cpp" />
+    <ClCompile Include="Utils\Windows.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
@@ -94,12 +96,15 @@
     <ClInclude Include="Devices\DeviceLogitech.h" />
     <ClInclude Include="DeviceManager.h" />
     <ClInclude Include="Devices\DeviceMmf.h" />
+    <ClInclude Include="TrayIcon.h" />
     <ClInclude Include="Utils\FileIO.h" />
     <ClInclude Include="MemoryMappedFileApi.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Structs.h" />
     <ClInclude Include="LightFX.h" />
     <ClInclude Include="Utils\Log.h" />
+    <ClInclude Include="Common\Windows.h" />
+    <ClInclude Include="Utils\Windows.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LightFXExtender.rc" />

@@ -1,10 +1,11 @@
-#include "DeviceManager.h"
-
 // Standard includes
 #include <string>
 
 // 3rd party includes
 #include "LFX2.h"
+
+// Project includes
+#include "DeviceManager.h"
 
 
 using namespace std;

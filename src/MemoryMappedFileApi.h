@@ -5,6 +5,7 @@
 #include <string>
 
 // Windows includes
+#include "Common/Windows.h"
 #include <Windows.h>
 
 // 3rd party includes

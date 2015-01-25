@@ -1,6 +1,7 @@
 #include "FileIO.h"
 
 // Windows includes
+#include "../Common/Windows.h"
 #include <Windows.h>
 #include <ShlObj.h>
 
