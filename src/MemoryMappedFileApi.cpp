@@ -1,5 +1,6 @@
 #include "MemoryMappedFileApi.h"
 
+
 using namespace std;
 
 #define APIVER 0

@@ -1,5 +1,6 @@
 #include "DeviceMmf.h"
 
+
 using namespace std;
 using namespace lightfx::devices::mmf;
 

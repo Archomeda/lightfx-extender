@@ -1,5 +1,8 @@
 #pragma once
+
+// Project includes
 #include "DeviceBase.h"
+
 
 namespace lightfx {
     namespace devices {

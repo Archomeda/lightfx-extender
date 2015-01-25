@@ -1,8 +1,15 @@
 #pragma once
+
+// Standard includes
 #include <string>
 #include <vector>
+
+// 3rd party includes
 #include "LFXDecl.h"
-#include "Structs.h"
+
+// Project includes
+#include "../Structs.h"
+
 
 namespace lightfx {
     namespace devices {

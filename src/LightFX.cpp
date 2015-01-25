@@ -1,9 +1,13 @@
-#include <map>
-#include <string>
 #include "LightFX.h"
 
-#include "DeviceLogitech.h"
-#include "DeviceMmf.h"
+// Standard includes
+#include <map>
+#include <string>
+
+// Project includes
+#include "Devices/DeviceLogitech.h"
+#include "Devices/DeviceMmf.h"
+
 
 using namespace std;
 using namespace lightfx::devices;

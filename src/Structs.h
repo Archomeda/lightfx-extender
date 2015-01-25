@@ -1,7 +1,12 @@
 #pragma once
+
+// Standard includes
 #include <vector>
 #include <string>
+
+// 3rd party includes
 #include "LFXDecl.h"
+
 
 namespace lightfx {
 

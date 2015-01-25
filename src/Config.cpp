@@ -1,11 +1,17 @@
+#include "Config.h"
+
+// Windows includes
+#include <ShlObj.h>
+
+// 3rd party includes
 #include "rapidjson\filereadstream.h"
 #include "rapidjson\filewritestream.h"
 #include "rapidjson\prettywriter.h"
-#include "Config.h"
-#include "FileIO.h"
-#include "Log.h"
 
-#include <ShlObj.h>
+// Project includes
+#include "Utils/FileIO.h"
+#include "Utils/Log.h"
+
 
 #define APPDATA_CONFIGFILE L"settings.json"
 
@@ -34,8 +40,7 @@
 
 using namespace std;
 using namespace rapidjson;
-using namespace lightfx::fileio;
-using namespace lightfx::log;
+using namespace lightfx::utils;
 
 namespace lightfx {
 
@@ -60,10 +65,10 @@ namespace lightfx {
                 }
                 return true;
             }
-            return false;
         } catch (...) {
             Log("Failed to load configuration");
         }
+        return false;
     }
 
     bool Config::Save() {
@@ -93,10 +98,10 @@ namespace lightfx {
                 pFile = nullptr;
                 return true;
             }
-            return false;
         } catch (...) {
             Log("Failed to save configuration");
         }
+        return false;
     }
 
     void Config::SetDefault() {

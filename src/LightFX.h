@@ -1,11 +1,16 @@
 #pragma once
+
+// Standard includes
 #include <memory>
 #include <string>
 #include <vector>
+
+// 3rd party includes
 #include "LFXDecl.h"
 
+// Project includes
+#include "Devices/DeviceBase.h"
 #include "Config.h"
-#include "DeviceBase.h"
 
 namespace lightfx {
 

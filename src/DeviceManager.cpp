@@ -1,18 +1,23 @@
 ﻿#include "DeviceManager.h"
-#include "Log.h"
-#include "FileIO.h"
-#include "resource.h"
 
-#include <CommCtrl.h>
-#include <shellapi.h>
-#include <strsafe.h>
+// Standard includes
 #include <locale>
 #include <codecvt>
 
+// Windows includes
+#include <CommCtrl.h>
+#include <shellapi.h>
+#include <strsafe.h>
+
+// Project includes
+#include "Utils/FileIO.h"
+#include "Utils/Log.h"
+#include "resource.h"
+
+
 using namespace std;
 using namespace lightfx::devices;
-using namespace lightfx::fileio;
-using namespace lightfx::log;
+using namespace lightfx::utils;
 
 #pragma region Windows helper functions
 

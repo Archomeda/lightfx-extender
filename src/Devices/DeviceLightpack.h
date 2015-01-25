@@ -1,7 +1,11 @@
 #pragma once
+
+// Windows includes
+#include <WinSock2.h>
+
+// Project includes
 #include "DeviceBase.h"
 
-#include <WinSock2.h>
 
 namespace lightfx {
     namespace devices {

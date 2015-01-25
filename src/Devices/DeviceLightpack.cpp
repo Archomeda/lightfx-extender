@@ -1,11 +1,15 @@
 #include "DeviceLightpack.h"
-#include "Log.h"
-#include <WS2tcpip.h>
 
+// Windows includes
+#include <WS2tcpip.h>
 #pragma comment(lib, "Ws2_32.lib")
 
+// Project includes
+#include "../Utils/Log.h"
+
+
 using namespace std;
-using namespace lightfx::log;
+using namespace lightfx::utils;
 
 #define DEVICENAME "Lightpack"
 #define DEVICETYPE LFX_DEVTYPE_DISPLAY

@@ -1,8 +1,11 @@
 #pragma once
+
+// Standard includes
 #include <string>
 
+
 namespace lightfx {
-    namespace log {
+    namespace utils {
         
         void Log(std::string line);
         void Log(std::wstring line);

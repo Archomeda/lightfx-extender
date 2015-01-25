@@ -1,6 +1,12 @@
 #pragma once
+
+// Standard includes
 #include <vector>
+
+// 3rd party includes
 #include "rapidjson\document.h"
+
+// Project includes
 #include "Structs.h"
 
 namespace lightfx {

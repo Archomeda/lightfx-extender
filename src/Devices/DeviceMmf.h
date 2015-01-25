@@ -1,7 +1,12 @@
 #pragma once
+
+// Standard includes
 #include <memory>
+
+// Project includes
+#include "../MemoryMappedFileApi.h"
 #include "DeviceBase.h"
-#include "MemoryMappedFileApi.h"
+
 
 #define MMFNAME "AlienFXFrameworkLink"
 

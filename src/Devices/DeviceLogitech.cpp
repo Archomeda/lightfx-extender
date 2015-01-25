@@ -1,7 +1,11 @@
+#include "DeviceLogitech.h"
+
+// Windows includes
 #include <Windows.h> // Windows.h is needed for some declarations inside LogitechLEDLib.h
+
+// 3rd party includes
 #include "LogitechLEDLib.h"
 
-#include "DeviceLogitech.h"
 
 using namespace std;
 

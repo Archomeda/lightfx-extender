@@ -2,18 +2,24 @@
 
 #define NTDDI_VERSION NTDDI_WIN7
 
+// Standard includes
 #include <memory>
 #include <string>
+
+
+// Project includes
+#include "Devices/DeviceLogitech.h"
+#include "Devices/DeviceLightpack.h"
+#include "Devices/DeviceMmf.h"
 #include "Config.h"
-#include "DeviceLogitech.h"
-#include "DeviceLightpack.h"
-#include "DeviceMmf.h"
 #include "LightFX.h"
 
+// Windows includes
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <Windows.h>
+
 
 namespace lightfx {
 

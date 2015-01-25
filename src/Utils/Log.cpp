@@ -1,11 +1,18 @@
+#include "Log.h"
+
+// Standard includes
 #include <iostream>
 #include <fstream>
-#include <time.h>
 #include <locale>
 #include <codecvt>
+
+// Windows includes
 #include <Windows.h>
-#include "Log.h"
+#include <time.h>
+
+// Project includes
 #include "FileIO.h"
+
 
 #define wstring_to_string(str) wstring_convert<codecvt_utf8<wchar_t>>().to_bytes(str)
 #define string_to_wstring(str) wstring_convert<codecvt_utf8<wchar_t>>().from_bytes(str)
@@ -14,7 +21,7 @@
 
 using namespace std;
 using namespace lightfx;
-using namespace lightfx::fileio;
+using namespace lightfx::utils;
 
 
 #define DTTMFMT "%Y-%m-%d %H:%M:%S "
@@ -30,7 +37,7 @@ static string getDtTm() {
 
 
 namespace lightfx {
-    namespace log {
+    namespace utils {
 
         void Log(string line) {
             wstring configPath;

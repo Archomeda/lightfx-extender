@@ -1,8 +1,15 @@
 #pragma once
+
+// Standard includes
 #include <memory>
 #include <string>
+
+// Windows includes
 #include <Windows.h>
+
+// 3rd party includes
 #include "LFXDecl.h"
+
 
 #define MMF_MAXDEVICES 8
 #define MMF_MAXLIGHTSPERDEVICE 16

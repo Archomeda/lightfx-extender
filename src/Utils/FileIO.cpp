@@ -1,11 +1,14 @@
 #include "FileIO.h"
+
+// Windows includes
 #include <Windows.h>
 #include <ShlObj.h>
+
 
 using namespace std;
 
 namespace lightfx {
-    namespace fileio {
+    namespace utils {
 
         bool DirExists(const wstring& path) {
             DWORD fileType = GetFileAttributesW(path.c_str());

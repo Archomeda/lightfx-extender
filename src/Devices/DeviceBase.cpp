@@ -1,5 +1,6 @@
 #include "DeviceBase.h"
 
+
 using namespace std;
 
 namespace lightfx {

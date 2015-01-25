@@ -76,30 +76,30 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Config.cpp" />
-    <ClCompile Include="DeviceBase.cpp" />
-    <ClCompile Include="DeviceLightpack.cpp" />
-    <ClCompile Include="DeviceLogitech.cpp" />
+    <ClCompile Include="Devices\DeviceBase.cpp" />
+    <ClCompile Include="Devices\DeviceLightpack.cpp" />
+    <ClCompile Include="Devices\DeviceLogitech.cpp" />
     <ClCompile Include="DeviceManager.cpp" />
-    <ClCompile Include="DeviceMmf.cpp" />
-    <ClCompile Include="FileIO.cpp" />
+    <ClCompile Include="Devices\DeviceMmf.cpp" />
+    <ClCompile Include="Utils\FileIO.cpp" />
     <ClCompile Include="LightFX.cpp" />
     <ClCompile Include="AlienFXExports.cpp" />
-    <ClCompile Include="Log.cpp" />
+    <ClCompile Include="Utils\Log.cpp" />
     <ClCompile Include="MemoryMappedFileApi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
-    <ClInclude Include="DeviceBase.h" />
-    <ClInclude Include="DeviceLightpack.h" />
-    <ClInclude Include="DeviceLogitech.h" />
+    <ClInclude Include="Devices\DeviceBase.h" />
+    <ClInclude Include="Devices\DeviceLightpack.h" />
+    <ClInclude Include="Devices\DeviceLogitech.h" />
     <ClInclude Include="DeviceManager.h" />
-    <ClInclude Include="DeviceMmf.h" />
-    <ClInclude Include="FileIO.h" />
+    <ClInclude Include="Devices\DeviceMmf.h" />
+    <ClInclude Include="Utils\FileIO.h" />
     <ClInclude Include="MemoryMappedFileApi.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Structs.h" />
     <ClInclude Include="LightFX.h" />
-    <ClInclude Include="Log.h" />
+    <ClInclude Include="Utils\Log.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AlienFXFramework.rc" />
