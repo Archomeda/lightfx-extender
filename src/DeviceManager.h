@@ -3,6 +3,7 @@
 #define NTDDI_VERSION NTDDI_WIN7
 
 #include <memory>
+#include <string>
 #include "Config.h"
 #include "DeviceLogitech.h"
 #include "DeviceLightpack.h"
@@ -31,6 +32,9 @@ namespace lightfx {
         bool DisableLightpackDevice();
         bool EnableMmfDevice();
         bool DisableMmfDevice();
+
+    protected:
+        std::wstring GetProcessName(std::wstring* drive, std::wstring* dir, std::wstring* fname, std::wstring* ext);
 
     private:
         Config config;

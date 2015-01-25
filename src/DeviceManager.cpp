@@ -6,6 +6,8 @@
 #include <CommCtrl.h>
 #include <shellapi.h>
 #include <strsafe.h>
+#include <locale>
+#include <codecvt>
 
 using namespace std;
 using namespace lightfx::devices;
@@ -52,6 +54,8 @@ namespace lightfx {
 
     bool DeviceManager::Initialize() {
         if (!this->isInitialized) {
+            Log(L"Connected to " + this->GetProcessName(nullptr, nullptr, nullptr, nullptr));
+
             // Config
             this->config.Load();
 
@@ -174,6 +178,33 @@ namespace lightfx {
         return true;
     }
 
+
+    wstring DeviceManager::GetProcessName(wstring* drive, wstring* dir, wstring* fname, wstring* ext) {
+        wchar_t szFileName[MAX_PATH];
+        GetModuleFileNameW(NULL, szFileName, MAX_PATH);
+        wchar_t cdrive[_MAX_DRIVE];
+        wchar_t cdir[_MAX_DIR];
+        wchar_t cfname[_MAX_FNAME];
+        wchar_t cext[_MAX_EXT];
+        _wsplitpath_s(szFileName, cdrive, sizeof(cdrive), cdir, sizeof(cdir), cfname, sizeof(cfname), cext, sizeof(cext));
+
+        if (drive != nullptr) {
+            *drive = wstring(cdrive);
+        }
+        if (dir != nullptr) {
+            *dir = wstring(cdir);
+        }
+        if (fname != nullptr) {
+            *fname = wstring(cfname);
+        }
+        if (ext != nullptr) {
+            *ext = wstring(cext);
+        }
+
+        return wstring(szFileName);
+    }
+
+
 #pragma region Tray Icon
 
 #define ISWIN7ORLATER CheckOS(6, 1)
@@ -200,18 +231,15 @@ namespace lightfx {
         RegisterClass(&this->trayIconWindowClass);
         this->hTrayIconWindow = CreateWindowEx(0, WINDOW_CLASSNAME, "LightFX Tray Icon", 0, 0, 0, 0, 0, NULL, NULL, this->hModuleInstance, static_cast<LPVOID>(this));
 
-        TCHAR szFileName[MAX_PATH];
-        GetModuleFileName(NULL, szFileName, MAX_PATH);
-        char fname[_MAX_FNAME];
-        char ext[_MAX_EXT];
-        _splitpath_s(szFileName, NULL, 0, NULL, 0, fname, sizeof(fname), ext, sizeof(ext));
+        wstring fname, ext;
+        wstring filename = this->GetProcessName(nullptr, nullptr, &fname, &ext);
 
         this->trayIconData = {};
         this->trayIconData.cbSize = sizeof(NOTIFYICONDATA);
         this->trayIconData.hWnd = this->hTrayIconWindow;
         this->trayIconData.uID = TRAYID;
         this->trayIconData.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP | NIF_GUID;
-        StringCchCopy(this->trayIconData.szTip, ARRAYSIZE(this->trayIconData.szTip), ("LightFX for " + string(fname) + string(ext)).c_str());
+        StringCchCopy(this->trayIconData.szTip, ARRAYSIZE(this->trayIconData.szTip), ("LightFX for " + wstring_convert<codecvt_utf8<wchar_t>>().to_bytes(fname + ext)).c_str());
         this->trayIconData.uVersion = NOTIFYICON_VERSION_4;
         this->trayIconData.uCallbackMessage = WM_TRAYICON;
 
@@ -224,7 +252,7 @@ namespace lightfx {
         // Not sure if taking the icon from an EXE file is desired by some companies,
         // as it might cause confusion to users if it's officially supported by those companies or not.
         // Therefore, it's disabled for now.
-        //this->trayIconData.hIcon = ExtractIcon(GetModuleHandle(NULL), szFileName, 0);
+        //this->trayIconData.hIcon = ExtractIconW(GetModuleHandle(NULL), filename.c_str(), 0);
         if (this->trayIconData.hIcon == NULL) {
             // Fall back to our default (somewhat crappy) icon if the executable icon cannot be found
             this->trayIconData.hIcon = (HICON)LoadImage(this->hModuleInstance, MAKEINTRESOURCE(IDI_TRAYICON), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0);
