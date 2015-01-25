@@ -261,21 +261,9 @@ namespace lightfx {
         if (wParam == TRAYID && lParam == WM_RBUTTONUP) {
             HMENU hMenu = CreatePopupMenu();
 
-            if (this->deviceLogitech->IsEnabled()) {
-                InsertMenu(hMenu, MENU_LOGITECHENABLED, MF_CHECKED, MENU_LOGITECHENABLED, MENU_LOGITECHENABLED_NAME);
-            } else {
-                InsertMenu(hMenu, MENU_LOGITECHENABLED, 0, MENU_LOGITECHENABLED, MENU_LOGITECHENABLED_NAME);
-            }
-            if (this->deviceLightpack->IsEnabled()) {
-                InsertMenu(hMenu, MENU_LIGHTPACKENABLED, MF_CHECKED, MENU_LIGHTPACKENABLED, MENU_LIGHTPACKENABLED_NAME);
-            } else {
-                InsertMenu(hMenu, MENU_LIGHTPACKENABLED, 0, MENU_LIGHTPACKENABLED, MENU_LIGHTPACKENABLED_NAME);
-            }
-            if (this->deviceMemoryMappedFileEnabled) {
-                InsertMenu(hMenu, MENU_MMFENABLED, MF_CHECKED, MENU_MMFENABLED, MENU_MMFENABLED_NAME);
-            } else {
-                InsertMenu(hMenu, MENU_MMFENABLED, 0, MENU_MMFENABLED, MENU_MMFENABLED_NAME);
-            }
+            InsertMenu(hMenu, MENU_LOGITECHENABLED, this->deviceLogitech->IsEnabled() ? MF_CHECKED : 0, MENU_LOGITECHENABLED, MENU_LOGITECHENABLED_NAME);
+            InsertMenu(hMenu, MENU_LIGHTPACKENABLED, this->deviceLightpack->IsEnabled() ? MF_CHECKED : 0, MENU_LIGHTPACKENABLED, MENU_LIGHTPACKENABLED_NAME);
+            InsertMenu(hMenu, MENU_MMFENABLED, this->deviceMemoryMappedFileEnabled ? MF_CHECKED : 0, MENU_MMFENABLED, MENU_MMFENABLED_NAME);
 
             POINT cursor;
             GetCursorPos(&cursor);
