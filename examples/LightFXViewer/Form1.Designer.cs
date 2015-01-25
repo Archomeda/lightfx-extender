@@ -1,4 +1,4 @@
-﻿namespace AlienFXViewer
+﻿namespace LightFXViewer
 {
     partial class Form1
     {

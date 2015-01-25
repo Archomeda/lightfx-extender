@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlienFXViewer
+namespace LightFXViewer
 {
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct AlienFXFrameworkLinkFile
+    public struct LightFXExtenderLinkFile
     {
         public uint Version;
         public uint Tick;

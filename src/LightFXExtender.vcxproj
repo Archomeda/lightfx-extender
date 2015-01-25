@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A8CB3988-1ADA-4631-A7D3-11D7F68776A3}</ProjectGuid>
-    <RootNamespace>AlienFXFramework</RootNamespace>
+    <RootNamespace>LightFXExtender</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -102,7 +102,7 @@
     <ClInclude Include="Utils\Log.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="AlienFXFramework.rc" />
+    <ResourceCompile Include="LightFXExtender.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="tray.ico" />

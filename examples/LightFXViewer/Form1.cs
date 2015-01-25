@@ -11,13 +11,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AlienFXViewer
+namespace LightFXViewer
 {
     public partial class Form1 : Form
     {
         private MemoryMappedFile memoryMappedFile;
         private MemoryMappedViewAccessor accessor;
-        private AlienFXFrameworkLinkFile linkFile;
+        private LightFXExtenderLinkFile linkFile;
 
         private bool stopRequested = false;
 
@@ -30,7 +30,7 @@ namespace AlienFXViewer
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.memoryMappedFile = MemoryMappedFile.CreateOrOpen("AlienFXFrameworkLink", Marshal.SizeOf(typeof(AlienFXFrameworkLinkFile)), MemoryMappedFileAccess.ReadWrite);
+            this.memoryMappedFile = MemoryMappedFile.CreateOrOpen("AlienFXFrameworkLink", Marshal.SizeOf(typeof(LightFXExtenderLinkFile)), MemoryMappedFileAccess.ReadWrite);
             this.accessor = this.memoryMappedFile.CreateViewAccessor();
 
             new Thread(CheckLoop).Start();
@@ -119,9 +119,9 @@ namespace AlienFXViewer
             this.memoryMappedFile.Dispose();
         }
 
-        private AlienFXFrameworkLinkFile ReadMemoryMappedFile()
+        private LightFXExtenderLinkFile ReadMemoryMappedFile()
         {
-            AlienFXFrameworkLinkFile linkFile;
+            LightFXExtenderLinkFile linkFile;
             this.accessor.Read(0, out linkFile);
             return linkFile;
         }

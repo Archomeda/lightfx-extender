@@ -88,7 +88,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="AlienFXFramework.rc">
+    <ResourceCompile Include="LightFXExtender.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
