@@ -217,7 +217,10 @@ namespace lightfx {
             this->trayIconData.guidItem = guid;
         }
 
-        this->trayIconData.hIcon = ExtractIcon(GetModuleHandle(NULL), szFileName, 0);
+        // Not sure if taking the icon from an EXE file is desired by some companies,
+        // as it might cause confusion to users if it's officially supported by those companies or not.
+        // Therefore, it's disabled for now.
+        //this->trayIconData.hIcon = ExtractIcon(GetModuleHandle(NULL), szFileName, 0);
         if (this->trayIconData.hIcon == NULL) {
             // Fall back to our default (somewhat crappy) icon if the executable icon cannot be found
             this->trayIconData.hIcon = (HICON)LoadImage(this->hModuleInstance, MAKEINTRESOURCE(IDI_TRAYICON), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0);
