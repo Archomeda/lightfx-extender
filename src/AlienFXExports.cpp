@@ -15,6 +15,8 @@ using namespace std;
 using namespace lightfx;
 using namespace lightfx::utils;
 
+unsigned int timing = 200;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -193,12 +195,36 @@ extern "C" {
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_SetLightActionColor(const unsigned int devIndex, const unsigned int lightIndex, const unsigned int actionType, const PLFX_COLOR primaryCol) {
-        // Not yet implemented
-        return LFX_FAILURE;
+        if (!LightsManager::Instance().IsInitialized()) {
+            return LFX_ERROR_NOINIT;
+        }
+
+        if (devIndex > LightsManager::Instance().GetNumberOfDevices()) {
+            return LFX_ERROR_NODEVS;
+        }
+
+        if (lightIndex > LightsManager::Instance().GetDevice(devIndex)->GetNumberOfLights()) {
+            return LFX_ERROR_NOLIGHTS;
+        }
+
+        switch (actionType) {
+        case LFX_ACTION_MORPH:
+            LightsManager::Instance().GetDevice(devIndex)->MorphToForLight(lightIndex, *primaryCol, timing);
+            break;
+
+        case LFX_ACTION_PULSE:
+            LightsManager::Instance().GetDevice(devIndex)->PulseForLight(lightIndex, *primaryCol, timing, 1);
+            break;
+
+        default:
+            return LFX_SetLightColor(devIndex, lightIndex, primaryCol);
+        }
+
+        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_SetLightActionColorEx(const unsigned int devIndex, const unsigned int lightIndex, const unsigned int actionType, const PLFX_COLOR primaryCol, const PLFX_COLOR secondaryCol) {
-        // Not yet implemented
+        // No support for secondary color
         return LFX_FAILURE;
     }
 
@@ -208,29 +234,36 @@ extern "C" {
         col.green = (primaryCol >> 16) & 0xFF;
         col.red = (primaryCol >> 8) & 0xFF;
         col.brightness = primaryCol & 0xFF;
+        LightLocationMask mask = static_cast<LightLocationMask>(locationMask);
 
-        // Not yet implemented
-        return LFX_FAILURE;
+        if (!LightsManager::Instance().IsInitialized()) {
+            return LFX_ERROR_NOINIT;
+        }
+
+        switch (actionType) {
+        case LFX_ACTION_MORPH:
+            return LightsManager::Instance().MorphToForLocation(mask, col, timing) > 0 ? LFX_SUCCESS : LFX_ERROR_NOLIGHTS;
+            break;
+
+        case LFX_ACTION_PULSE:
+            LightsManager::Instance().PulseForLocation(mask, col, timing, 1) > 0 ? LFX_SUCCESS : LFX_ERROR_NOLIGHTS;
+            break;
+
+        default:
+            return LFX_Light(locationMask, primaryCol);
+        }
+
+        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_ActionColorEx(const unsigned int locationMask, const unsigned int actionType, const unsigned int primaryCol, const unsigned int secondaryCol) {
-        LFX_COLOR pcol, scol;
-        pcol.blue = (primaryCol >> 24) & 0xFF;
-        pcol.green = (primaryCol >> 16) & 0xFF;
-        pcol.red = (primaryCol >> 8) & 0xFF;
-        pcol.brightness = primaryCol & 0xFF;
-        scol.blue = (secondaryCol >> 24) & 0xFF;
-        scol.green = (secondaryCol >> 16) & 0xFF;
-        scol.red = (secondaryCol >> 8) & 0xFF;
-        scol.brightness = secondaryCol & 0xFF;
-
-        // Not yet implemented
+        // No support for secondary color
         return LFX_FAILURE;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_SetTiming(const int newTiming) {
-        // Not yet implemented
-        return LFX_FAILURE;
+        timing = newTiming;
+        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetVersion(char* const version, const unsigned int versionSize) {
