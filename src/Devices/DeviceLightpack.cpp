@@ -57,15 +57,7 @@ namespace lightfx {
             return true;
         }
 
-        bool DeviceLightpack::Update() {
-            if (!this->IsEnabled()) {
-                return true;
-            }
-
-            if (!DeviceBase::Update()) {
-                return false;
-            }
-
+        bool DeviceLightpack::PushColorToDevice() {
             vector<LightpackColor> newLights = {};
             for (size_t i = 0; i < this->Lights.size(); ++i) {
                 double brightness = this->CurrentColor[i].brightness / 255.0;

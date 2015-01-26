@@ -124,6 +124,26 @@ namespace lightfx {
         return done;
     }
 
+    size_t LightsManager::MorphTo(const LFX_COLOR& color, unsigned int time) {
+        size_t done = 0;
+        for (auto device : this->devices) {
+            if (device->MorphTo(color, time)) {
+                ++done;
+            }
+        }
+        return done;
+    }
+
+    size_t LightsManager::MorphToForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time) {
+        size_t done = 0;
+        for (auto device : this->devices) {
+            if (device->MorphToForLocation(locationMask, color, time)) {
+                ++done;
+            }
+        }
+        return done;
+    }
+
     void LightsManager::AddDevices() {
         this->devices.push_back(shared_ptr<DeviceLogitech>(new DeviceLogitech()));
         this->devices.push_back(shared_ptr<DeviceLightpack>(new DeviceLightpack(this->config.LightpackHost, this->config.LightpackPort, this->config.LightpackKey)));

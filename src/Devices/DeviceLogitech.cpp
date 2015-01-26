@@ -46,15 +46,7 @@ namespace lightfx {
             return true;
         }
 
-        bool DeviceLogitech::Update() {
-            if (!this->IsEnabled()) {
-                return true;
-            }
-
-            if (!DeviceBase::Update()) {
-                return false;
-            }
-
+        bool DeviceLogitech::PushColorToDevice() {
             double divider = (this->rangeOutMax - this->rangeOutMin) / ((this->rangeInMax - this->rangeInMin) / 100.0) / 100.0;
             double brightness = this->CurrentColor[0].brightness / 255.0;
             double red = (this->CurrentColor[0].red - this->rangeOutMin) / divider * brightness + this->rangeInMin;

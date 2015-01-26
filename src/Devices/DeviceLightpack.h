@@ -52,7 +52,8 @@ namespace lightfx {
 
             virtual bool Initialize() override;
             virtual bool Release() override;
-            virtual bool Update() override;
+
+            virtual bool PushColorToDevice() override;
 
             virtual std::wstring GetDeviceName() override;
             virtual unsigned char GetDeviceType() override;

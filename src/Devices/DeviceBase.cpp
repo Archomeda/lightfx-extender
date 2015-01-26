@@ -1,5 +1,13 @@
 #include "DeviceBase.h"
 
+// Standard includes
+#include <thread>
+#include <chrono>
+
+// Windows includes
+#include "../Common/Windows.h"
+#include <Windows.h>
+
 // Project includes
 #include "../Utils/Log.h"
 
@@ -56,14 +64,32 @@ namespace lightfx {
 
         bool DeviceBase::Update() {
             for (size_t i = 0; i < this->Lights.size(); ++i) {
-                this->CurrentColor[i] = this->NextColor[i];
+                this->CurrentActionStartColor[i] = this->NextActionStartColor[i];
+                this->CurrentActionEndColor[i] = this->NextActionEndColor[i];
             }
+            this->CurrentAction = this->NextAction;
+            this->CurrentActionTime = this->NextActionTime;
+
+            if (this->CurrentAction == Instant) {
+                return this->PushColorToDevice();
+            } else {
+                this->AnimationStartTime = GetTickCount();
+                thread t(&DeviceBase::AnimateCurrentColorLoop, this);
+            }
+
             return true;
         }
 
         bool DeviceBase::Reset() {
             this->CurrentColor = vector<LFX_COLOR>(this->Lights.size());
-            this->NextColor = vector<LFX_COLOR>(this->Lights.size());
+            this->CurrentAction = Instant;
+            this->CurrentActionStartColor = vector<LFX_COLOR>(this->Lights.size());
+            this->CurrentActionEndColor = vector<LFX_COLOR>(this->Lights.size());
+            this->CurrentActionTime = 200;
+            this->NextAction = Instant;
+            this->NextActionStartColor = vector<LFX_COLOR>(this->Lights.size());
+            this->NextActionEndColor = vector<LFX_COLOR>(this->Lights.size());
+            this->NextActionTime = 200;
             return true;
         }
 
@@ -88,15 +114,17 @@ namespace lightfx {
 
         bool DeviceBase::SetColor(const LFX_COLOR& color) {
             for (size_t i = 0; i < this->Lights.size(); ++i) {
-                this->NextColor[i] = LFX_COLOR(color);
+                this->NextActionEndColor[i] = LFX_COLOR(color);
             }
+            this->NextAction = Instant;
             return true;
         }
 
         bool DeviceBase::SetColorForLight(const size_t index, const LFX_COLOR& color) {
             if (index < this->Lights.size()) {
-                this->NextColor[index] = LFX_COLOR(color);
+                this->NextActionEndColor[index] = LFX_COLOR(color);
             }
+            this->NextAction = Instant;
             return true;
         }
 
@@ -105,5 +133,72 @@ namespace lightfx {
             return this->SetColor(color);
         }
 
+        bool DeviceBase::MorphTo(const LFX_COLOR& color, unsigned int time) {
+            for (size_t i = 0; i < this->Lights.size(); ++i) {
+                this->NextActionStartColor[i] = LFX_COLOR(this->CurrentActionEndColor[i]);
+                this->NextActionEndColor[i] = LFX_COLOR(color);
+            }
+            this->NextAction = Morph;
+            this->NextActionTime = time > 0 ? time : 200;
+            return true;
+        }
+
+        bool DeviceBase::MorphToForLight(const size_t index, const LFX_COLOR& color, unsigned int time) {
+            if (index < this->Lights.size()) {
+                this->NextActionStartColor[index] = LFX_COLOR(this->CurrentActionEndColor[index]);
+                this->NextActionEndColor[index] = LFX_COLOR(color);
+            }
+            this->NextAction = Morph;
+            this->NextActionTime = time > 0 ? time : 200;
+            return true;
+        }
+
+        bool DeviceBase::MorphToForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time) {
+            // TODO: Implement locationMask filter
+            return this->MorphTo(color, time);
+        }
+
+        void DeviceBase::AnimateCurrentColorLoop() {
+            while (this->AnimationRunning) {
+                unsigned long timePassed = GetTickCount() - this->AnimationStartTime;
+                double progress = (double)timePassed / this->CurrentActionTime;
+                bool colorChanged = false;
+
+                switch (this->CurrentAction) {
+                case Morph:
+                    for (size_t i = 0; i < this->Lights.size(); ++i) {
+                        unsigned char newR = this->CurrentActionStartColor[i].red + unsigned char(progress * (this->CurrentActionEndColor[i].red - this->CurrentActionStartColor[i].red));
+                        unsigned char newG = this->CurrentActionStartColor[i].green + unsigned char(progress * (this->CurrentActionEndColor[i].green - this->CurrentActionStartColor[i].green));
+                        unsigned char newB = this->CurrentActionStartColor[i].blue + unsigned char(progress * (this->CurrentActionEndColor[i].blue - this->CurrentActionStartColor[i].blue));
+                        unsigned char newBr = this->CurrentActionStartColor[i].brightness + unsigned char(progress * (this->CurrentActionEndColor[i].brightness - this->CurrentActionStartColor[i].brightness));
+
+                        if (newR != this->CurrentColor[i].red || newG != this->CurrentColor[i].green || newB != this->CurrentColor[i].blue || newBr != this->CurrentColor[i].brightness) {
+                            this->CurrentColor[i].red = newR;
+                            this->CurrentColor[i].green = newG;
+                            this->CurrentColor[i].blue = newB;
+                            this->CurrentColor[i].brightness = newBr;
+                            colorChanged = true;
+                        }
+                    }
+
+                    if (colorChanged) {
+                        this->PushColorToDevice();
+                    }
+
+                    if (timePassed >= this->CurrentActionTime) {
+                        this->AnimationRunning = false;
+                        return;
+                    }
+
+                    this_thread::sleep_for(chrono::milliseconds(1));
+                    break;
+
+                default:
+                    this->AnimationRunning = false;
+                    return;
+                }
+            }
+        }
     }
 }
+

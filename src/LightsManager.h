@@ -35,6 +35,9 @@ namespace lightfx {
         size_t SetColor(const LFX_COLOR& color);
         size_t SetColorForLocation(const LightLocationMask locationMask, const LFX_COLOR& color);
 
+        size_t MorphTo(const LFX_COLOR& color, unsigned int time);
+        size_t MorphToForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time);
+
     private:
         LightsManager() {};
         LightsManager(const LightsManager&);
