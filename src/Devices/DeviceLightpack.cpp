@@ -68,10 +68,10 @@ namespace lightfx {
 
             vector<LightpackColor> newLights = {};
             for (size_t i = 0; i < this->Lights.size(); ++i) {
-                double brightness = this->CurrentPrimaryColor[i].brightness / 255.0;
-                int red = int(this->CurrentPrimaryColor[i].red * brightness);
-                int green = int(this->CurrentPrimaryColor[i].green * brightness);
-                int blue = int(this->CurrentPrimaryColor[i].blue * brightness);
+                double brightness = this->CurrentColor[i].brightness / 255.0;
+                int red = int(this->CurrentColor[i].red * brightness);
+                int green = int(this->CurrentColor[i].green * brightness);
+                int blue = int(this->CurrentColor[i].blue * brightness);
                 newLights.push_back({ i + 1, red, green, blue });
             }
             this->SetColors(newLights);

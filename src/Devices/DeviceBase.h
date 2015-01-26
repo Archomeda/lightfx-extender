@@ -37,18 +37,18 @@ namespace lightfx {
             virtual size_t GetNumberOfLights();
             virtual DeviceLight GetLight(const size_t index);
 
-            virtual LFX_COLOR GetPrimaryColorForLight(const size_t index);
-            virtual bool SetPrimaryColor(const LFX_COLOR& color);
-            virtual bool SetPrimaryColorForLight(const size_t index, const LFX_COLOR& color);
-            virtual bool SetPrimaryColorForLocation(const LightLocationMask locationMask, const LFX_COLOR& color);
+            virtual LFX_COLOR GetColorForLight(const size_t index);
+            virtual bool SetColor(const LFX_COLOR& color);
+            virtual bool SetColorForLight(const size_t index, const LFX_COLOR& color);
+            virtual bool SetColorForLocation(const LightLocationMask locationMask, const LFX_COLOR& color);
 
         protected:
             bool IsEnabled_ = false;
             bool IsInitialized_ = false;
 
             std::vector<DeviceLight> Lights = {};
-            std::vector<LFX_COLOR> CurrentPrimaryColor = {};
-            std::vector<LFX_COLOR> NextPrimaryColor = {};
+            std::vector<LFX_COLOR> CurrentColor = {};
+            std::vector<LFX_COLOR> NextColor = {};
 
         };
 

@@ -56,10 +56,10 @@ namespace lightfx {
             }
 
             double divider = (this->rangeOutMax - this->rangeOutMin) / ((this->rangeInMax - this->rangeInMin) / 100.0) / 100.0;
-            double brightness = this->CurrentPrimaryColor[0].brightness / 255.0;
-            double red = (this->CurrentPrimaryColor[0].red - this->rangeOutMin) / divider * brightness + this->rangeInMin;
-            double green = (this->CurrentPrimaryColor[0].green - this->rangeOutMin) / divider * brightness + this->rangeInMin;
-            double blue = (this->CurrentPrimaryColor[0].blue - this->rangeOutMin) / divider * brightness + this->rangeInMin;
+            double brightness = this->CurrentColor[0].brightness / 255.0;
+            double red = (this->CurrentColor[0].red - this->rangeOutMin) / divider * brightness + this->rangeInMin;
+            double green = (this->CurrentColor[0].green - this->rangeOutMin) / divider * brightness + this->rangeInMin;
+            double blue = (this->CurrentColor[0].blue - this->rangeOutMin) / divider * brightness + this->rangeInMin;
 
             return LogiLedSetLighting((int)red, (int)green, (int)blue);
         }

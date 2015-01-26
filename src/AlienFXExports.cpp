@@ -156,7 +156,7 @@ extern "C" {
             return LFX_ERROR_NOLIGHTS;
         }
 
-        *lightCol = LightsManager::Instance().GetDevice(devIndex)->GetPrimaryColorForLight(lightIndex);
+        *lightCol = LightsManager::Instance().GetDevice(devIndex)->GetColorForLight(lightIndex);
         return LFX_SUCCESS;
     }
 
@@ -173,7 +173,7 @@ extern "C" {
             return LFX_ERROR_NOLIGHTS;
         }
         
-        LightsManager::Instance().GetDevice(devIndex)->SetPrimaryColorForLight(lightIndex, *lightCol);
+        LightsManager::Instance().GetDevice(devIndex)->SetColorForLight(lightIndex, *lightCol);
         return LFX_SUCCESS;
     }
 

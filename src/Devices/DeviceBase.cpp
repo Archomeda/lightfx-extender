@@ -56,14 +56,14 @@ namespace lightfx {
 
         bool DeviceBase::Update() {
             for (size_t i = 0; i < this->Lights.size(); ++i) {
-                this->CurrentPrimaryColor[i] = this->NextPrimaryColor[i];
+                this->CurrentColor[i] = this->NextColor[i];
             }
             return true;
         }
 
         bool DeviceBase::Reset() {
-            this->CurrentPrimaryColor = vector<LFX_COLOR>(this->Lights.size());
-            this->NextPrimaryColor = vector<LFX_COLOR>(this->Lights.size());
+            this->CurrentColor = vector<LFX_COLOR>(this->Lights.size());
+            this->NextColor = vector<LFX_COLOR>(this->Lights.size());
             return true;
         }
 
@@ -79,30 +79,30 @@ namespace lightfx {
             return DeviceLight();
         }
 
-        LFX_COLOR DeviceBase::GetPrimaryColorForLight(const size_t index) {
+        LFX_COLOR DeviceBase::GetColorForLight(const size_t index) {
             if (index < this->Lights.size()) {
-                return LFX_COLOR(this->CurrentPrimaryColor[index]);
+                return LFX_COLOR(this->CurrentColor[index]);
             }
             return LFX_COLOR();
         }
 
-        bool DeviceBase::SetPrimaryColor(const LFX_COLOR& color) {
+        bool DeviceBase::SetColor(const LFX_COLOR& color) {
             for (size_t i = 0; i < this->Lights.size(); ++i) {
-                this->NextPrimaryColor[i] = LFX_COLOR(color);
+                this->NextColor[i] = LFX_COLOR(color);
             }
             return true;
         }
 
-        bool DeviceBase::SetPrimaryColorForLight(const size_t index, const LFX_COLOR& color) {
+        bool DeviceBase::SetColorForLight(const size_t index, const LFX_COLOR& color) {
             if (index < this->Lights.size()) {
-                this->NextPrimaryColor[index] = LFX_COLOR(color);
+                this->NextColor[index] = LFX_COLOR(color);
             }
             return true;
         }
 
-        bool DeviceBase::SetPrimaryColorForLocation(const LightLocationMask locationMask, const LFX_COLOR& color) {
+        bool DeviceBase::SetColorForLocation(const LightLocationMask locationMask, const LFX_COLOR& color) {
             // TODO: Implement locationMask filter
-            return this->SetPrimaryColor(color);
+            return this->SetColor(color);
         }
 
     }
