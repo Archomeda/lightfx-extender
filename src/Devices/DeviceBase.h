@@ -18,6 +18,7 @@ namespace lightfx {
         enum LightAction {
             Instant,
             Morph,
+            Pulse,
         };
 
         class DeviceBase {
@@ -53,6 +54,10 @@ namespace lightfx {
             virtual bool MorphToForLight(const size_t index, const LFX_COLOR& color, unsigned int time);
             virtual bool MorphToForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time);
 
+            virtual bool Pulse(const LFX_COLOR& startColor, const LFX_COLOR& endColor, unsigned int time, unsigned int amount);
+            virtual bool PulseForLight(const size_t index, const LFX_COLOR& startColor, const LFX_COLOR& endColor, unsigned int time, unsigned int amount);
+            virtual bool PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& startColor, const LFX_COLOR& endColor, unsigned int time, unsigned int amount);
+
         protected:
             bool AnimationRunning = false;
             unsigned long AnimationStartTime = 0;
@@ -64,15 +69,17 @@ namespace lightfx {
             std::vector<DeviceLight> Lights = {};
             std::vector<LFX_COLOR> CurrentColor = {};
 
-            LightAction CurrentAction = Instant;
+            LightAction CurrentAction = LightAction::Instant;
             std::vector<LFX_COLOR> CurrentActionStartColor = {};
             std::vector<LFX_COLOR> CurrentActionEndColor = {};
             unsigned int CurrentActionTime = 200;
+            unsigned int CurrentActionAmount = 5;
 
-            LightAction NextAction = Instant;
+            LightAction NextAction = LightAction::Instant;
             std::vector<LFX_COLOR> NextActionStartColor = {};
             std::vector<LFX_COLOR> NextActionEndColor = {};
             unsigned int NextActionTime = 200;
+            unsigned int NextActionAmount = 5;
         };
 
     }
