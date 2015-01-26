@@ -72,6 +72,9 @@ namespace lightfx {
             this->CurrentActionAmount = this->NextActionAmount;
 
             if (this->CurrentAction == LightAction::Instant) {
+                for (size_t i = 0; i < this->Lights.size(); ++i) {
+                    this->CurrentColor[i] = this->NextActionEndColor[i];
+                }
                 return this->PushColorToDevice();
             } else {
                 this->AnimationStartTime = GetTickCount();
