@@ -33,7 +33,6 @@ namespace lightfx {
         std::shared_ptr<devices::DeviceBase> GetDevice(const size_t index);
 
         size_t SetColor(const LFX_COLOR& color);
-        size_t SetColorForLight(const size_t lightIndex, const LFX_COLOR& color);
         size_t SetColorForLocation(const LightLocationMask locationMask, const LFX_COLOR& color);
 
     private:

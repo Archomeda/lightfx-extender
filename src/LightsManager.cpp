@@ -114,16 +114,6 @@ namespace lightfx {
         return done;
     }
 
-    size_t LightsManager::SetColorForLight(const size_t lightIndex, const LFX_COLOR& color) {
-        size_t done = 0;
-        for (auto device : this->devices) {
-            if (device->SetPrimaryColorForLight(lightIndex, color)) {
-                ++done;
-            }
-        }
-        return done;
-    }
-
     size_t LightsManager::SetColorForLocation(const LightLocationMask locationMask, const LFX_COLOR& color) {
         size_t done = 0;
         for (auto device : this->devices) {
