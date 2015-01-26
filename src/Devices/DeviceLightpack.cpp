@@ -11,7 +11,7 @@
 using namespace std;
 using namespace lightfx::utils;
 
-#define DEVICENAME "Lightpack"
+#define DEVICENAME L"Lightpack"
 #define DEVICETYPE LFX_DEVTYPE_DISPLAY
 
 #define API_BUFFLEN 8192
@@ -25,7 +25,7 @@ namespace lightfx {
             this->key = key;
         }
 
-        LFX_RESULT DeviceLightpack::Initialize() {
+        bool DeviceLightpack::Initialize() {
             if (!this->IsInitialized()) {
                 if (this->ConnectAPI()) {
                     this->Lights.clear();
@@ -35,37 +35,35 @@ namespace lightfx {
                     LightpackScreen screen = this->GetScreenSize();
                     double divider = max(screen.width - screen.x, screen.height - screen.y) / 100.0;
                     for (int i = 0; i < amountLeds; ++i) {
-                        DeviceLightData light;
-                        light.Description = to_string(leds[i].index);
+                        DeviceLight light;
+                        light.Name = to_wstring(leds[i].index);
                         int posX = int(((leds[i].x - screen.x) + (leds[i].width / 2)) / divider);
                         int posY = int(((screen.height - leds[i].y - screen.y) + (leds[i].height / 2)) / divider);
-                        light.Position = { posX, posY, 0 };                        
+                        light.Position = { posX, posY, 0 };
                         this->Lights.push_back(light);
                     }
 
                     return DeviceBase::Initialize();
                 }
             }
-            return LFX_SUCCESS;
+            return true;
         }
 
-        LFX_RESULT DeviceLightpack::Release() {
+        bool DeviceLightpack::Release() {
             if (this->IsInitialized()) {
                 this->DisconnectAPI();
                 return DeviceBase::Release();
             }
-            return LFX_SUCCESS;
+            return true;
         }
 
-        LFX_RESULT DeviceLightpack::Update() {
+        bool DeviceLightpack::Update() {
             if (!this->IsEnabled()) {
-                return LFX_SUCCESS;
+                return true;
             }
 
-            auto result = DeviceBase::Update();
-
-            if (result != LFX_SUCCESS) {
-                return result;
+            if (!DeviceBase::Update()) {
+                return false;
             }
 
             vector<LightpackColor> newLights = {};
@@ -77,13 +75,15 @@ namespace lightfx {
                 newLights.push_back({ i + 1, red, green, blue });
             }
             this->SetColors(newLights);
-            return LFX_SUCCESS;
+            return true;
+        }
+            
+        wstring DeviceLightpack::GetDeviceName() {
+            return DEVICENAME;
         }
 
-        LFX_RESULT DeviceLightpack::GetDeviceInfo(string& description, unsigned char& type) {
-            description = DEVICENAME;
-            type = DEVICETYPE;
-            return LFX_SUCCESS;
+        unsigned char DeviceLightpack::GetDeviceType() {
+            return DEVICETYPE;
         }
 
         bool DeviceLightpack::ConnectAPI() {
@@ -234,7 +234,7 @@ namespace lightfx {
             vector<LightpackLed> v;
             this->SendAPI("getleds");
             string result = this->ReceiveAPI();
-            
+
             // Find delimiter ':' first to seperate the result from the used command
             size_t pos = result.find(":");
             if (pos != string::npos) {

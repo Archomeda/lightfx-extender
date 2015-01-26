@@ -10,7 +10,7 @@
 
 using namespace std;
 
-#define DEVICENAME "Logitech LED"
+#define DEVICENAME L"Logitech"
 #define DEVICETYPE LFX_DEVTYPE_KEYBOARD
 
 namespace lightfx {
@@ -23,40 +23,36 @@ namespace lightfx {
             this->rangeInMax = inMax;
         }
 
-        LFX_RESULT DeviceLogitech::Initialize() {
+        bool DeviceLogitech::Initialize() {
             if (!this->IsInitialized()) {
                 if (LogiLedInit()) {
                     this->Lights.clear();
 
                     // TODO: Customizable Logitech config
-                    DeviceLightData light;
-                    light.Description = "";
-                    light.Position = LFX_POSITION();
+                    DeviceLight light;
                     this->Lights.push_back(light);
 
                     return DeviceBase::Initialize();
                 }
             }
-            return LFX_SUCCESS;
+            return true;
         }
 
-        LFX_RESULT DeviceLogitech::Release() {
+        bool DeviceLogitech::Release() {
             if (this->IsInitialized()) {
                 LogiLedShutdown();
                 return DeviceBase::Release();
             }
-            return LFX_SUCCESS;
+            return true;
         }
 
-        LFX_RESULT DeviceLogitech::Update() {
+        bool DeviceLogitech::Update() {
             if (!this->IsEnabled()) {
-                return LFX_SUCCESS;
+                return true;
             }
 
-            auto result = DeviceBase::Update();
-
-            if (result != LFX_SUCCESS) {
-                return result;
+            if (!DeviceBase::Update()) {
+                return false;
             }
 
             double divider = (this->rangeOutMax - this->rangeOutMin) / ((this->rangeInMax - this->rangeInMin) / 100.0) / 100.0;
@@ -65,13 +61,15 @@ namespace lightfx {
             double green = (this->CurrentPrimaryColor[0].green - this->rangeOutMin) / divider * brightness + this->rangeInMin;
             double blue = (this->CurrentPrimaryColor[0].blue - this->rangeOutMin) / divider * brightness + this->rangeInMin;
 
-            return LogiLedSetLighting((int)red, (int)green, (int)blue) ? LFX_SUCCESS : LFX_FAILURE;
+            return LogiLedSetLighting((int)red, (int)green, (int)blue);
         }
 
-        LFX_RESULT DeviceLogitech::GetDeviceInfo(string& description, unsigned char& type) {
-            description = DEVICENAME;
-            type = DEVICETYPE;
-            return LFX_SUCCESS;
+        wstring DeviceLogitech::GetDeviceName() {
+            return DEVICENAME;
+        }
+
+        unsigned char DeviceLogitech::GetDeviceType() {
+            return DEVICETYPE;
         }
 
     }

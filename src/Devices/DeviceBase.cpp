@@ -1,7 +1,11 @@
 #include "DeviceBase.h"
 
+// Project includes
+#include "../Utils/Log.h"
+
 
 using namespace std;
+using namespace lightfx::utils;
 
 namespace lightfx {
     namespace devices {
@@ -12,7 +16,8 @@ namespace lightfx {
 
         bool DeviceBase::EnableDevice() {
             if (!this->IsEnabled()) {
-                if (this->Initialize() == LFX_SUCCESS) {
+                if (this->Initialize()) {
+                    Log(this->GetDeviceName() + L" enabled");
                     this->IsEnabled_ = true;
                     return true;
                 }
@@ -20,10 +25,11 @@ namespace lightfx {
             }
             return true;
         }
-    
+
         bool DeviceBase::DisableDevice() {
             if (this->IsEnabled()) {
-                if (this->Release() == LFX_SUCCESS) {
+                if (this->Release()) {
+                    Log(this->GetDeviceName() + L" disabled");
                     this->IsEnabled_ = false;
                     return true;
                 }
@@ -33,144 +39,71 @@ namespace lightfx {
         }
 
 
-        LFX_RESULT DeviceBase::Initialize() {
+        bool DeviceBase::Initialize() {
             if (!this->IsInitialized()) {
                 this->IsInitialized_ = true;
                 this->Reset();
             }
-            return LFX_SUCCESS;
+            return true;
         }
 
-        LFX_RESULT DeviceBase::Release() {
+        bool DeviceBase::Release() {
             if (this->IsInitialized()) {
                 this->IsInitialized_ = false;
             }
-            return LFX_SUCCESS;
+            return true;
         }
 
-        LFX_RESULT DeviceBase::Reset() {
-            this->CurrentPrimaryColor = vector<LFX_COLOR>(this->Lights.size());
-            this->NextPrimaryColor = vector<LFX_COLOR>(this->Lights.size());
-            this->CurrentSecondaryColor = vector<LFX_COLOR>(this->Lights.size());
-            this->NextSecondaryColor = vector<LFX_COLOR>(this->Lights.size());
-            this->CurrentAction = vector<int>(this->Lights.size());
-            this->NextAction = vector<int>(this->Lights.size());
-            this->CurrentTiming = 200;
-            this->NextTiming = 200;
-            return LFX_SUCCESS;
-        }
-
-        LFX_RESULT DeviceBase::Update() {
+        bool DeviceBase::Update() {
             for (size_t i = 0; i < this->Lights.size(); ++i) {
                 this->CurrentPrimaryColor[i] = this->NextPrimaryColor[i];
-                this->CurrentSecondaryColor[i] = this->NextSecondaryColor[i];
-                this->CurrentAction[i] = this->NextAction[i];
             }
-            return LFX_SUCCESS;
+            return true;
+        }
+
+        bool DeviceBase::Reset() {
+            this->CurrentPrimaryColor = vector<LFX_COLOR>(this->Lights.size());
+            this->NextPrimaryColor = vector<LFX_COLOR>(this->Lights.size());
+            return true;
         }
 
 
-        LFX_RESULT DeviceBase::GetNumLights(unsigned int& numLights) {
-            numLights = this->Lights.size();
-            return LFX_SUCCESS;
+        size_t DeviceBase::GetNumberOfLights() {
+            return this->Lights.size();
         }
 
-        LFX_RESULT DeviceBase::GetLightDescription(const unsigned int index, string& description) {
-            if (index > this->Lights.size()) {
-                return LFX_ERROR_NOLIGHTS;
+        DeviceLight DeviceBase::GetLight(const size_t index) {
+            if (index < this->Lights.size()) {
+                return this->Lights[index];
             }
-
-            description = string(this->Lights[index].Description);
-            return LFX_SUCCESS;
+            return DeviceLight();
         }
 
-        LFX_RESULT DeviceBase::GetLightLocation(const unsigned int index, LFX_POSITION& location) {
-            if (index > this->Lights.size()) {
-                return LFX_ERROR_NOLIGHTS;
+        LFX_COLOR DeviceBase::GetPrimaryColorForLight(const size_t index) {
+            if (index < this->Lights.size()) {
+                return LFX_COLOR(this->CurrentPrimaryColor[index]);
             }
-
-            location = LFX_POSITION(this->Lights[index].Position);
-            return LFX_SUCCESS;
+            return LFX_COLOR();
         }
 
-
-        LFX_RESULT DeviceBase::GetLightColor(const unsigned int index, LFX_COLOR& color) {
-            if (index > this->Lights.size()) {
-                return LFX_ERROR_NOLIGHTS;
-            }
-
-            color = LFX_COLOR(this->CurrentPrimaryColor[index]);
-            return LFX_SUCCESS;
-        }
-
-        LFX_RESULT DeviceBase::SetLightColor(const unsigned int index, const LFX_COLOR& color) {
-            if (index > this->Lights.size()) {
-                return LFX_ERROR_NOLIGHTS;
-            }
-
-            this->NextPrimaryColor[index] = LFX_COLOR(color);
-            return LFX_SUCCESS;
-        }
-
-        LFX_RESULT DeviceBase::Light(const unsigned int locationMask, const LFX_COLOR& color) {
-            // locationMask is ignored for now, reserved for possible future use
+        bool DeviceBase::SetPrimaryColor(const LFX_COLOR& color) {
             for (size_t i = 0; i < this->Lights.size(); ++i) {
                 this->NextPrimaryColor[i] = LFX_COLOR(color);
             }
-            return LFX_SUCCESS;
+            return true;
         }
 
-
-        LFX_RESULT DeviceBase::SetLightActionColor(const unsigned int index, const unsigned int actionType, const LFX_COLOR& primaryColor) {
-            if (index > this->Lights.size()) {
-                return LFX_ERROR_NOLIGHTS;
+        bool DeviceBase::SetPrimaryColorForLight(const size_t index, const LFX_COLOR& color) {
+            if (index < this->Lights.size()) {
+                this->NextPrimaryColor[index] = LFX_COLOR(color);
             }
-
-            return this->SetLightActionColor(index, actionType, primaryColor, LFX_COLOR());
+            return true;
         }
 
-        LFX_RESULT DeviceBase::SetLightActionColor(const unsigned int index, const unsigned int actionType, const LFX_COLOR& primaryColor, const LFX_COLOR& secondaryColor) {
-            if (index > this->Lights.size()) {
-                return LFX_ERROR_NOLIGHTS;
-            }
-
-            this->NextAction[index] = actionType;
-            this->NextPrimaryColor[index] = LFX_COLOR(primaryColor);
-            if (actionType == LFX_ACTION_MORPH) {
-                this->NextSecondaryColor[index] = LFX_COLOR(secondaryColor);
-            }
-
-            return LFX_SUCCESS;
-        }
-
-        LFX_RESULT DeviceBase::ActionColor(const unsigned int locationMask, const unsigned int actionType, const LFX_COLOR& primaryColor) {
-            // locationMask is ignored for now, reserved for possible future use
-            return this->ActionColor(locationMask, actionType, primaryColor, LFX_COLOR());
-        }
-
-        LFX_RESULT DeviceBase::ActionColor(const unsigned int locationMask, const unsigned int actionType, const LFX_COLOR& primaryColor, const LFX_COLOR& secondaryColor) {
-            // locationMask is ignored for now, reserved for possible future use
-            for (size_t i = 0; i < this->Lights.size(); ++i) {
-                this->NextAction[i] = actionType;
-                this->NextPrimaryColor[i] = LFX_COLOR(primaryColor);
-                if (actionType == LFX_ACTION_MORPH) {
-                    this->NextSecondaryColor[i] = LFX_COLOR(secondaryColor);
-                }
-            }
-            return LFX_SUCCESS;
-        }
-
-
-        LFX_RESULT DeviceBase::GetTiming(int& timing) {
-            timing = this->CurrentTiming;
-            return LFX_SUCCESS;
-        }
-
-        LFX_RESULT DeviceBase::SetTiming(const int newTiming) {
-            this->CurrentTiming = newTiming;
-            return LFX_SUCCESS;
+        bool DeviceBase::SetPrimaryColorForLocation(const LightLocationMask locationMask, const LFX_COLOR& color) {
+            // TODO: Implement locationMask filter
+            return this->SetPrimaryColor(color);
         }
 
     }
-
 }

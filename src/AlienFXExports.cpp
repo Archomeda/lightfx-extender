@@ -1,84 +1,180 @@
 // Standard includes
 #include <string>
+#include <locale>
+#include <codecvt>
 
 // 3rd party includes
 #include "LFX2.h"
 
 // Project includes
-#include "DeviceManager.h"
+#include "Utils/String.h"
+#include "LightsManager.h"
 
 
 using namespace std;
 using namespace lightfx;
-
-DeviceManager deviceManager = DeviceManager();
+using namespace lightfx::utils;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_Initialize() {
-        LFX_RESULT result = deviceManager.Initialize() ? LFX_SUCCESS : LFX_FAILURE;
-        return result;
+        return LightsManager::Instance().Initialize() > 0 ? LFX_SUCCESS : LFX_ERROR_NODEVS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_Release() {
-        LFX_RESULT result = deviceManager.Dispose() ? LFX_SUCCESS : LFX_FAILURE;
-        return result;
+        LightsManager::Instance().Release();
+        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_Reset() {
-        LFX_RESULT result = deviceManager.GetLightFXManager()->Reset();
-        return result;
+        if (!LightsManager::Instance().IsInitialized()) {
+            return LFX_ERROR_NOINIT;
+        }
+
+        if (!LightsManager::Instance().HasDevices()) {
+            return LFX_ERROR_NODEVS;
+        }
+
+        LightsManager::Instance().Reset();
+        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_Update() {
-        LFX_RESULT result = deviceManager.GetLightFXManager()->Update();
-        return result;
+        if (!LightsManager::Instance().IsInitialized()) {
+            return LFX_ERROR_NOINIT;
+        }
+
+        if (!LightsManager::Instance().HasDevices()) {
+            return LFX_ERROR_NODEVS;
+        }
+
+        LightsManager::Instance().Update();
+        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_UpdateDefault() {
-        LFX_RESULT result = deviceManager.GetLightFXManager()->UpdateDefault();
-        return result;
+        // Not supported
+        return LFX_FAILURE;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetNumDevices(unsigned int* const numDevices) {
-        LFX_RESULT result = deviceManager.GetLightFXManager()->GetNumDevices(*numDevices);
-        return result;
+        if (!LightsManager::Instance().IsInitialized()) {
+            return LFX_ERROR_NOINIT;
+        }
+
+        if (!LightsManager::Instance().HasDevices()) {
+            return LFX_ERROR_NODEVS;
+        }
+
+        *numDevices = LightsManager::Instance().GetNumberOfDevices();
+        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetDeviceDescription(const unsigned int devIndex, char* const devDesc, const unsigned int devDescSize, unsigned char* const devType) {
-        string deviceName;
-        LFX_RESULT result = deviceManager.GetLightFXManager()->GetDeviceDescription(devIndex, deviceName, devDescSize, *devType);
+        if (!LightsManager::Instance().IsInitialized()) {
+            return LFX_ERROR_NOINIT;
+        }
+
+        if (devIndex > LightsManager::Instance().GetNumberOfDevices()) {
+            return LFX_ERROR_NODEVS;
+        }
+
+        string deviceName = wstring_to_string(LightsManager::Instance().GetDevice(devIndex)->GetDeviceName());
+        if (deviceName.length() > devDescSize) {
+            return LFX_ERROR_BUFFSIZE;
+        }
+
         *devDesc = *deviceName.c_str();
-        return result;
+        *devType = LightsManager::Instance().GetDevice(devIndex)->GetDeviceType();
+        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetNumLights(const unsigned int devIndex, unsigned int* const numLights) {
-        LFX_RESULT result = deviceManager.GetLightFXManager()->GetNumLights(devIndex, *numLights);
-        return result;
+        if (!LightsManager::Instance().IsInitialized()) {
+            return LFX_ERROR_NOINIT;
+        }
+
+        if (devIndex > LightsManager::Instance().GetNumberOfDevices()) {
+            return LFX_ERROR_NODEVS;
+        }
+
+        *numLights = LightsManager::Instance().GetDevice(devIndex)->GetNumberOfLights();
+        return LFX_SUCCESS;
     }
 
-    FN_DECLSPEC LFX_RESULT STDCALL LFX_GetLightDescription(const unsigned int devIndex, const unsigned int lightIndex, char* const lightDesc, const unsigned int devDescSize) {
-        string lightName;
-        LFX_RESULT result = deviceManager.GetLightFXManager()->GetLightDescription(devIndex, lightIndex, lightName, devDescSize);
+    FN_DECLSPEC LFX_RESULT STDCALL LFX_GetLightDescription(const unsigned int devIndex, const unsigned int lightIndex, char* const lightDesc, const unsigned int lightDescSize) {
+        if (!LightsManager::Instance().IsInitialized()) {
+            return LFX_ERROR_NOINIT;
+        }
+
+        if (devIndex > LightsManager::Instance().GetNumberOfDevices()) {
+            return LFX_ERROR_NODEVS;
+        }
+
+        if (lightIndex > LightsManager::Instance().GetDevice(devIndex)->GetNumberOfLights()) {
+            return LFX_ERROR_NOLIGHTS;
+        }
+
+        string lightName = wstring_to_string(LightsManager::Instance().GetDevice(devIndex)->GetLight(lightIndex).Name);
+        if (lightName.length() > lightDescSize) {
+            return LFX_ERROR_BUFFSIZE;
+        }
+
         *lightDesc = *lightName.c_str();
-        return result;
+        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetLightLocation(const unsigned int devIndex, const unsigned int lightIndex, PLFX_POSITION const lightLoc) {
-        LFX_RESULT result = deviceManager.GetLightFXManager()->GetLightLocation(devIndex, lightIndex, *lightLoc);
-        return result;
+        if (!LightsManager::Instance().IsInitialized()) {
+            return LFX_ERROR_NOINIT;
+        }
+
+        if (devIndex > LightsManager::Instance().GetNumberOfDevices()) {
+            return LFX_ERROR_NODEVS;
+        }
+
+        if (lightIndex > LightsManager::Instance().GetDevice(devIndex)->GetNumberOfLights()) {
+            return LFX_ERROR_NOLIGHTS;
+        }
+
+        *lightLoc = LightsManager::Instance().GetDevice(devIndex)->GetLight(lightIndex).Position;
+        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetLightColor(const unsigned int devIndex, const unsigned int lightIndex, PLFX_COLOR const lightCol) {
-        LFX_RESULT result = deviceManager.GetLightFXManager()->GetLightColor(devIndex, lightIndex, *lightCol);
-        return result;
+        if (!LightsManager::Instance().IsInitialized()) {
+            return LFX_ERROR_NOINIT;
+        }
+
+        if (devIndex > LightsManager::Instance().GetNumberOfDevices()) {
+            return LFX_ERROR_NODEVS;
+        }
+
+        if (lightIndex > LightsManager::Instance().GetDevice(devIndex)->GetNumberOfLights()) {
+            return LFX_ERROR_NOLIGHTS;
+        }
+
+        *lightCol = LightsManager::Instance().GetDevice(devIndex)->GetPrimaryColorForLight(lightIndex);
+        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_SetLightColor(const unsigned int devIndex, const unsigned int lightIndex, const PLFX_COLOR lightCol) {
-        LFX_RESULT result = deviceManager.GetLightFXManager()->SetLightColor(devIndex, lightIndex, *lightCol);
-        return result;
+        if (!LightsManager::Instance().IsInitialized()) {
+            return LFX_ERROR_NOINIT;
+        }
+
+        if (devIndex > LightsManager::Instance().GetNumberOfDevices()) {
+            return LFX_ERROR_NODEVS;
+        }
+
+        if (lightIndex > LightsManager::Instance().GetDevice(devIndex)->GetNumberOfLights()) {
+            return LFX_ERROR_NOLIGHTS;
+        }
+        
+        LightsManager::Instance().GetDevice(devIndex)->SetPrimaryColorForLight(lightIndex, *lightCol);
+        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_Light(const unsigned int locationMask, const unsigned int lightCol) {
@@ -87,18 +183,23 @@ extern "C" {
         col.green = (lightCol >> 16) & 0xFF;
         col.red = (lightCol >> 8) & 0xFF;
         col.brightness = lightCol & 0xFF;
-        LFX_RESULT result = deviceManager.GetLightFXManager()->Light(locationMask, col);
-        return result;
+        LightLocationMask mask = static_cast<LightLocationMask>(locationMask);
+
+        if (!LightsManager::Instance().IsInitialized()) {
+            return LFX_ERROR_NOINIT;
+        }
+
+        return LightsManager::Instance().SetColorForLocation(mask, col) > 0 ? LFX_SUCCESS : LFX_ERROR_NOLIGHTS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_SetLightActionColor(const unsigned int devIndex, const unsigned int lightIndex, const unsigned int actionType, const PLFX_COLOR primaryCol) {
-        LFX_RESULT result = deviceManager.GetLightFXManager()->SetLightActionColor(devIndex, lightIndex, actionType, *primaryCol);
-        return result;
+        // Not yet implemented
+        return LFX_FAILURE;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_SetLightActionColorEx(const unsigned int devIndex, const unsigned int lightIndex, const unsigned int actionType, const PLFX_COLOR primaryCol, const PLFX_COLOR secondaryCol) {
-        LFX_RESULT result = deviceManager.GetLightFXManager()->SetLightActionColor(devIndex, lightIndex, actionType, *primaryCol, *secondaryCol);
-        return result;
+        // Not yet implemented
+        return LFX_FAILURE;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_ActionColor(const unsigned int locationMask, const unsigned int actionType, const unsigned int primaryCol) {
@@ -107,8 +208,9 @@ extern "C" {
         col.green = (primaryCol >> 16) & 0xFF;
         col.red = (primaryCol >> 8) & 0xFF;
         col.brightness = primaryCol & 0xFF;
-        LFX_RESULT result = deviceManager.GetLightFXManager()->ActionColor(locationMask, actionType, col);
-        return result;
+
+        // Not yet implemented
+        return LFX_FAILURE;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_ActionColorEx(const unsigned int locationMask, const unsigned int actionType, const unsigned int primaryCol, const unsigned int secondaryCol) {
@@ -121,20 +223,19 @@ extern "C" {
         scol.green = (secondaryCol >> 16) & 0xFF;
         scol.red = (secondaryCol >> 8) & 0xFF;
         scol.brightness = secondaryCol & 0xFF;
-        LFX_RESULT result = deviceManager.GetLightFXManager()->ActionColor(locationMask, actionType, pcol, scol);
-        return result;
+
+        // Not yet implemented
+        return LFX_FAILURE;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_SetTiming(const int newTiming) {
-        LFX_RESULT result = deviceManager.GetLightFXManager()->SetTiming(newTiming);
-        return result;
+        // Not yet implemented
+        return LFX_FAILURE;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetVersion(char* const version, const unsigned int versionSize) {
-        string ver;
-        LFX_RESULT result = deviceManager.GetLightFXManager()->GetVersion(ver, versionSize);
-        *version = *ver.c_str();
-        return result;
+        *version = *"2.2.0.0";
+        return LFX_SUCCESS;
     }
 
 #ifdef __cplusplus

@@ -21,13 +21,6 @@
 #define TRAYID 1
 #define WM_TRAYICON WM_USER + 1
 
-/*#define MENU_LOGITECHENABLED 1
-#define MENU_LOGITECHENABLED_NAME L"Logitech devices"
-#define MENU_LIGHTPACKENABLED 2
-#define MENU_LIGHTPACKENABLED_NAME L"Lightpack device"
-#define MENU_MMFENABLED 3
-#define MENU_MMFENABLED_NAME L"Memory mapped file passthrough"
-#define MENU_CONFFOLDER 100*/
 #define MENU_CONFFOLDER_NAME L"Open configuration folder..."
 
 using namespace std;
@@ -109,13 +102,11 @@ namespace lightfx {
         if (wParam == TRAYID && lParam == WM_RBUTTONUP) {
             HMENU hMenu = CreatePopupMenu();
 
-            size_t index = 0;
-            for (index = 0; index < this->attachedDevices.size(); ++index) {
+            size_t index;
+            for (index = 1; index <= this->attachedDevices.size(); ++index) {
                 string deviceName = "";
                 unsigned char deviceType = 0;
-                this->attachedDevices[index]->GetDeviceInfo(deviceName, deviceType);
-                InsertMenuW(hMenu, index, this->attachedDevices[index]->IsEnabled() ? MF_CHECKED : MF_UNCHECKED, index,
-                    wstring_convert<codecvt_utf8<wchar_t>>().from_bytes(deviceName).c_str());
+                InsertMenuW(hMenu, index, this->attachedDevices[index - 1]->IsEnabled() ? MF_CHECKED : MF_UNCHECKED, index, this->attachedDevices[index - 1]->GetDeviceName().c_str());
             }
             InsertMenuW(hMenu, index, MF_SEPARATOR, 0, NULL);
             ++index;
@@ -134,11 +125,12 @@ namespace lightfx {
                     folder = folder + L"/" + APPDATA_FOLDER;
                     ShellExecuteW(NULL, L"explore", folder.c_str(), NULL, NULL, SW_SHOWNORMAL);
                 }
-            } else if (result < this->attachedDevices.size()) {
-                if (this->attachedDevices[result]->IsEnabled()) {
-                    this->attachedDevices[result]->DisableDevice();
+            } else if (result > 0 && result <= this->attachedDevices.size()) {
+                size_t index = result - 1;
+                if (this->attachedDevices[index]->IsEnabled()) {
+                    this->attachedDevices[index]->DisableDevice();
                 } else {
-                    this->attachedDevices[result]->EnableDevice();
+                    this->attachedDevices[index]->EnableDevice();
                 }
             }
         }

@@ -50,11 +50,12 @@ namespace lightfx {
         public:
             DeviceLightpack(const std::string& hostname, const std::string& port, const std::string& key);
 
-            virtual LFX_RESULT Initialize() override;
-            virtual LFX_RESULT Release() override;
-            virtual LFX_RESULT Update() override;
+            virtual bool Initialize() override;
+            virtual bool Release() override;
+            virtual bool Update() override;
 
-            virtual LFX_RESULT GetDeviceInfo(std::string& description, unsigned char& type) override;
+            virtual std::wstring GetDeviceName() override;
+            virtual unsigned char GetDeviceType() override;
 
         protected:
             bool ConnectAPI();

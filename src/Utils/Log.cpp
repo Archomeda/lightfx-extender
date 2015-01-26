@@ -12,11 +12,9 @@
 #include <time.h>
 
 // Project includes
+#include "../Utils/String.h"
 #include "FileIO.h"
 
-
-#define wstring_to_string(str) wstring_convert<codecvt_utf8<wchar_t>>().to_bytes(str)
-#define string_to_wstring(str) wstring_convert<codecvt_utf8<wchar_t>>().from_bytes(str)
 
 #define APPDATA_LOGFILE L"LightFX.log"
 

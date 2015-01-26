@@ -8,7 +8,8 @@
 #include "LFXDecl.h"
 
 // Project includes
-#include "../Structs.h"
+#include "../LightLocationMask.h"
+#include "DeviceLight.h"
 
 
 namespace lightfx {
@@ -25,41 +26,29 @@ namespace lightfx {
             virtual bool EnableDevice();
             virtual bool DisableDevice();
 
-            virtual LFX_RESULT Initialize();
-            virtual LFX_RESULT Release();
-            virtual LFX_RESULT Reset();
-            virtual LFX_RESULT Update();
+            virtual bool Initialize();
+            virtual bool Release();
+            virtual bool Update();
+            virtual bool Reset();
 
-            virtual LFX_RESULT GetDeviceInfo(std::string& description, unsigned char& type) = 0;
-            virtual LFX_RESULT GetNumLights(unsigned int& numLights);
-            virtual LFX_RESULT GetLightDescription(const unsigned int index, std::string& description);
-            virtual LFX_RESULT GetLightLocation(const unsigned int index, LFX_POSITION& location);
+            virtual std::wstring GetDeviceName() = 0;
+            virtual unsigned char GetDeviceType() = 0;
 
-            virtual LFX_RESULT GetLightColor(const unsigned int index, LFX_COLOR& color);
-            virtual LFX_RESULT SetLightColor(const unsigned int index, const LFX_COLOR& color);
-            virtual LFX_RESULT Light(const unsigned int locationMask, const LFX_COLOR& color);
+            virtual size_t GetNumberOfLights();
+            virtual DeviceLight GetLight(const size_t index);
 
-            virtual LFX_RESULT SetLightActionColor(const unsigned int index, const unsigned int actionType, const LFX_COLOR& primaryColor);
-            virtual LFX_RESULT SetLightActionColor(const unsigned int index, const unsigned int actionType, const LFX_COLOR& primaryColor, const LFX_COLOR& secondaryColor);
-            virtual LFX_RESULT ActionColor(const unsigned int locationMask, const unsigned int actionType, const LFX_COLOR& primaryColor);
-            virtual LFX_RESULT ActionColor(const unsigned int locationMask, const unsigned int actionType, const LFX_COLOR& primaryColor, const LFX_COLOR& secondaryColor);
-
-            virtual LFX_RESULT GetTiming(int& timing);
-            virtual LFX_RESULT SetTiming(const int newTiming);
+            virtual LFX_COLOR GetPrimaryColorForLight(const size_t index);
+            virtual bool SetPrimaryColor(const LFX_COLOR& color);
+            virtual bool SetPrimaryColorForLight(const size_t index, const LFX_COLOR& color);
+            virtual bool SetPrimaryColorForLocation(const LightLocationMask locationMask, const LFX_COLOR& color);
 
         protected:
             bool IsEnabled_ = false;
             bool IsInitialized_ = false;
 
-            std::vector<DeviceLightData> Lights = {};
+            std::vector<DeviceLight> Lights = {};
             std::vector<LFX_COLOR> CurrentPrimaryColor = {};
             std::vector<LFX_COLOR> NextPrimaryColor = {};
-            std::vector<LFX_COLOR> CurrentSecondaryColor = {};
-            std::vector<LFX_COLOR> NextSecondaryColor = {};
-            std::vector<int> CurrentAction = {};
-            std::vector<int> NextAction = {};
-            int CurrentTiming = 200;
-            int NextTiming = 200;
 
         };
 

@@ -12,11 +12,12 @@ namespace lightfx {
         public:
             void SetRange(const int outMin, const int outMax, const int inMin, const int inMax);
 
-            virtual LFX_RESULT Initialize() override;
-            virtual LFX_RESULT Release() override;
-            virtual LFX_RESULT Update() override;
+            virtual bool Initialize() override;
+            virtual bool Release() override;
+            virtual bool Update() override;
 
-            virtual LFX_RESULT GetDeviceInfo(std::string& description, unsigned char& type) override;
+            virtual std::wstring GetDeviceName() override;
+            virtual unsigned char GetDeviceType() override;
 
         private:
             int rangeOutMin = 0;
