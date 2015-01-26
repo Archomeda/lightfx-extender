@@ -10,6 +10,10 @@ namespace lightfx {
             return reinterpret_cast<HMODULE>(&__ImageBase);
         }
 
+        wstring GetProcessName() {
+            return GetProcessName(nullptr, nullptr, nullptr, nullptr);
+        }
+
         wstring GetProcessName(wstring* drive, wstring* dir, wstring* fname, wstring* ext) {
             wchar_t szFileName[MAX_PATH];
             GetModuleFileNameW(NULL, szFileName, MAX_PATH);

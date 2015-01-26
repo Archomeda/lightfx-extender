@@ -23,7 +23,7 @@ namespace lightfx {
     }
 
     size_t LightsManager::Initialize() {
-        Log(L"Connected to " + GetProcessName(nullptr, nullptr, nullptr, nullptr));
+        Log(L"Connected to " + GetProcessName());
 
         // Load config
         this->config.Load();
