@@ -161,10 +161,10 @@ namespace lightfx {
             return this->MorphTo(color, time);
         }
 
-        bool DeviceBase::Pulse(const LFX_COLOR& startColor, const LFX_COLOR& endColor, unsigned int time, unsigned int amount) {
+        bool DeviceBase::Pulse(const LFX_COLOR& color, unsigned int time, unsigned int amount) {
             for (size_t i = 0; i < this->Lights.size(); ++i) {
-                this->NextActionStartColor[i] = LFX_COLOR(startColor);
-                this->NextActionEndColor[i] = LFX_COLOR(endColor);
+                this->NextActionStartColor[i] = LFX_COLOR(this->CurrentActionEndColor[i]);
+                this->NextActionEndColor[i] = LFX_COLOR(color);
             }
             this->NextAction = LightAction::Pulse;
             this->NextActionTime = time > 0 ? time : 200;
@@ -172,10 +172,10 @@ namespace lightfx {
             return true;
         }
 
-        bool DeviceBase::PulseForLight(const size_t index, const LFX_COLOR& startColor, const LFX_COLOR& endColor, unsigned int time, unsigned int amount) {
+        bool DeviceBase::PulseForLight(const size_t index, const LFX_COLOR& color, unsigned int time, unsigned int amount) {
             if (index < this->Lights.size()) {
-                this->NextActionStartColor[index] = LFX_COLOR(startColor);
-                this->NextActionEndColor[index] = LFX_COLOR(endColor);
+                this->NextActionStartColor[index] = LFX_COLOR(this->CurrentActionEndColor[index]);
+                this->NextActionEndColor[index] = LFX_COLOR(color);
             }
             this->NextAction = LightAction::Pulse;
             this->NextActionTime = time > 0 ? time : 200;
@@ -183,9 +183,9 @@ namespace lightfx {
             return true;
         }
 
-        bool DeviceBase::PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& startColor, const LFX_COLOR& endColor, unsigned int time, unsigned int amount) {
+        bool DeviceBase::PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time, unsigned int amount) {
             // TODO: Implement locationMask filter
-            return this->Pulse(startColor, endColor, time, amount);
+            return this->Pulse(color, time, amount);
         }
 
         void DeviceBase::AnimateCurrentColorLoop() {

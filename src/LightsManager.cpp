@@ -144,20 +144,20 @@ namespace lightfx {
         return done;
     }
 
-    size_t LightsManager::Pulse(const LFX_COLOR& startColor, const LFX_COLOR& endColor, unsigned int time, unsigned int amount) {
+    size_t LightsManager::Pulse(const LFX_COLOR& color, unsigned int time, unsigned int amount) {
         size_t done = 0;
         for (auto device : this->devices) {
-            if (device->Pulse(startColor, endColor, time, amount)) {
+            if (device->Pulse(color, time, amount)) {
                 ++done;
             }
         }
         return true;
     }
 
-    size_t LightsManager::PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& startColor, const LFX_COLOR& endColor, unsigned int time, unsigned int amount) {
+    size_t LightsManager::PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time, unsigned int amount) {
         size_t done = 0;
         for (auto device : this->devices) {
-            if (device->PulseForLocation(locationMask, startColor, endColor, time, amount)) {
+            if (device->PulseForLocation(locationMask, color, time, amount)) {
                 ++done;
             }
         }

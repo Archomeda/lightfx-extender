@@ -54,9 +54,9 @@ namespace lightfx {
             virtual bool MorphToForLight(const size_t index, const LFX_COLOR& color, unsigned int time);
             virtual bool MorphToForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time);
 
-            virtual bool Pulse(const LFX_COLOR& startColor, const LFX_COLOR& endColor, unsigned int time, unsigned int amount);
-            virtual bool PulseForLight(const size_t index, const LFX_COLOR& startColor, const LFX_COLOR& endColor, unsigned int time, unsigned int amount);
-            virtual bool PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& startColor, const LFX_COLOR& endColor, unsigned int time, unsigned int amount);
+            virtual bool Pulse(const LFX_COLOR& color, unsigned int time, unsigned int amount);
+            virtual bool PulseForLight(const size_t index, const LFX_COLOR& color, unsigned int time, unsigned int amount);
+            virtual bool PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time, unsigned int amount);
 
         protected:
             bool AnimationRunning = false;

@@ -38,8 +38,8 @@ namespace lightfx {
         size_t MorphTo(const LFX_COLOR& color, unsigned int time);
         size_t MorphToForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time);
 
-        size_t Pulse(const LFX_COLOR& startColor, const LFX_COLOR& endColor, unsigned int time, unsigned int amount);
-        size_t PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& startColor, const LFX_COLOR& endColor, unsigned int time, unsigned int amount);
+        size_t Pulse(const LFX_COLOR& color, unsigned int time, unsigned int amount);
+        size_t PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time, unsigned int amount);
     
     private:
         LightsManager() {};
