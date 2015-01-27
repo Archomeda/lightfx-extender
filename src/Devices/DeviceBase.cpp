@@ -78,6 +78,7 @@ namespace lightfx {
                 return this->PushColorToDevice();
             } else {
                 this->AnimationStartTime = GetTickCount();
+                this->AnimationRunning = true;
                 thread t(&DeviceBase::AnimateCurrentColorLoop, this);
             }
 
