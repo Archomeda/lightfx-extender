@@ -5,7 +5,7 @@
 #include <map>
 
 // 3rd party includes
-#include "rapidjson\document.h"
+#include "rapidjson/document.h"
 
 // Project includes
 #include "Devices/DeviceLight.h"

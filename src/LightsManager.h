@@ -6,6 +6,7 @@
 
 // Project includes
 #include "Devices/DeviceBase.h"
+#include "Games/GameBase.h"
 #include "LightLocationMask.h"
 #include "Config.h"
 #include "TrayIcon.h"
@@ -47,12 +48,15 @@ namespace lightfx {
         void operator =(const LightsManager&);
 
         std::vector<std::shared_ptr<devices::DeviceBase>> devices;
+        std::vector<std::shared_ptr<games::GameBase>> games;
+        std::shared_ptr<games::GameBase> currentGame;
         bool isInitialized = false;
 
         Config config;
         TrayIcon trayIcon;
 
         void AddDevices();
+        void AddGames();
 
     };
 

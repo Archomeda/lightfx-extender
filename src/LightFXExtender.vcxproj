@@ -79,6 +79,7 @@
     <ClCompile Include="Devices\DeviceBase.cpp" />
     <ClCompile Include="Devices\DeviceLightpack.cpp" />
     <ClCompile Include="Devices\DeviceLogitech.cpp" />
+    <ClCompile Include="Games\Guildwars2.cpp" />
     <ClCompile Include="TrayIcon.cpp" />
     <ClCompile Include="LightsManager.cpp" />
     <ClCompile Include="Utils\FileIO.cpp" />
@@ -91,6 +92,9 @@
     <ClInclude Include="Devices\DeviceBase.h" />
     <ClInclude Include="Devices\DeviceLightpack.h" />
     <ClInclude Include="Devices\DeviceLogitech.h" />
+    <ClInclude Include="Games\GameBase.h" />
+    <ClInclude Include="Games\Guildwars2.h" />
+    <ClInclude Include="Games\MumbleLink.h" />
     <ClInclude Include="LightLocationMask.h" />
     <ClInclude Include="TrayIcon.h" />
     <ClInclude Include="LightsManager.h" />

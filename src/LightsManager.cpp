@@ -3,6 +3,7 @@
 // Project includes
 #include "Devices/DeviceLogitech.h"
 #include "Devices/DeviceLightpack.h"
+#include "Games/Guildwars2.h"
 #include "Utils/Log.h"
 #include "Utils/String.h"
 #include "Utils/Windows.h"
@@ -10,6 +11,7 @@
 
 using namespace std;
 using namespace lightfx::devices;
+using namespace lightfx::games;
 using namespace lightfx::utils;
 
 namespace lightfx {
@@ -31,6 +33,9 @@ namespace lightfx {
         // Add devices
         this->AddDevices();
 
+        // Load games
+        this->AddGames();
+
         // Add tray icon
         this->trayIcon = TrayIcon();
         this->trayIcon.AddTrayIcon();
@@ -48,6 +53,13 @@ namespace lightfx {
 
             ++done;
         }
+
+        // If it's a special supported game, initialize the features
+        if (this->currentGame) {
+            this->currentGame->Initialize();
+            Log(L"Initialized special features for " + this->currentGame->GetName());
+        }
+
         this->isInitialized = true;
         return done;
     }
@@ -61,6 +73,11 @@ namespace lightfx {
             this->config.DeviceStates[wstring_to_string(device->GetDeviceName())] = device->IsEnabled();
         }
         this->config.Save();
+
+        // Release special supported game, if it's one
+        if (this->currentGame) {
+            this->currentGame->Release();
+        }
 
         // Release devices
         size_t done = 0;
@@ -168,6 +185,20 @@ namespace lightfx {
     void LightsManager::AddDevices() {
         this->devices.push_back(shared_ptr<DeviceLogitech>(new DeviceLogitech()));
         this->devices.push_back(shared_ptr<DeviceLightpack>(new DeviceLightpack(this->config.LightpackHost, this->config.LightpackPort, this->config.LightpackKey)));
+    }
+
+    void LightsManager::AddGames() {
+        this->games.push_back(shared_ptr<Guildwars2>(new Guildwars2()));
+
+        wstring fname, ext;
+        GetProcessName(nullptr, nullptr, &fname, &ext);
+        wstring fileName = fname + ext;
+        for (auto game : this->games) {
+            if (game->GetFileName() == fileName) {
+                this->currentGame = game;
+                break;
+            }
+        }
     }
 
 }
