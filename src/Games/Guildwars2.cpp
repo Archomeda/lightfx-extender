@@ -75,15 +75,15 @@ namespace lightfx {
                 switch (teamColorId) {
                 case 9: // Blue
                     color.blue = 255;
-                    Log(this->GetName() + L": Detected PvP/WvW blue team");
+                    Log(this->GetName() + L": Mumble Link - Detected PvP/WvW blue team");
                     break;
                 case 55: // Green
                     color.green = 255;
-                    Log(this->GetName() + L": Detected PvP/WvW green team");
+                    Log(this->GetName() + L": Mumble Link - Detected PvP/WvW green team");
                     break;
                 case 376: // Red
                     color.red = 255;
-                    Log(this->GetName() + L": Detected PvP/WvW red team");
+                    Log(this->GetName() + L": Mumble Link - Detected PvP/WvW red team");
                     break;
                 }
                 LightsManager::Instance().Pulse(color, 1000, 5);
