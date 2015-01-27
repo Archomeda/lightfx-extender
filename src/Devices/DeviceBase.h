@@ -3,6 +3,7 @@
 // Standard includes
 #include <string>
 #include <vector>
+#include <thread>
 
 // 3rd party includes
 #include "LFXDecl.h"
@@ -25,6 +26,7 @@ namespace lightfx {
 
         public:
             DeviceBase();
+            ~DeviceBase();
 
             bool IsEnabled() { return this->IsEnabled_; }
             bool IsInitialized() { return this->IsInitialized_; }
@@ -59,9 +61,9 @@ namespace lightfx {
             virtual bool PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time, unsigned int amount);
 
         protected:
-            bool AnimationRunning = false;
-            unsigned long AnimationStartTime = 0;
             virtual void AnimateCurrentColorLoop();
+            virtual void StartAnimating();
+            virtual void StopAnimating();
 
             bool IsEnabled_ = false;
             bool IsInitialized_ = false;
@@ -80,6 +82,12 @@ namespace lightfx {
             std::vector<LFX_COLOR> NextActionEndColor = {};
             unsigned int NextActionTime = 200;
             unsigned int NextActionAmount = 5;
+
+        private:
+            bool animationRunning = false;
+            bool hasAnimated = false;
+            unsigned long animationStartTime = 0;
+            std::thread animationThread;
         };
 
     }

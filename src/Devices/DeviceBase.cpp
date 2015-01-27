@@ -1,7 +1,6 @@
 #include "DeviceBase.h"
 
 // Standard includes
-#include <thread>
 #include <chrono>
 
 // Windows includes
@@ -20,6 +19,10 @@ namespace lightfx {
 
         DeviceBase::DeviceBase() {
             this->Reset();
+        }
+
+        DeviceBase::~DeviceBase() {
+            this->StopAnimating();
         }
 
         bool DeviceBase::EnableDevice() {
@@ -77,9 +80,9 @@ namespace lightfx {
                 }
                 return this->PushColorToDevice();
             } else {
-                this->AnimationStartTime = GetTickCount();
-                this->AnimationRunning = true;
-                thread t(&DeviceBase::AnimateCurrentColorLoop, this);
+                this->animationStartTime = GetTickCount();
+                this->StopAnimating();
+                this->StartAnimating();
             }
 
             return true;
@@ -193,8 +196,8 @@ namespace lightfx {
         }
 
         void DeviceBase::AnimateCurrentColorLoop() {
-            while (this->AnimationRunning) {
-                unsigned long timePassed = GetTickCount() - this->AnimationStartTime;
+            while (this->animationRunning) {
+                unsigned long timePassed = GetTickCount() - this->animationStartTime;
                 double progress = (double)timePassed / this->CurrentActionTime;
                 bool colorChanged = false;
 
@@ -220,14 +223,15 @@ namespace lightfx {
                     }
 
                     if (timePassed >= this->CurrentActionTime) {
-                        this->AnimationRunning = false;
+                        this->animationRunning = false;
                         return;
                     }
 
                     break;
 
                 case LightAction::Pulse:
-                    progress = modf(progress, nullptr);
+                    double intpart;
+                    progress = modf(progress, &intpart);
                     for (size_t i = 0; i < this->Lights.size(); ++i) {
                         unsigned char newR, newG, newB, newBr;
                         if (progress < 0.5) {
@@ -256,18 +260,33 @@ namespace lightfx {
                     }
 
                     if (timePassed >= this->CurrentActionTime * this->CurrentActionAmount) {
-                        this->AnimationRunning = false;
+                        this->animationRunning = false;
                         return;
                     }
 
                     break;
 
                 default:
-                    this->AnimationRunning = false;
+                    this->animationRunning = false;
                     return;
                 }
 
                 this_thread::sleep_for(chrono::milliseconds(1));
+            }
+        }
+
+        void DeviceBase::StartAnimating() {
+            this->animationRunning = true;
+            this->hasAnimated = true;
+            this->animationThread = thread(&DeviceBase::AnimateCurrentColorLoop, this);
+        }
+
+        void DeviceBase::StopAnimating() {
+            if (this->animationRunning || this->hasAnimated) {
+                this->animationRunning = false;
+                this->hasAnimated = false;
+                this->animationThread.join();
+                this->animationThread.~thread();
             }
         }
     }
