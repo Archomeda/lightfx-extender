@@ -3,8 +3,6 @@
 // Standard includes
 #include <algorithm>
 #include <string>
-#include <locale>
-#include <codecvt>
 
 // Windows includes
 #include <CommCtrl.h>

@@ -3,8 +3,6 @@
 // Standard includes
 #include <iostream>
 #include <fstream>
-#include <locale>
-#include <codecvt>
 
 // Windows includes
 #include "../Common/Windows.h"

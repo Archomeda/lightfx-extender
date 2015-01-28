@@ -1,7 +1,5 @@
 // Standard includes
 #include <string>
-#include <locale>
-#include <codecvt>
 
 // 3rd party includes
 #include "LFX2.h"
