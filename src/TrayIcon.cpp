@@ -102,8 +102,6 @@ namespace lightfx {
 
             size_t index;
             for (index = 1; index <= this->attachedDevices.size(); ++index) {
-                string deviceName = "";
-                unsigned char deviceType = 0;
                 InsertMenuW(hMenu, index, this->attachedDevices[index - 1]->IsEnabled() ? MF_CHECKED : MF_UNCHECKED, index, this->attachedDevices[index - 1]->GetDeviceName().c_str());
             }
             InsertMenuW(hMenu, index, MF_SEPARATOR, 0, NULL);
