@@ -21,15 +21,15 @@ using namespace lightfx;
 using namespace lightfx::utils;
 
 
-#define DTTMFMT "%Y-%m-%d %H:%M:%S "
+#define DTTMFMT L"%Y-%m-%d %H:%M:%S "
 #define DTTMSZ 21
-static string getDtTm() {
-    char buff[DTTMSZ];
+static wstring getDtTm() {
+    wchar_t buff[DTTMSZ];
     time_t t = time(0);
     tm lt;
     localtime_s(&lt, &t);
-    strftime(buff, DTTMSZ, DTTMFMT, &lt);
-    return string(buff);
+    wcsftime(buff, DTTMSZ, DTTMFMT, &lt);
+    return wstring(buff);
 }
 
 
