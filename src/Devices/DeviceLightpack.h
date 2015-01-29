@@ -48,7 +48,7 @@ namespace lightfx {
         class DeviceLightpack : public DeviceBase {
 
         public:
-            DeviceLightpack(const std::string& hostname, const std::string& port, const std::string& key);
+            DeviceLightpack(const std::wstring& hostname, const std::wstring& port, const std::wstring& key);
 
             virtual bool Initialize() override;
             virtual bool Release() override;
@@ -61,10 +61,10 @@ namespace lightfx {
         protected:
             bool ConnectAPI();
             bool DisconnectAPI();
-            bool SendAPI(const std::string& cmd);
-            std::string ReceiveAPI();
+            bool SendAPI(const std::wstring& cmd);
+            std::wstring ReceiveAPI();
 
-            LightpackStatus ApiKey(const std::string& key);
+            LightpackStatus ApiKey(const std::wstring& key);
             LightpackStatus Lock();
             LightpackStatus Unlock();
             int GetCountLeds();
@@ -77,9 +77,9 @@ namespace lightfx {
 
         private:
             SOCKET lightpackSocket = INVALID_SOCKET;
-            std::string hostname = "127.0.0.1";
-            std::string port = "3636";
-            std::string key = "";
+            std::wstring hostname = L"127.0.0.1";
+            std::wstring port = L"3636";
+            std::wstring key = L"";
 
         };
 

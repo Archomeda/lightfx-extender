@@ -47,7 +47,7 @@ namespace lightfx {
 
             // Check which devices should be enabled on start
             wstring deviceName = device->GetDeviceName();
-            if (this->config.DeviceStates.count(wstring_to_string(deviceName)) > 0) {
+            if (this->config.DeviceStates.count(deviceName) > 0) {
                 device->EnableDevice();
             }
 
@@ -70,7 +70,7 @@ namespace lightfx {
 
         // Save before releasing stuff
         for (auto device : this->devices) {
-            this->config.DeviceStates[wstring_to_string(device->GetDeviceName())] = device->IsEnabled();
+            this->config.DeviceStates[device->GetDeviceName()] = device->IsEnabled();
         }
         this->config.Save();
 

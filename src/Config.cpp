@@ -1,4 +1,10 @@
-#include "Config.h"
+﻿#include "Config.h"
+
+// Standard includes
+#include <iostream>
+#include <fstream>
+#include <codecvt>
+#include <sstream>
 
 // Windows includes
 #include <ShlObj.h>
@@ -6,6 +12,7 @@
 // 3rd party includes
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
+#include "rapidjson/encodedstream.h"
 #include "rapidjson/prettywriter.h"
 
 // Project includes
@@ -15,18 +22,18 @@
 
 #define APPDATA_CONFIGFILE L"settings.json"
 
-#define CONF_DEVICESTATES "EnabledDevices"
+#define CONF_DEVICESTATES L"EnabledDevices"
 
-#define CONF_LOGITECHCOLORANGE "LogitechColorRange"
-#define CONF_LOGITECHCOLORRANGE_OUTMIN "AlienFxMin"
-#define CONF_LOGITECHCOLORRANGE_OUTMAX "AlienFxMax"
-#define CONF_LOGITECHCOLORRANGE_INMIN "LogitechMin"
-#define CONF_LOGITECHCOLORRANGE_INMAX "LogitechMax"
+#define CONF_LOGITECHCOLORANGE L"LogitechColorRange"
+#define CONF_LOGITECHCOLORRANGE_OUTMIN L"AlienFxMin"
+#define CONF_LOGITECHCOLORRANGE_OUTMAX L"AlienFxMax"
+#define CONF_LOGITECHCOLORRANGE_INMIN L"LogitechMin"
+#define CONF_LOGITECHCOLORRANGE_INMAX L"LogitechMax"
 
-#define CONF_LIGHTPACKAPI "LightpackAPI"
-#define CONF_LIGHTPACKHOST "Hostname"
-#define CONF_LIGHTPACKPORT "PortNumber"
-#define CONF_LIGHTPACKKEY "Key"
+#define CONF_LIGHTPACKAPI L"LightpackAPI"
+#define CONF_LIGHTPACKHOST L"Hostname"
+#define CONF_LIGHTPACKPORT L"PortNumber"
+#define CONF_LIGHTPACKKEY L"Key"
 
 using namespace std;
 using namespace rapidjson;
@@ -37,26 +44,28 @@ namespace lightfx {
     bool Config::Load() {
         this->SetDefault();
         try {
-            // TODO: Find a better way to read JSON from a file (with no manually managed buffer)
             wstring configPath;
             if (GetRoamingAppDataFolder(configPath)) {
                 configPath = configPath + L"/" + APPDATA_FOLDER;
                 if (DirExists(configPath)) {
                     configPath = configPath + L"/" + APPDATA_CONFIGFILE;
-                    FILE* pFile;
-                    if (_wfopen_s(&pFile, configPath.c_str(), L"rb") == 0) {
-                        char buffer[65536];
-                        FileReadStream frs(pFile, buffer, sizeof(buffer));
-                        this->doc.ParseStream<0, UTF8<>, FileReadStream>(frs);
-                        this->Parse();
-                        fclose(pFile);
-                    }
-                    pFile = nullptr;
+
+                    wifstream configStream;
+                    configStream.imbue(locale(configStream.getloc(), new codecvt_utf8<wchar_t>));
+                    configStream.open(configPath, wios::in | wios::binary);
+
+                    wstringstream stream;
+                    stream << configStream.rdbuf();
+
+                    wstring json = stream.str();
+                    this->doc.Parse<0>(json.c_str());
+                    configStream.close();
+                    this->Parse();
                 }
                 return true;
             }
         } catch (...) {
-            Log("Failed to load configuration");
+            Log(L"Failed to load configuration");
         }
         return false;
     }
@@ -65,31 +74,33 @@ namespace lightfx {
         try {
             this->Commit();
 
-            // TODO: Find a better way to write JSON to a file (with no manually managed buffer)
             wstring configPath;
             if (GetRoamingAppDataFolder(configPath)) {
                 configPath = configPath + L"/" + APPDATA_FOLDER;
                 if (!DirExists(configPath)) {
                     if (CreateDirectoryW(configPath.c_str(), NULL) == FALSE) {
-                        Log("Failed to create folder in %APPDATA%");
+                        Log(L"Failed to create folder in %APPDATA%");
                         LogLastError();
                         return false;
                     }
                 }
                 configPath = configPath + L"/" + APPDATA_CONFIGFILE;
-                FILE* pFile;
-                if (_wfopen_s(&pFile, configPath.c_str(), L"wb") == 0) {
-                    char buffer[65536];
-                    FileWriteStream fws(pFile, buffer, sizeof(buffer));
-                    PrettyWriter<FileWriteStream> writer(fws);
-                    this->doc.Accept(writer);
-                    fclose(pFile);
-                }
-                pFile = nullptr;
+
+                GenericStringBuffer<UTF16<>> buffer;
+                PrettyWriter<GenericStringBuffer<UTF16<>>, UTF16<>, UTF16<>> writer(buffer);
+                this->doc.Accept(writer);
+                
+                wstring json = buffer.GetString();
+                wofstream configStream;
+                configStream.imbue(locale(configStream.getloc(), new codecvt_utf8<wchar_t>));
+                configStream.open(configPath, wios::out | wios::binary);
+                configStream << json;
+                configStream.close();
+
                 return true;
             }
         } catch (...) {
-            Log("Failed to save configuration");
+            Log(L"Failed to save configuration");
         }
         return false;
     }
@@ -107,10 +118,10 @@ namespace lightfx {
         }
 
         if (this->doc.HasMember(CONF_DEVICESTATES) && this->doc[CONF_DEVICESTATES].IsObject()) {
-            const Value& deviceStates = this->doc[CONF_DEVICESTATES];
+            const GenericValue<UTF16<>>& deviceStates = this->doc[CONF_DEVICESTATES];
             for (auto itr = deviceStates.MemberBegin(); itr != deviceStates.MemberEnd(); ++itr) {
                 if (itr->value.IsBool()) {
-                    string deviceName = itr->name.GetString();
+                    wstring deviceName = itr->name.GetString();
                     bool deviceEnabled = itr->value.GetBool();
                     this->DeviceStates[deviceName] = deviceEnabled;
                 }
@@ -118,7 +129,7 @@ namespace lightfx {
         }
 
         if (this->doc.HasMember(CONF_LOGITECHCOLORANGE) && this->doc[CONF_LOGITECHCOLORANGE].IsObject()) {
-            const Value& colorRange = this->doc[CONF_LOGITECHCOLORANGE];
+            const GenericValue<UTF16<>>& colorRange = this->doc[CONF_LOGITECHCOLORANGE];
             if (colorRange.HasMember(CONF_LOGITECHCOLORRANGE_OUTMIN) && colorRange[CONF_LOGITECHCOLORRANGE_OUTMIN].IsInt()) {
                 this->LogitechColorRangeOutMin = colorRange[CONF_LOGITECHCOLORRANGE_OUTMIN].GetInt();
             }
@@ -134,7 +145,7 @@ namespace lightfx {
         }
 
         if (this->doc.HasMember(CONF_LIGHTPACKAPI) && this->doc[CONF_LIGHTPACKAPI].IsObject()) {
-            const Value& api = this->doc[CONF_LIGHTPACKAPI];
+            const GenericValue<UTF16<>>& api = this->doc[CONF_LIGHTPACKAPI];
             if (api.HasMember(CONF_LIGHTPACKHOST) && api[CONF_LIGHTPACKHOST].IsString()) {
                 this->LightpackHost = api[CONF_LIGHTPACKHOST].GetString();
             }
@@ -148,30 +159,30 @@ namespace lightfx {
     }
 
     void Config::Commit() {
-        Document::AllocatorType& allocator = this->doc.GetAllocator();
+        GenericDocument<UTF16<>>::AllocatorType& allocator = this->doc.GetAllocator();
         this->doc.SetObject();
 
-        Value deviceStates(kObjectType);
+        GenericValue<UTF16<>> deviceStates(kObjectType);
         for (auto itr : this->DeviceStates) {
-            deviceStates.AddMember(Value(itr.first.c_str(), allocator).Move(), Value(itr.second), allocator);
+            deviceStates.AddMember(GenericValue<UTF16<>>(itr.first.c_str(), allocator).Move(), GenericValue<UTF16<>>(itr.second), allocator);
         }
         this->doc.AddMember(CONF_DEVICESTATES, deviceStates, allocator);
 
-        Value logiRange(kObjectType);
+        GenericValue<UTF16<>> logiRange(kObjectType);
         logiRange.AddMember(CONF_LOGITECHCOLORRANGE_OUTMIN, this->LogitechColorRangeOutMin, allocator);
         logiRange.AddMember(CONF_LOGITECHCOLORRANGE_OUTMAX, this->LogitechColorRangeOutMax, allocator);
         logiRange.AddMember(CONF_LOGITECHCOLORRANGE_INMIN, this->LogitechColorRangeInMin, allocator);
         logiRange.AddMember(CONF_LOGITECHCOLORRANGE_INMAX, this->LogitechColorRangeInMax, allocator);
         this->doc.AddMember(CONF_LOGITECHCOLORANGE, logiRange, allocator);
 
-        Value lightpackApi(kObjectType);
-        Value host(kStringType);
+        GenericValue<UTF16<>> lightpackApi(kObjectType);
+        GenericValue<UTF16<>> host(kStringType);
         host.SetString(this->LightpackHost.c_str(), allocator);
         lightpackApi.AddMember(CONF_LIGHTPACKHOST, host, allocator);
-        Value port(kStringType);
+        GenericValue<UTF16<>> port(kStringType);
         port.SetString(this->LightpackPort.c_str(), allocator);
         lightpackApi.AddMember(CONF_LIGHTPACKPORT, port, allocator);
-        Value key(kStringType);
+        GenericValue<UTF16<>> key(kStringType);
         key.SetString(this->LightpackKey.c_str(), allocator);
         lightpackApi.AddMember(CONF_LIGHTPACKKEY, key, allocator);
         this->doc.AddMember(CONF_LIGHTPACKAPI, lightpackApi, allocator);

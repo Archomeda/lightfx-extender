@@ -19,16 +19,16 @@ namespace lightfx {
         bool Load();
         bool Save();
 
-        std::map<std::string, bool> DeviceStates = {};
+        std::map<std::wstring, bool> DeviceStates = {};
 
         int LogitechColorRangeOutMin = 0;
         int LogitechColorRangeOutMax = 255;
         int LogitechColorRangeInMin = 0;
         int LogitechColorRangeInMax = 100;
 
-        std::string LightpackHost = "127.0.0.1";
-        std::string LightpackPort = "3636";
-        std::string LightpackKey = "";
+        std::wstring LightpackHost = L"127.0.0.1";
+        std::wstring LightpackPort = L"3636";
+        std::wstring LightpackKey = L"";
 
     protected:
         void SetDefault();
@@ -36,7 +36,7 @@ namespace lightfx {
         void Commit();
 
     private:
-        rapidjson::Document doc;
+        rapidjson::GenericDocument<rapidjson::UTF16<>> doc;
 
     };
 

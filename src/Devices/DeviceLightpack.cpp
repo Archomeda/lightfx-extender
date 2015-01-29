@@ -6,6 +6,7 @@
 
 // Project includes
 #include "../Utils/Log.h"
+#include "../Utils/String.h"
 
 
 using namespace std;
@@ -19,7 +20,7 @@ using namespace lightfx::utils;
 namespace lightfx {
     namespace devices {
 
-        DeviceLightpack::DeviceLightpack(const string& hostname, const string& port, const string& key) {
+        DeviceLightpack::DeviceLightpack(const wstring& hostname, const wstring& port, const wstring& key) {
             this->hostname = hostname;
             this->port = port;
             this->key = key;
@@ -82,20 +83,20 @@ namespace lightfx {
             WSADATA wsaData;
             if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
                 // WSAStartup failed
-                Log("WSAStartup failed");
+                Log(L"WSAStartup failed");
                 return false;
             }
 
-            struct addrinfo *result = NULL, hints;
+            struct addrinfoW *result = NULL, hints;
 
             ZeroMemory(&hints, sizeof(hints));
             hints.ai_family = AF_INET;
             hints.ai_socktype = SOCK_STREAM;
             hints.ai_protocol = IPPROTO_TCP;
 
-            if (getaddrinfo(this->hostname.c_str(), this->port.c_str(), &hints, &result) != 0) {
-                // getaddrinfo failed
-                Log("getaddrinfo failed");
+            if (GetAddrInfoW(this->hostname.c_str(), this->port.c_str(), &hints, &result) != 0) {
+                // GetAddrInfoW failed
+                Log(L"GetAddrInfoW failed");
                 WSACleanup();
                 return false;
             }
@@ -103,23 +104,23 @@ namespace lightfx {
             this->lightpackSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
             if (this->lightpackSocket == INVALID_SOCKET) {
                 // Invalid socket
-                Log("socket failed");
-                freeaddrinfo(result);
+                Log(L"Invalid socket");
+                FreeAddrInfoW(result);
                 WSACleanup();
                 return false;
             }
 
             if (connect(this->lightpackSocket, result->ai_addr, (int)result->ai_addrlen) == SOCKET_ERROR) {
                 // Connection error
-                Log("connect failed");
+                Log(L"Connection error");
                 closesocket(this->lightpackSocket);
                 this->lightpackSocket = INVALID_SOCKET;
-                freeaddrinfo(result);
+                FreeAddrInfoW(result);
                 WSACleanup();
                 return false;
             }
 
-            freeaddrinfo(result);
+            FreeAddrInfoW(result);
             this->ReceiveAPI();
             if (this->ApiKey(this->key) == Success) {
                 if (this->Lock() != Success) {
@@ -147,9 +148,9 @@ namespace lightfx {
             return true;
         }
 
-        bool DeviceLightpack::SendAPI(const string& cmd) {
-            string s = cmd + "\n";
-            int result = send(this->lightpackSocket, s.c_str(), s.length(), 0);
+        bool DeviceLightpack::SendAPI(const wstring& cmd) {
+            wstring s = cmd + L"\n";
+            int result = send(this->lightpackSocket, wstring_to_string(s).c_str(), s.length(), 0);
             if (result == SOCKET_ERROR) {
                 closesocket(this->lightpackSocket);
                 WSACleanup();
@@ -158,28 +159,28 @@ namespace lightfx {
             return true;
         }
 
-        string DeviceLightpack::ReceiveAPI() {
+        wstring DeviceLightpack::ReceiveAPI() {
             char buff[API_BUFFLEN];
             int result = recv(this->lightpackSocket, buff, API_BUFFLEN, 0);
             if (result > 0) {
                 string result = string(buff);
                 result = result.substr(0, result.find("\n") - 1);
-                return result;
+                return string_to_wstring(result);
             } else if (result == 0) {
                 // Connection closed
-                return "";
+                return L"";
             } else {
                 // Error
-                return "";
+                return L"";
             }
         }
 
-        LightpackStatus DeviceLightpack::ApiKey(const string& key) {
-            this->SendAPI("apikey:" + key);
-            string result = this->ReceiveAPI();
-            if (result == "ok") {
+        LightpackStatus DeviceLightpack::ApiKey(const wstring& key) {
+            this->SendAPI(L"apikey:" + key);
+            wstring result = this->ReceiveAPI();
+            if (result == L"ok") {
                 return Success;
-            } else if (result == "fail") {
+            } else if (result == L"fail") {
                 return Fail;
             } else {
                 return Error;
@@ -187,11 +188,11 @@ namespace lightfx {
         }
 
         LightpackStatus DeviceLightpack::Lock() {
-            this->SendAPI("lock");
-            string result = this->ReceiveAPI();
-            if (result == "lock:success") {
+            this->SendAPI(L"lock");
+            wstring result = this->ReceiveAPI();
+            if (result == L"lock:success") {
                 return Success;
-            } else if (result == "lock:busy") {
+            } else if (result == L"lock:busy") {
                 return Busy;
             } else {
                 return Error;
@@ -199,11 +200,11 @@ namespace lightfx {
         }
 
         LightpackStatus DeviceLightpack::Unlock() {
-            this->SendAPI("unlock");
-            string result = this->ReceiveAPI();
-            if (result == "unlock:success") {
+            this->SendAPI(L"unlock");
+            wstring result = this->ReceiveAPI();
+            if (result == L"unlock:success") {
                 return Success;
-            } else if (result == "unlock:not locked") {
+            } else if (result == L"unlock:not locked") {
                 return NotLocked;
             } else {
                 return Error;
@@ -211,12 +212,12 @@ namespace lightfx {
         }
 
         int DeviceLightpack::GetCountLeds() {
-            this->SendAPI("getcountleds");
-            string result = this->ReceiveAPI();
-            size_t pos = result.find(":");
+            this->SendAPI(L"getcountleds");
+            wstring result = this->ReceiveAPI();
+            size_t pos = result.find(L":");
             if (pos != string::npos) {
                 result.erase(0, pos + 1);
-                return atoi(result.c_str());
+                return stoi(result);
             } else {
                 return 0;
             }
@@ -224,48 +225,48 @@ namespace lightfx {
 
         vector<LightpackLed> DeviceLightpack::GetLeds() {
             vector<LightpackLed> v;
-            this->SendAPI("getleds");
-            string result = this->ReceiveAPI();
+            this->SendAPI(L"getleds");
+            wstring result = this->ReceiveAPI();
 
             // Find delimiter ':' first to seperate the result from the used command
-            size_t pos = result.find(":");
-            if (pos != string::npos) {
+            size_t pos = result.find(L":");
+            if (pos != wstring::npos) {
                 result.erase(0, pos + 1);
                 // Repeat until end of string
-                while (pos != string::npos) {
+                while (pos != wstring::npos) {
                     // Find delimter '-' to get the LED index
-                    pos = result.find("-");
-                    if (pos != string::npos) {
+                    pos = result.find(L"-");
+                    if (pos != wstring::npos) {
                         LightpackLed led;
-                        string subresult = result.substr(0, pos);
+                        wstring subresult = result.substr(0, pos);
                         result.erase(0, pos + 1);
-                        led.index = atoi(subresult.c_str());
+                        led.index = stoi(subresult);
                         // Find 3x delimiter ',' to get the x, y and width of the captured area
                         for (int i = 0; i < 3; ++i) {
-                            pos = result.find(",");
+                            pos = result.find(L",");
                             if (pos != string::npos) {
                                 subresult = result.substr(0, pos);
                                 result.erase(0, pos + 1);
                                 switch (i)
                                 {
                                 case 0:
-                                    led.x = atoi(subresult.c_str());
+                                    led.x = stoi(subresult);
                                     break;
                                 case 1:
-                                    led.y = atoi(subresult.c_str());
+                                    led.y = stoi(subresult);
                                     break;
                                 case 2:
-                                    led.width = atoi(subresult.c_str());
+                                    led.width = stoi(subresult);
                                     break;
                                 }
                             }
                         }
                         // Find last delimiter ';' to get the height of the captured area
-                        pos = result.find(";");
+                        pos = result.find(L";");
                         if (pos != string::npos) {
                             subresult = result.substr(0, pos);
                             result.erase(0, pos + 1);
-                            led.height = atoi(subresult.c_str());
+                            led.height = stoi(subresult);
                         }
                         v.push_back(led);
                     }
@@ -287,35 +288,35 @@ namespace lightfx {
 
             /*
             LightpackScreen screen = {};
-            this->SendAPI("getleds");
-            string result = this->ReceiveAPI();
+            this->SendAPI(L"getleds");
+            wstring result = this->ReceiveAPI();
 
             // Find delimiter ':' first to seperate the result from the used command
-            size_t pos = result.find(":");
+            size_t pos = result.find(L":");
             if (pos != string::npos) {
                 result.erase(0, pos + 1);
                 // Find delimter ',' to seperate x, y and width
                 for (int i = 0; i < 3; ++i) {
-                    pos = result.find(",");
+                    pos = result.find(L",");
                     if (pos != string::npos) {
-                        string subresult = result.substr(0, pos);
+                        wstring subresult = result.substr(0, pos);
                         result.erase(0, pos + 1);
                         switch (i)
                         {
                         case 0:
-                            screen.x = atoi(subresult.c_str());
+                            screen.x = stoi(subresult);
                             break;
                         case 1:
-                            screen.y = atoi(subresult.c_str());
+                            screen.y = stoi(subresult);
                             break;
                         case 2:
-                            screen.width = atoi(subresult.c_str());
+                            screen.width = stoi(subresult);
                             break;
                         }
                     }
                 }
                 // Last bit is the height
-                screen.height = atoi(result.c_str());
+                screen.height = stoi(result);
             }
             return screen;
             */
@@ -330,17 +331,17 @@ namespace lightfx {
         }
 
         LightpackStatus DeviceLightpack::SetColors(const vector<int>& indices, const vector<int>& red, const vector<int>& green, const vector<int>& blue) {
-            string cmd = "setcolor:";
+            wstring cmd = L"setcolor:";
             for (size_t i = 0; i < indices.size(); ++i) {
-                cmd += to_string(indices[i]) + "-" + to_string(red[i]) + "," + to_string(green[i]) + "," + to_string(blue[i]) + ";";
+                cmd += to_wstring(indices[i]) + L"-" + to_wstring(red[i]) + L"," + to_wstring(green[i]) + L"," + to_wstring(blue[i]) + L";";
             }
             this->SendAPI(cmd);
-            string result = this->ReceiveAPI();
-            if (result == "ok") {
+            wstring result = this->ReceiveAPI();
+            if (result == L"ok") {
                 return Success;
-            } else if (result == "busy") {
+            } else if (result == L"busy") {
                 return Busy;
-            } else if (result == "not locked") {
+            } else if (result == L"not locked") {
                 return NotLocked;
             } else {
                 return Error;
@@ -348,17 +349,17 @@ namespace lightfx {
         }
 
         LightpackStatus DeviceLightpack::SetColors(const vector<LightpackColor>& colors) {
-            string cmd = "setcolor:";
+            wstring cmd = L"setcolor:";
             for (size_t i = 0; i < colors.size(); ++i) {
-                cmd += to_string(colors[i].index) + "-" + to_string(colors[i].red) + "," + to_string(colors[i].green) + "," + to_string(colors[i].blue) + ";";
+                cmd += to_wstring(colors[i].index) + L"-" + to_wstring(colors[i].red) + L"," + to_wstring(colors[i].green) + L"," + to_wstring(colors[i].blue) + L";";
             }
             this->SendAPI(cmd);
-            string result = this->ReceiveAPI();
-            if (result == "ok") {
+            wstring result = this->ReceiveAPI();
+            if (result == L"ok") {
                 return Success;
-            } else if (result == "busy") {
+            } else if (result == L"busy") {
                 return Busy;
-            } else if (result == "not locked") {
+            } else if (result == L"not locked") {
                 return NotLocked;
             } else {
                 return Error;

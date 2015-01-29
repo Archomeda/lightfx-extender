@@ -1,8 +1,9 @@
-#include "Log.h"
+﻿#include "Log.h"
 
 // Standard includes
 #include <iostream>
 #include <fstream>
+#include <codecvt>
 
 // Windows includes
 #include "../Common/Windows.h"
@@ -10,7 +11,6 @@
 #include <time.h>
 
 // Project includes
-#include "../Utils/String.h"
 #include "FileIO.h"
 
 
@@ -36,7 +36,7 @@ static wstring getDtTm() {
 namespace lightfx {
     namespace utils {
 
-        void Log(string line) {
+        void Log(wstring line) {
             wstring configPath;
             if (GetRoamingAppDataFolder(configPath)) {
                 configPath = configPath + L"/" + APPDATA_FOLDER;
@@ -47,14 +47,11 @@ namespace lightfx {
                 }
                 configPath = configPath + L"/" + APPDATA_LOGFILE;
 
-                ofstream logstream;
-                logstream.open(configPath, ios::out | ios::app | ios::binary);
-                logstream << getDtTm() << line << "\n";
+                wofstream logstream;
+                logstream.imbue(locale(logstream.getloc(), new codecvt_utf8<wchar_t>));
+                logstream.open(configPath, wios::out | wios::app | wios::binary);
+                logstream << getDtTm() << line << std::endl;
             }
-        }
-
-        void Log(wstring line) {
-            Log(wstring_to_string(line));
         }
 
         void LogLastError() {
