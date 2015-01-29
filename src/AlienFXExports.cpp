@@ -86,7 +86,7 @@ extern "C" {
             return LFX_ERROR_BUFFSIZE;
         }
 
-        *devDesc = *deviceName.c_str();
+        sprintf_s(devDesc, devDescSize, deviceName.c_str());
         *devType = LightsManager::Instance().GetDevice(devIndex)->GetDeviceType();
         return LFX_SUCCESS;
     }
@@ -122,7 +122,7 @@ extern "C" {
             return LFX_ERROR_BUFFSIZE;
         }
 
-        *lightDesc = *lightName.c_str();
+        sprintf_s(lightDesc, lightDescSize, lightName.c_str());
         return LFX_SUCCESS;
     }
 
@@ -139,7 +139,7 @@ extern "C" {
             return LFX_ERROR_NOLIGHTS;
         }
 
-        *lightLoc = LightsManager::Instance().GetDevice(devIndex)->GetLight(lightIndex).Position;
+        *lightLoc = LFX_POSITION(LightsManager::Instance().GetDevice(devIndex)->GetLight(lightIndex).Position);
         return LFX_SUCCESS;
     }
 
@@ -156,7 +156,7 @@ extern "C" {
             return LFX_ERROR_NOLIGHTS;
         }
 
-        *lightCol = LightsManager::Instance().GetDevice(devIndex)->GetColorForLight(lightIndex);
+        *lightCol = LFX_COLOR(LightsManager::Instance().GetDevice(devIndex)->GetColorForLight(lightIndex));
         return LFX_SUCCESS;
     }
 
@@ -173,8 +173,7 @@ extern "C" {
             return LFX_ERROR_NOLIGHTS;
         }
         
-        LightsManager::Instance().GetDevice(devIndex)->SetColorForLight(lightIndex, *lightCol);
-        return LFX_SUCCESS;
+        return LightsManager::Instance().GetDevice(devIndex)->SetColorForLight(lightIndex, *lightCol);
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_Light(const unsigned int locationMask, const unsigned int lightCol) {
@@ -265,7 +264,7 @@ extern "C" {
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetVersion(char* const version, const unsigned int versionSize) {
-        *version = *"2.2.0.0";
+        sprintf_s(version, versionSize, "2.2.0.0");
         return LFX_SUCCESS;
     }
 
