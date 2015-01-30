@@ -21,7 +21,7 @@ using namespace lightfx;
 using namespace lightfx::utils;
 
 
-#define DTTMFMT L"%Y-%m-%d %H:%M:%S "
+#define DTTMFMT L"%Y-%m-%d %H:%M:%S"
 #define DTTMSZ 21
 static wstring getDtTm() {
     wchar_t buff[DTTMSZ];
@@ -50,7 +50,7 @@ namespace lightfx {
                 wofstream logstream;
                 logstream.imbue(locale(logstream.getloc(), new codecvt_utf8<wchar_t>));
                 logstream.open(configPath, wios::out | wios::app | wios::binary);
-                logstream << getDtTm() << line << std::endl;
+                logstream << getDtTm() << L" - " << line << std::endl;
             }
         }
 
