@@ -4,9 +4,15 @@
 #include <string>
 
 
+#ifdef LIGHTFX_EXPORTS
+#define LIGHTFX_API _declspec(dllexport)
+#else
+#define LIGHTFX_API
+#endif
+
 namespace lightfx {
     
-    class Version {
+    class LIGHTFX_API Version {
 
     public:
         Version() : Version(0, 0, 0) {}

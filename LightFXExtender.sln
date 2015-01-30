@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LightFXExtender", "src\LightFXExtender.vcxproj", "{A8CB3988-1ADA-4631-A7D3-11D7F68776A3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTests", "tests\UnitTests.vcxproj", "{E6703E60-834C-43A5-808A-B44108D867B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,6 +17,10 @@ Global
 		{A8CB3988-1ADA-4631-A7D3-11D7F68776A3}.Debug|Win32.Build.0 = Debug|Win32
 		{A8CB3988-1ADA-4631-A7D3-11D7F68776A3}.Release|Win32.ActiveCfg = Release|Win32
 		{A8CB3988-1ADA-4631-A7D3-11D7F68776A3}.Release|Win32.Build.0 = Release|Win32
+		{E6703E60-834C-43A5-808A-B44108D867B8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E6703E60-834C-43A5-808A-B44108D867B8}.Debug|Win32.Build.0 = Debug|Win32
+		{E6703E60-834C-43A5-808A-B44108D867B8}.Release|Win32.ActiveCfg = Release|Win32
+		{E6703E60-834C-43A5-808A-B44108D867B8}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

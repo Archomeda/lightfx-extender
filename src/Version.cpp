@@ -1,3 +1,4 @@
+#define LIGHTFX_EXPORTS
 #include "Version.h"
 
 // Standard includes
