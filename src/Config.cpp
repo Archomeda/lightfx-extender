@@ -10,9 +10,6 @@
 #include <ShlObj.h>
 
 // 3rd party includes
-#include "rapidjson/filereadstream.h"
-#include "rapidjson/filewritestream.h"
-#include "rapidjson/encodedstream.h"
 #include "rapidjson/prettywriter.h"
 
 // Project includes
