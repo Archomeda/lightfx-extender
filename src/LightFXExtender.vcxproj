@@ -84,10 +84,13 @@
     <ClCompile Include="Games\Guildwars2.cpp" />
     <ClCompile Include="TrayIcon.cpp" />
     <ClCompile Include="LightsManager.cpp" />
+    <ClCompile Include="UpdateManager.cpp" />
     <ClCompile Include="Utils\FileIO.cpp" />
     <ClCompile Include="AlienFXExports.cpp" />
     <ClCompile Include="Utils\Log.cpp" />
+    <ClCompile Include="Utils\String.cpp" />
     <ClCompile Include="Utils\Windows.cpp" />
+    <ClCompile Include="Version.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
@@ -100,13 +103,16 @@
     <ClInclude Include="LightLocationMask.h" />
     <ClInclude Include="TrayIcon.h" />
     <ClInclude Include="LightsManager.h" />
+    <ClInclude Include="UpdateManager.h" />
     <ClInclude Include="Utils\FileIO.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Devices\DeviceLight.h" />
     <ClInclude Include="Utils\Log.h" />
     <ClInclude Include="Common\Windows.h" />
     <ClInclude Include="Utils\String.h" />
+    <ClInclude Include="VersionInfo.h" />
     <ClInclude Include="Utils\Windows.h" />
+    <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LightFXExtender.rc" />

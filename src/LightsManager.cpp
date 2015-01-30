@@ -30,6 +30,9 @@ namespace lightfx {
         // Load config
         this->config.Load();
 
+        // Start checking for updates
+        this->updateCheckerThread = thread(&LightsManager::CheckForUpdate, this);
+
         // Add devices
         this->AddDevices();
 
@@ -86,6 +89,10 @@ namespace lightfx {
                 ++done;
             }
         }
+
+        // Join update thread in order to close properly
+        this->updateCheckerThread.join();
+
         this->isInitialized = false;
         return done;
     }
@@ -179,6 +186,23 @@ namespace lightfx {
             }
         }
         return true;
+    }
+
+    void LightsManager::CheckForUpdate() {
+        Version currentVersion = this->updateManager.GetCurrentVersion();
+        Log(L"Checking for updates... (current version: " +
+            to_wstring(currentVersion.GetMajor()) + L"." + to_wstring(currentVersion.GetMinor()) + L"." + to_wstring(currentVersion.GetBuild()) + L")");
+
+        Version liveVersion = this->updateManager.GetLiveVersion();
+        if (liveVersion > currentVersion) {
+            wstring newVersionString = to_wstring(liveVersion.GetMajor()) + L"." + to_wstring(liveVersion.GetMinor()) + L"." + to_wstring(liveVersion.GetBuild());
+            wstring newVersionUrl = this->updateManager.GetDownloadPageUrl();
+            Log(L"A newer version is available: " + newVersionString);
+            Log(L"See " + newVersionUrl + L" for downloads");
+            this->trayIcon.AddUpdateNotification(newVersionString, newVersionUrl);
+        } else {
+            Log(L"No update available");
+        }
     }
 
 

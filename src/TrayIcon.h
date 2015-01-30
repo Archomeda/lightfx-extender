@@ -24,6 +24,8 @@ namespace lightfx {
         void AttachDevice(std::shared_ptr<devices::DeviceBase> device);
         void DetachDevice(std::shared_ptr<devices::DeviceBase> device);
 
+        void AddUpdateNotification(const std::wstring& versionString, const std::wstring& downloadUrl);
+
     private:
         HINSTANCE hModuleInstance = {};
         WNDCLASSW trayIconWindowClass = {};
@@ -34,6 +36,8 @@ namespace lightfx {
         void TrayIconCallback(WPARAM wParam, LPARAM lParam);
 
         std::vector<std::shared_ptr<devices::DeviceBase>> attachedDevices;
+        std::wstring newVersionString;
+        std::wstring newVersionUrl;
 
     };
 

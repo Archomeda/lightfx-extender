@@ -20,6 +20,7 @@
 #define WM_TRAYICON WM_USER + 1
 
 #define MENU_CONFFOLDER_NAME L"Open configuration folder..."
+#define MENU_UPDATE_NAME L"Download new version"
 
 using namespace std;
 using namespace lightfx::utils;
@@ -77,6 +78,12 @@ namespace lightfx {
         this->attachedDevices.erase(std::remove(this->attachedDevices.begin(), this->attachedDevices.end(), device), this->attachedDevices.end());
     }
 
+    void TrayIcon::AddUpdateNotification(const wstring& versionString, const wstring& downloadUrl) {
+        this->newVersionString = versionString;
+        this->newVersionUrl = downloadUrl;
+    }
+
+
     LRESULT CALLBACK TrayIcon::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         if (msg == WM_NCCREATE) {
             // Set extra window space to point to the this object
@@ -106,6 +113,12 @@ namespace lightfx {
             }
             InsertMenuW(hMenu, index, MF_SEPARATOR, 0, NULL);
             ++index;
+            UINT updateUrlIndex = 0;
+            if (this->newVersionString != L"") {
+                updateUrlIndex = index;
+                InsertMenuW(hMenu, updateUrlIndex, 0, updateUrlIndex, wstring(wstring(MENU_UPDATE_NAME) + L" (v" + this->newVersionString + L")...").c_str());
+                ++index;
+            }
             const UINT confFolderIndex = index;
             InsertMenuW(hMenu, confFolderIndex, 0, confFolderIndex, MENU_CONFFOLDER_NAME);
 
@@ -121,6 +134,8 @@ namespace lightfx {
                     folder = folder + L"/" + APPDATA_FOLDER;
                     ShellExecuteW(NULL, L"explore", folder.c_str(), NULL, NULL, SW_SHOWNORMAL);
                 }
+            } else if (updateUrlIndex > 0 && result == updateUrlIndex) {
+                ShellExecuteW(NULL, L"open", this->newVersionUrl.c_str(), NULL, NULL, SW_SHOWDEFAULT);
             } else if (result > 0 && result <= this->attachedDevices.size()) {
                 size_t index = result - 1;
                 if (this->attachedDevices[index]->IsEnabled()) {

@@ -3,6 +3,7 @@
 // Standard includes
 #include <vector>
 #include <memory>
+#include <thread>
 
 // Project includes
 #include "Devices/DeviceBase.h"
@@ -10,6 +11,7 @@
 #include "LightLocationMask.h"
 #include "Config.h"
 #include "TrayIcon.h"
+#include "UpdateManager.h"
 
 
 namespace lightfx {
@@ -41,6 +43,8 @@ namespace lightfx {
 
         size_t Pulse(const LFX_COLOR& color, unsigned int time, unsigned int amount);
         size_t PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time, unsigned int amount);
+
+        void CheckForUpdate();
     
     private:
         LightsManager() {};
@@ -54,6 +58,8 @@ namespace lightfx {
 
         Config config;
         TrayIcon trayIcon;
+        std::thread updateCheckerThread;
+        UpdateManager updateManager;
 
         void AddDevices();
         void AddGames();
