@@ -1,0 +1,8 @@
+version: 0.0.{build}
+
+configuration: Release
+
+artifacts:
+  - path: bin/$(configuration)
+    name: LightFX Extender v$(appveyor_build_version)
+    type: zip
