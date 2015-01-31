@@ -19,9 +19,21 @@ namespace lightfx {
             Version::Version();
         }
 
-        this->majorVer = splitted.size() >= 1 ? stoi(splitted.at(0)) : 0;
-        this->minorVer = splitted.size() >= 2 ? stoi(splitted.at(1)) : 0;
-        this->buildVer = splitted.size() >= 3 ? stoi(splitted.at(2)) : 0;
+        try {
+            this->majorVer = splitted.size() >= 1 ? stoi(splitted.at(0)) : 0;
+        } catch (const invalid_argument&) {
+            this->majorVer = 0;
+        }
+        try {
+            this->minorVer = splitted.size() >= 2 ? stoi(splitted.at(1)) : 0;
+        } catch (const invalid_argument&) {
+            this->minorVer = 0;
+        }
+        try {
+            this->buildVer = splitted.size() >= 3 ? stoi(splitted.at(2)) : 0;
+        } catch (const invalid_argument&) {
+            this->buildVer = 0;
+        }
     }
 
     Version::Version(const wstring& str) {
@@ -30,9 +42,21 @@ namespace lightfx {
             Version::Version();
         }
 
-        this->majorVer = splitted.size() >= 1 ? stoi(splitted.at(0)) : 0;
-        this->minorVer = splitted.size() >= 2 ? stoi(splitted.at(1)) : 0;
-        this->buildVer = splitted.size() >= 3 ? stoi(splitted.at(2)) : 0;
+        try {
+            this->majorVer = splitted.size() >= 1 ? stoi(splitted.at(0)) : 0;
+        } catch (const invalid_argument&) {
+            this->majorVer = 0;
+        }
+        try {
+            this->minorVer = splitted.size() >= 2 ? stoi(splitted.at(1)) : 0;
+        } catch (const invalid_argument&) {
+            this->minorVer = 0;
+        }
+        try {
+            this->buildVer = splitted.size() >= 3 ? stoi(splitted.at(2)) : 0;
+        } catch (const invalid_argument&) {
+            this->buildVer = 0;
+        }
     }
 
 }
