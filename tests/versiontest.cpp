@@ -57,5 +57,40 @@ namespace lightfx_tests {
             Assert::AreEqual<unsigned int>(2, ver.GetMinor(), L"Minor");
             Assert::AreEqual<unsigned int>(0, ver.GetBuild(), L"Build");
         }
+ 
+        TEST_METHOD(FromWStringEmpty) {
+            Version ver = Version::FromString(L"");
+            Assert::AreEqual<unsigned int>(0, ver.GetMajor(), L"Major");
+            Assert::AreEqual<unsigned int>(0, ver.GetMinor(), L"Minor");
+            Assert::AreEqual<unsigned int>(0, ver.GetBuild(), L"Build");
+        }
+
+        TEST_METHOD(FromWStringFullFormat) {
+            Version ver = Version::FromString(L"1.2.3");
+            Assert::AreEqual<unsigned int>(1, ver.GetMajor(), L"Major");
+            Assert::AreEqual<unsigned int>(2, ver.GetMinor(), L"Minor");
+            Assert::AreEqual<unsigned int>(3, ver.GetBuild(), L"Build");
+        }
+
+        TEST_METHOD(FromWStringPartialFormat) {
+            Version ver = Version::FromString(L"1.2");
+            Assert::AreEqual<unsigned int>(1, ver.GetMajor(), L"Major");
+            Assert::AreEqual<unsigned int>(2, ver.GetMinor(), L"Minor");
+            Assert::AreEqual<unsigned int>(0, ver.GetBuild(), L"Build");
+        }
+
+        TEST_METHOD(FromWStringMisformedFormat1) {
+            Version ver = Version::FromString(L"1.2.3aa");
+            Assert::AreEqual<unsigned int>(1, ver.GetMajor(), L"Major");
+            Assert::AreEqual<unsigned int>(2, ver.GetMinor(), L"Minor");
+            Assert::AreEqual<unsigned int>(3, ver.GetBuild(), L"Build");
+        }
+
+        TEST_METHOD(FromWStringMisformedFormat2) {
+            Version ver = Version::FromString(L"1.2.aa");
+            Assert::AreEqual<unsigned int>(1, ver.GetMajor(), L"Major");
+            Assert::AreEqual<unsigned int>(2, ver.GetMinor(), L"Minor");
+            Assert::AreEqual<unsigned int>(0, ver.GetBuild(), L"Build");
+        }
     };
 }
