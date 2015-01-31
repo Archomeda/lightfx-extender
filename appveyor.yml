@@ -6,7 +6,7 @@ before_build:
   - ps: appveyor/UpdateBuildVersion.ps1
 
 test:
-  - vstest.console /logger:Appveyor bin/test/$(configuration)/UnitTests.dll
+  - vstest.console /logger:Appveyor bin/test/%CONFIGURATION%/UnitTests.dll
 
 artifacts:
   - path: bin/$(configuration)
