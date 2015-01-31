@@ -35,7 +35,9 @@ namespace lightfx {
         }
         friend inline bool operator!=(const Version& a, const Version& b) { return !operator==(a, b); }
         friend inline bool operator<(const Version& a, const Version& b) {
-            return a.majorVer < b.majorVer || a.minorVer < b.minorVer || a.buildVer < b.buildVer;
+            return a.majorVer < b.majorVer ||
+                (a.majorVer == b.majorVer && a.minorVer < b.minorVer) ||
+                (a.majorVer == b.majorVer && a.minorVer == b.minorVer && a.buildVer < b.buildVer);
         }
         friend inline bool operator>(const Version& a, const Version& b) { return operator<(b, a); }
         friend inline bool operator<=(const Version& a, const Version& b) { return !operator<(b, a); }
