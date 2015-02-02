@@ -100,7 +100,7 @@
   </ImportGroup>
   <Target Name="AfterBuild">
     <ItemGroup>
-      <ProjectOutFiles Include="$(SolutionDir)\bin\Release\**\*" />
+      <ProjectOutFiles Include="$(SolutionDir)bin\Release\**\*" />
     </ItemGroup>
     <Copy SourceFiles="@(ProjectOutFiles)" DestinationFolder="$(TargetDir)" />
   </Target>
