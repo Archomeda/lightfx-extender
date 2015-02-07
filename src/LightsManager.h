@@ -38,12 +38,18 @@ namespace lightfx {
         size_t SetColor(const LFX_COLOR& color);
         size_t SetColorForLocation(const LightLocationMask locationMask, const LFX_COLOR& color);
 
-        size_t MorphTo(const LFX_COLOR& color, unsigned int time);
-        size_t MorphToForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time);
+        size_t MorphTo(const LFX_COLOR& color, const unsigned int transitionTime);
+        size_t MorphToForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, const unsigned int transitionTime);
 
-        size_t Pulse(const LFX_COLOR& color, unsigned int time, unsigned int amount);
-        size_t PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time, unsigned int amount);
-
+        size_t Pulse(const LFX_COLOR& color, const unsigned int transitionTime, const unsigned int amount);
+        size_t Pulse(const LFX_COLOR& color, const unsigned int transitionTime, const unsigned int startColorTime, const unsigned int endColorTime, const unsigned int amount);
+        size_t Pulse(const LFX_COLOR& startColor, const LFX_COLOR& endColor, const unsigned int transitionTime, const unsigned int amount);
+        size_t Pulse(const LFX_COLOR& startColor, const LFX_COLOR& endColor, const unsigned int transitionTime, const unsigned int startColorTime, const unsigned int endColorTime, const unsigned int amount);
+        size_t PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, const unsigned int transitionTime, const unsigned int amount);
+        size_t PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, const unsigned int transitionTime, const unsigned int startColorTime, const unsigned int endColorTime, const unsigned int amount);
+        size_t PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& startColor, const LFX_COLOR& endColor, const unsigned int transitionTime, const unsigned int amount);
+        size_t PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& startColor, const LFX_COLOR& endColor, const unsigned int transitionTime, const unsigned int startColorTime, const unsigned int endColorTime, const unsigned int amount);
+        
         void CheckForUpdate();
     
     private:

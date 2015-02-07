@@ -70,23 +70,26 @@ namespace lightfx {
                 // Assume this is the start of the match (PvP) or map join (WvW).
                 // Therefore we can show the team color.
 
-                LFX_COLOR color = {};
-                color.brightness = 255;
+                LFX_COLOR teamColor = {};
+                teamColor.brightness = 255;
                 switch (teamColorId) {
                 case 9: // Blue
-                    color.blue = 255;
+                    teamColor.blue = 255;
                     Log(this->GetName() + L": Mumble Link - Detected PvP/WvW blue team");
                     break;
                 case 55: // Green
-                    color.green = 255;
+                    teamColor.green = 255;
                     Log(this->GetName() + L": Mumble Link - Detected PvP/WvW green team");
                     break;
                 case 376: // Red
-                    color.red = 255;
+                    teamColor.red = 255;
                     Log(this->GetName() + L": Mumble Link - Detected PvP/WvW red team");
                     break;
                 }
-                LightsManager::Instance().Pulse(color, 1000, 5);
+                LFX_COLOR startColor = {};
+                startColor.brightness = 0;
+
+                LightsManager::Instance().Pulse(startColor, teamColor, 200, 100, 400, 5);
                 LightsManager::Instance().Update();
                 this->lastTeamColorLightUpdate = currentTick;
             }

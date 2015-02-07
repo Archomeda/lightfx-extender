@@ -52,13 +52,22 @@ namespace lightfx {
             virtual bool SetColorForLight(const size_t index, const LFX_COLOR& color);
             virtual bool SetColorForLocation(const LightLocationMask locationMask, const LFX_COLOR& color);
 
-            virtual bool MorphTo(const LFX_COLOR& color, unsigned int time);
-            virtual bool MorphToForLight(const size_t index, const LFX_COLOR& color, unsigned int time);
-            virtual bool MorphToForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time);
+            virtual bool MorphTo(const LFX_COLOR& color, const unsigned int transitionTime);
+            virtual bool MorphToForLight(const size_t index, const LFX_COLOR& color, const unsigned int transitionTime);
+            virtual bool MorphToForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, const unsigned int transitionTime);
 
-            virtual bool Pulse(const LFX_COLOR& color, unsigned int time, unsigned int amount);
-            virtual bool PulseForLight(const size_t index, const LFX_COLOR& color, unsigned int time, unsigned int amount);
-            virtual bool PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time, unsigned int amount);
+            virtual bool Pulse(const LFX_COLOR& color, const unsigned int transitionTime, const unsigned int amount);
+            virtual bool Pulse(const LFX_COLOR& color, const unsigned int transitionTime, const unsigned int startColorTime, const unsigned int endColorTime, const unsigned int amount);
+            virtual bool Pulse(const LFX_COLOR& startColor, const LFX_COLOR& endColor, const unsigned int transitionTime, const unsigned int amount);
+            virtual bool Pulse(const LFX_COLOR& startColor, const LFX_COLOR& endColor, const unsigned int transitionTime, const unsigned int startColorTime, const unsigned int endColorTime, const unsigned int amount);
+            virtual bool PulseForLight(const size_t index, const LFX_COLOR& color, const unsigned int transitionTime, const unsigned int amount);
+            virtual bool PulseForLight(const size_t index, const LFX_COLOR& color, const unsigned int transitionTime, const unsigned int startColorTime, const unsigned int endColorTime, const  unsigned int amount);
+            virtual bool PulseForLight(const size_t index, const LFX_COLOR& startColor, const LFX_COLOR& endColor, const unsigned int transitionTime, const unsigned int amount);
+            virtual bool PulseForLight(const size_t index, const LFX_COLOR& startColor, const LFX_COLOR& endColor, const unsigned int transitionTime, const unsigned int startColorTime, const unsigned int endColorTime, const unsigned int amount);
+            virtual bool PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, const unsigned int transitionTime, const unsigned int amount);
+            virtual bool PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, const unsigned int transitionTime, const unsigned int startColorTime, const unsigned int endColorTime, const unsigned int amount);
+            virtual bool PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& startColor, const LFX_COLOR& endColor, const unsigned int transitionTime, const unsigned int amount);
+            virtual bool PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& startColor, const LFX_COLOR& endColor, const unsigned int transitionTime, const unsigned int startColorTime, const unsigned int endColorTime, const unsigned int amount);
 
         protected:
             virtual void AnimateCurrentColorLoop();
@@ -74,16 +83,25 @@ namespace lightfx {
             LightAction CurrentAction = LightAction::Instant;
             std::vector<LFX_COLOR> CurrentActionStartColor = {};
             std::vector<LFX_COLOR> CurrentActionEndColor = {};
-            unsigned int CurrentActionTime = 200;
+            unsigned int CurrentActionTransitionTime = 200;
+            unsigned int CurrentActionStartColorTime = 0;
+            unsigned int CurrentActionEndColorTime = 0;
             unsigned int CurrentActionAmount = 5;
 
             LightAction NextAction = LightAction::Instant;
             std::vector<LFX_COLOR> NextActionStartColor = {};
             std::vector<LFX_COLOR> NextActionEndColor = {};
-            unsigned int NextActionTime = 200;
+            unsigned int NextActionTransitionTime = 200;
+            unsigned int NextActionStartColorTime = 0;
+            unsigned int NextActionEndColorTime = 0;
             unsigned int NextActionAmount = 5;
 
+            std::vector<LFX_COLOR> PrevStaticColor = {};
+
         private:
+            bool DoAnimateMorph(const unsigned long timePassed);
+            bool DoAnimatePulse(const unsigned long timePassed);
+
             bool animationRunning = false;
             bool hasAnimated = false;
             unsigned long animationStartTime = 0;

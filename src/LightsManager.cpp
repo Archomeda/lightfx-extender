@@ -148,40 +148,100 @@ namespace lightfx {
         return done;
     }
 
-    size_t LightsManager::MorphTo(const LFX_COLOR& color, unsigned int time) {
+    size_t LightsManager::MorphTo(const LFX_COLOR& color, const unsigned int transitionTime) {
         size_t done = 0;
         for (auto device : this->devices) {
-            if (device->MorphTo(color, time)) {
+            if (device->MorphTo(color, transitionTime)) {
                 ++done;
             }
         }
         return done;
     }
 
-    size_t LightsManager::MorphToForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time) {
+    size_t LightsManager::MorphToForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, const unsigned int transitionTime) {
         size_t done = 0;
         for (auto device : this->devices) {
-            if (device->MorphToForLocation(locationMask, color, time)) {
+            if (device->MorphToForLocation(locationMask, color, transitionTime)) {
                 ++done;
             }
         }
         return done;
     }
 
-    size_t LightsManager::Pulse(const LFX_COLOR& color, unsigned int time, unsigned int amount) {
+    size_t LightsManager::Pulse(const LFX_COLOR& color, const unsigned int transitionTime, const unsigned int amount) {
         size_t done = 0;
         for (auto device : this->devices) {
-            if (device->Pulse(color, time, amount)) {
+            if (device->Pulse(color, transitionTime, amount)) {
                 ++done;
             }
         }
         return true;
     }
 
-    size_t LightsManager::PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, unsigned int time, unsigned int amount) {
+    size_t LightsManager::Pulse(const LFX_COLOR& color, const unsigned int transitionTime, const unsigned int startColorTime, const unsigned int endColorTime, const unsigned int amount) {
         size_t done = 0;
         for (auto device : this->devices) {
-            if (device->PulseForLocation(locationMask, color, time, amount)) {
+            if (device->Pulse(color, transitionTime, startColorTime, endColorTime, amount)) {
+                ++done;
+            }
+        }
+        return true;
+    }
+
+    size_t LightsManager::Pulse(const LFX_COLOR& startColor, const LFX_COLOR& endColor, const unsigned int transitionTime, const unsigned int amount) {
+        size_t done = 0;
+        for (auto device : this->devices) {
+            if (device->Pulse(startColor, endColor, transitionTime, amount)) {
+                ++done;
+            }
+        }
+        return true;
+    }
+
+    size_t LightsManager::Pulse(const LFX_COLOR& startColor, const LFX_COLOR& endColor, const unsigned int transitionTime, const unsigned int startColorTime, const unsigned int endColorTime, const unsigned int amount) {
+        size_t done = 0;
+        for (auto device : this->devices) {
+            if (device->Pulse(startColor, endColor, transitionTime, startColorTime, endColorTime, amount)) {
+                ++done;
+            }
+        }
+        return true;
+    }
+
+    size_t LightsManager::PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, const unsigned int transitionTime, const unsigned int amount) {
+        size_t done = 0;
+        for (auto device : this->devices) {
+            if (device->PulseForLocation(locationMask, color, transitionTime, amount)) {
+                ++done;
+            }
+        }
+        return true;
+    }
+
+    size_t LightsManager::PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& color, const unsigned int transitionTime, const unsigned int startColorTime, const unsigned int endColorTime, const unsigned int amount) {
+        size_t done = 0;
+        for (auto device : this->devices) {
+            if (device->PulseForLocation(locationMask, color, transitionTime, startColorTime, endColorTime, amount)) {
+                ++done;
+            }
+        }
+        return true;
+    }
+
+    size_t LightsManager::PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& startColor, const LFX_COLOR& endColor, const unsigned int transitionTime, const unsigned int amount) {
+        size_t done = 0;
+        for (auto device : this->devices) {
+            if (device->PulseForLocation(locationMask, startColor, endColor, transitionTime, amount)) {
+                ++done;
+            }
+        }
+        return true;
+    }
+
+    size_t LightsManager::PulseForLocation(const LightLocationMask locationMask, const LFX_COLOR& startColor, const LFX_COLOR& endColor, const unsigned int transitionTime, const unsigned int startColorTime, const unsigned int endColorTime, const unsigned int amount) {
+        size_t done = 0;
+        for (auto device : this->devices) {
+            if (device->PulseForLocation(locationMask, startColor, endColor, transitionTime, startColorTime, endColorTime, amount)) {
                 ++done;
             }
         }
