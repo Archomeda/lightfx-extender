@@ -9,6 +9,10 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_Tests|Win32">
+      <Configuration>Release_Tests</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A8CB3988-1ADA-4631-A7D3-11D7F68776A3}</ProjectGuid>
@@ -28,6 +32,13 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Tests|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -35,6 +46,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_Tests|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -46,12 +60,17 @@
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <TargetName>LightFX</TargetName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Tests|Win32'">
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <TargetName>LightFX</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -73,52 +92,66 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>$(SolutionDir)lib\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Tests|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;LFXE_TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>$(SolutionDir)lib\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Config.cpp" />
-    <ClCompile Include="Devices\DeviceBase.cpp" />
-    <ClCompile Include="Devices\DeviceLightpack.cpp" />
-    <ClCompile Include="Devices\DeviceLogitech.cpp" />
-    <ClCompile Include="Games\Guildwars2.cpp" />
-    <ClCompile Include="TrayIcon.cpp" />
-    <ClCompile Include="LightsManager.cpp" />
-    <ClCompile Include="UpdateManager.cpp" />
-    <ClCompile Include="Utils\FileIO.cpp" />
-    <ClCompile Include="AlienFXExports.cpp" />
-    <ClCompile Include="Utils\Log.cpp" />
-    <ClCompile Include="Utils\String.cpp" />
-    <ClCompile Include="Utils\Windows.cpp" />
-    <ClCompile Include="Version.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Config.h" />
-    <ClInclude Include="Devices\DeviceBase.h" />
-    <ClInclude Include="Devices\DeviceLightpack.h" />
-    <ClInclude Include="Devices\DeviceLogitech.h" />
-    <ClInclude Include="Games\GameBase.h" />
-    <ClInclude Include="Games\Guildwars2.h" />
-    <ClInclude Include="Games\MumbleLink.h" />
-    <ClInclude Include="LightLocationMask.h" />
-    <ClInclude Include="TrayIcon.h" />
-    <ClInclude Include="LightsManager.h" />
-    <ClInclude Include="UpdateManager.h" />
-    <ClInclude Include="Utils\FileIO.h" />
+    <ClInclude Include="Common\ApiExports.h" />
+    <ClInclude Include="Config\ConfigFile.h" />
+    <ClInclude Include="Devices\Device.h" />
+    <ClInclude Include="Games\Game.h" />
+    <ClInclude Include="LightFXExtender.h" />
+    <ClInclude Include="Managers\ConfigManager.h" />
+    <ClInclude Include="Managers\DeviceManager.h" />
+    <ClInclude Include="Managers\GameManager.h" />
+    <ClInclude Include="Devices\LightManager.h" />
+    <ClInclude Include="Managers\LogManager.h" />
+    <ClInclude Include="Managers\TrayManager.h" />
+    <ClInclude Include="Managers\UpdateManager.h" />
+    <ClInclude Include="Managers\Version.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Devices\DeviceLight.h" />
-    <ClInclude Include="Utils\Log.h" />
     <ClInclude Include="Common\Windows.h" />
     <ClInclude Include="Utils\String.h" />
     <ClInclude Include="VersionInfo.h" />
-    <ClInclude Include="Utils\Windows.h" />
-    <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LightFXExtender.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="tray.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Devices\Device.cpp" />
+    <ClCompile Include="Devices\LightManager.cpp" />
+    <ClCompile Include="Games\Game.cpp" />
+    <ClCompile Include="LightFXExtender.cpp" />
+    <ClCompile Include="Managers\ConfigManager.cpp" />
+    <ClCompile Include="Managers\DeviceManager.cpp" />
+    <ClCompile Include="Managers\GameManager.cpp" />
+    <ClCompile Include="Managers\LogManager.cpp" />
+    <ClCompile Include="Managers\TrayManager.cpp" />
+    <ClCompile Include="Managers\UpdateManager.cpp" />
+    <ClCompile Include="Managers\Version.cpp" />
+    <ClCompile Include="Utils\String.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
