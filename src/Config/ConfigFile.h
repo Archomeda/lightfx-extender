@@ -21,8 +21,13 @@ namespace lightfx {
 
             const std::wstring GetCurrentFileName();
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
         private:
             std::wstring configFilename;
+
+#pragma warning(pop)
 
         };
 

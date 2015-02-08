@@ -38,10 +38,15 @@ namespace lightfx {
             virtual std::wstring GetDeviceName() = 0;
             virtual unsigned char GetDeviceType() = 0;
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
         private:
             bool isEnabled = false;
             bool isInitialized = false;
             spLightManager lightManager;
+
+#pragma warning(pop)
 
         };
 

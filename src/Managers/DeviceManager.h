@@ -30,8 +30,13 @@ namespace lightfx {
             void AddDevice(const std::wstring& deviceKey, const spDevice& device);
             spDevice GetDevice(const std::wstring& deviceKey);
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
         private:
             mapDevices devices = {};
+
+#pragma warning(pop)
 
         };
 

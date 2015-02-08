@@ -31,8 +31,13 @@ namespace lightfx {
             void AddConfigFile(const std::wstring& configKey, const spConfigFile& configFile);
             spConfigFile GetConfigFile(const std::wstring& configKey);
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
         private:
             mapConfigFiles configFiles = {};
+
+#pragma warning(pop)
 
         };
 

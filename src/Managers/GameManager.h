@@ -30,8 +30,13 @@ namespace lightfx {
             void AddGame(const std::wstring& deviceKey, const spGame& device);
             spGame GetGame(const std::wstring& deviceKey);
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
         private:
             mapGames games = {};
+
+#pragma warning(pop)
 
         };
 
