@@ -61,5 +61,6 @@ public:
         vector<wstring> actual = split(str, delim);
         Assert::IsTrue(expected == actual);
     }
+
     };
 }

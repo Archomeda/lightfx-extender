@@ -11,7 +11,7 @@ using namespace lightfx::config;
 namespace lightfx {
     namespace managers {
 
-        LFXE_API ConfigManager::ConfigManager(const LightFXExtender* lightFXExtender) {
+        LFXE_API ConfigManager::ConfigManager() {
 
         }
 
@@ -20,7 +20,16 @@ namespace lightfx {
         }
 
 
-        LFXE_API void ConfigManager::AddConfigFile(const wstring& configKey, const spConfigFile& configFile) {
+        LFXE_API spLightFXExtender ConfigManager::GetLightFXExtender() {
+            return nullptr;
+        }
+
+        LFXE_API void ConfigManager::SetLightFXExtender(spLightFXExtender lightFXExtender) {
+            
+        }
+
+
+        LFXE_API void ConfigManager::AddConfigFile(const wstring& configKey, spConfigFile configFile) {
 
         }
 

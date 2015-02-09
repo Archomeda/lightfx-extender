@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClInclude Include="Common\ApiExports.h" />
     <ClInclude Include="Config\ConfigFile.h" />
+    <ClInclude Include="Config\MainConfigFile.h" />
     <ClInclude Include="Devices\Device.h" />
     <ClInclude Include="Games\Game.h" />
     <ClInclude Include="LightFXExtender.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="Managers\Version.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Common\Windows.h" />
+    <ClInclude Include="Utils\FileIO.h" />
     <ClInclude Include="Utils\String.h" />
     <ClInclude Include="VersionInfo.h" />
   </ItemGroup>
@@ -171,6 +173,8 @@
     <Image Include="tray.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Config\ConfigFile.cpp" />
+    <ClCompile Include="Config\MainConfigFile.cpp" />
     <ClCompile Include="Devices\Device.cpp" />
     <ClCompile Include="Devices\LightManager.cpp" />
     <ClCompile Include="Games\Game.cpp" />
@@ -182,6 +186,7 @@
     <ClCompile Include="Managers\TrayManager.cpp" />
     <ClCompile Include="Managers\UpdateManager.cpp" />
     <ClCompile Include="Managers\Version.cpp" />
+    <ClCompile Include="Utils\FileIO.cpp" />
     <ClCompile Include="Utils\String.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
