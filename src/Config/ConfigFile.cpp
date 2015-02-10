@@ -31,11 +31,11 @@ namespace lightfx {
         }
 
 
-        LFXE_API spConfigManager ConfigFile::GetConfigManager() {
+        LFXE_API shared_ptr<ConfigManager> ConfigFile::GetConfigManager() {
             return this->configManager;
         }
 
-        LFXE_API void ConfigFile::SetConfigManager(spConfigManager configManager) {
+        LFXE_API void ConfigFile::SetConfigManager(shared_ptr<ConfigManager> configManager) {
             this->configManager = configManager;
         }
 

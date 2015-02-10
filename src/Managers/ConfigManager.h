@@ -6,15 +6,13 @@
 #include <memory>
 
 // Project includes
+#include "Manager.h"
 #include "../LightFXExtender.h"
 #include "../Config/ConfigFile.h"
 
 // API exports
 #include "../Common/ApiExports.h"
 
-
-#pragma warning(push)
-#pragma warning(disable : 4251)
 
 namespace lightfx {
     namespace config {
@@ -25,32 +23,14 @@ namespace lightfx {
 
     namespace managers {
 
-        typedef std::shared_ptr<config::ConfigFile> spConfigFile;
-        typedef std::map<std::wstring, std::weak_ptr<config::ConfigFile>> mapConfigFiles;
-        typedef std::shared_ptr<LightFXExtender> spLightFXExtender;
+        template class LFXE_API Manager < config::ConfigFile, ConfigManager > ;
 
-        class LFXE_API ConfigManager : public std::enable_shared_from_this < ConfigManager > {
+        class LFXE_API ConfigManager : public Manager < config::ConfigFile, ConfigManager > {
 
         public:
-            ConfigManager();
-            ~ConfigManager();
-
-            spLightFXExtender GetLightFXExtender();
-            void SetLightFXExtender(spLightFXExtender lightFXExtender);
-
-            void AddConfigFile(const std::wstring& configKey, spConfigFile configFile);
-            spConfigFile GetConfigFile(const std::wstring& configKey);
-
-            const std::wstring GetConfigDirectory();
-
-        private:
-            spLightFXExtender lightFXExtender;
-            mapConfigFiles configFiles = {};
-
+            ConfigManager() {};
 
         };
 
     }
 }
-
-#pragma warning(pop)

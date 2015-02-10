@@ -20,15 +20,13 @@ namespace lightfx {
 
     namespace config {
 
-        typedef std::shared_ptr<managers::ConfigManager> spConfigManager;
-        
         class LFXE_API ConfigFile {
 
         public:
             ConfigFile();
 
-            spConfigManager GetConfigManager();
-            void SetConfigManager(spConfigManager configManager);
+            std::shared_ptr<managers::ConfigManager> GetConfigManager();
+            void SetConfigManager(std::shared_ptr<managers::ConfigManager> configManager);
 
             void Load(const std::wstring& fileName);
             void Save();
@@ -45,7 +43,7 @@ namespace lightfx {
             virtual void Deserialize(const std::wstring& data) = 0;
 
         private:
-            spConfigManager configManager;
+            std::shared_ptr<managers::ConfigManager> configManager;
             std::wstring configFileName;
             std::wstring configDirectory;
 

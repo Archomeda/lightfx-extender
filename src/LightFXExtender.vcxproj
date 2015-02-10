@@ -157,6 +157,7 @@
     <ClInclude Include="Managers\GameManager.h" />
     <ClInclude Include="Devices\LightManager.h" />
     <ClInclude Include="Managers\LogManager.h" />
+    <ClInclude Include="Managers\Manager.h" />
     <ClInclude Include="Managers\TrayManager.h" />
     <ClInclude Include="Managers\UpdateManager.h" />
     <ClInclude Include="Managers\Version.h" />

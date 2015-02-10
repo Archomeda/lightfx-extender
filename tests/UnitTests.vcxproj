@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Config\MainConfigFileTest.cpp" />
+    <ClCompile Include="Managers\ManagerTest.cpp" />
     <ClCompile Include="Managers\VersionTest.cpp" />
     <ClCompile Include="Utils\FileIOTest.cpp" />
     <ClCompile Include="Utils\StringTest.cpp" />

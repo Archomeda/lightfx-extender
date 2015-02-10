@@ -1,5 +1,8 @@
 #pragma once
 
+// Standard includes
+#include <memory>
+
 // Project includes
 #include "Managers/ConfigManager.h"
 #include "Managers/DeviceManager.h"
@@ -12,15 +15,25 @@
 #include "Common/ApiExports.h"
 
 
-namespace lightfx {
+#pragma warning(push)
+#pragma warning(disable : 4251)
 
-    class LFXE_API LightFXExtender {
+namespace lightfx {
+    namespace managers {
+        class ConfigManager;
+    }
+
+    class LFXE_API LightFXExtender : public std::enable_shared_from_this < LightFXExtender >  {
 
     public:
+        std::shared_ptr<managers::ConfigManager> GetConfigManager();
 
 
     private:
+        std::weak_ptr<managers::ConfigManager> configManager;
 
     };
 
 }
+
+#pragma warning(pop)

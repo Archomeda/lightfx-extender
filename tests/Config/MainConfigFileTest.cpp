@@ -23,7 +23,7 @@ namespace config {
 public:
 
     TEST_METHOD(SetConfigManager) {
-        spConfigManager configManager = make_shared<ConfigManager>();
+        auto configManager = make_shared<ConfigManager>();
         MainConfigFile configFile;
         configFile.SetConfigManager(configManager->shared_from_this());
         Assert::IsTrue(configManager == configFile.GetConfigManager());
