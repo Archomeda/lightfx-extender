@@ -3,14 +3,6 @@
 // Standard includes
 #include <memory>
 
-// Project includes
-#include "Managers/ConfigManager.h"
-#include "Managers/DeviceManager.h"
-#include "Managers/GameManager.h"
-#include "Managers/LogManager.h"
-#include "Managers/TrayManager.h"
-#include "Managers/UpdateManager.h"
-
 // API exports
 #include "Common/ApiExports.h"
 
@@ -21,16 +13,19 @@
 namespace lightfx {
     namespace managers {
         class ConfigManager;
+        class DeviceManager;
     }
 
     class LFXE_API LightFXExtender : public std::enable_shared_from_this < LightFXExtender >  {
 
     public:
         std::shared_ptr<managers::ConfigManager> GetConfigManager();
+        std::shared_ptr<managers::DeviceManager> GetDeviceManager();
 
 
     private:
         std::weak_ptr<managers::ConfigManager> configManager;
+        std::weak_ptr<managers::DeviceManager> deviceManager;
 
     };
 

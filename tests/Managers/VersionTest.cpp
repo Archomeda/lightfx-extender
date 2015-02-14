@@ -5,8 +5,10 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace lightfx::managers;
 
-namespace managers {
-    TEST_CLASS(VersionTest) {
+namespace lightfx_tests {
+    namespace managers {
+
+        TEST_CLASS(VersionTest) {
 public:
 
     TEST_METHOD(ContructorDefault) {
@@ -187,5 +189,6 @@ public:
         Assert::IsFalse(verA >= verH, L"verA >= verH");
     }
 
-    };
+        };
+    }
 }

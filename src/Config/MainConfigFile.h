@@ -2,7 +2,6 @@
 
 // Standard includes
 #include <string>
-#include <map>
 
 // 3rd party includes
 #include "rapidjson/document.h"

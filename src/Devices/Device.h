@@ -5,24 +5,24 @@
 #include <memory>
 
 // Project includes
-#include "LightManager.h"
+#include "../Managers/DeviceManager.h"
+#include "../Managers/ChildOfManager.h"
 
 // API exports
 #include "../Common/ApiExports.h"
 
 
-
 namespace lightfx {
+    namespace managers {
+        class DeviceManager;
+    }
+
     namespace devices {
 
-        class LightManager;
-        typedef std::shared_ptr<LightManager> spLightManager;
-
-        class LFXE_API Device {
+        class LFXE_API Device : public managers::ChildOfManager < managers::DeviceManager > {
 
         public:
             Device();
-            ~Device();
 
             bool IsEnabled();
             bool IsInitialized();
@@ -35,18 +35,13 @@ namespace lightfx {
             virtual bool Update();
             virtual bool Reset();
 
-            virtual std::wstring GetDeviceName() = 0;
-            virtual unsigned char GetDeviceType() = 0;
+            virtual const std::wstring GetDeviceName() = 0;
+            virtual const unsigned char GetDeviceType() = 0;
 
-#pragma warning(push)
-#pragma warning(disable : 4251)
 
         private:
             bool isEnabled = false;
             bool isInitialized = false;
-            spLightManager lightManager;
-
-#pragma warning(pop)
 
         };
 

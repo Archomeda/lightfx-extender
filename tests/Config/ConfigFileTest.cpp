@@ -1,5 +1,5 @@
 #include "CppUnitTest.h"
-#include "../../src/Config/MainConfigFile.h"
+#include "ConfigFileMock.h"
 
 // Standard includes
 #include <string>
@@ -18,20 +18,22 @@ using namespace lightfx;
 using namespace lightfx::config;
 using namespace lightfx::managers;
 
-namespace config {
-    TEST_CLASS(MainConfigFileTest) {
+namespace lightfx_tests {
+    namespace config {
+
+        TEST_CLASS(ConfigFileTest) {
 public:
 
     TEST_METHOD(SetConfigManager) {
         auto configManager = make_shared<ConfigManager>();
-        MainConfigFile configFile;
-        configFile.SetConfigManager(configManager->shared_from_this());
-        Assert::IsTrue(configManager == configFile.GetConfigManager());
+        ConfigFileMock configFile;
+        configFile.SetManager(configManager->shared_from_this());
+        Assert::IsTrue(configManager == configFile.GetManager());
     }
 
     TEST_METHOD(SetConfigDirectory) {
         wstring directoryName = L"SomeNiceDirectoryHere";
-        MainConfigFile configFile;
+        ConfigFileMock configFile;
         configFile.SetConfigDirectory(directoryName);
         Assert::AreEqual<wstring>(directoryName, configFile.GetConfigDirectory());
     }
@@ -39,7 +41,7 @@ public:
 
     TEST_METHOD(LoadFileNonExisting) {
         wstring filename = L"NonExistingFile.conf";
-        MainConfigFile configFile;
+        ConfigFileMock configFile;
         configFile.SetConfigDirectory(L"./");
         configFile.Load(filename);
         Assert::AreEqual<wstring>(filename, configFile.GetCurrentFileName());
@@ -53,7 +55,7 @@ public:
         stream.open(filename, wios::out | wios::app | wios::binary);
         stream << "{}";
 
-        MainConfigFile configFile;
+        ConfigFileMock configFile;
         configFile.SetConfigDirectory(L"./");
         configFile.Load(filename);
         Assert::AreEqual<wstring>(filename, configFile.GetCurrentFileName());
@@ -61,7 +63,7 @@ public:
 
     TEST_METHOD(SaveFileNonExisting) {
         wstring filename = L"NonExistingFile.conf";
-        MainConfigFile configFile;
+        ConfigFileMock configFile;
         configFile.SetConfigDirectory(L"./");
         configFile.Load(filename);
         DeleteFileW(filename.c_str());
@@ -81,7 +83,7 @@ public:
         stream << "{}";
         stream.close();
 
-        MainConfigFile configFile;
+        ConfigFileMock configFile;
         configFile.SetConfigDirectory(L"./");
         configFile.Load(filename);
         DeleteFileW(filename.c_str());
@@ -102,7 +104,7 @@ public:
         stream << "{}";
         stream.close();
 
-        MainConfigFile configFile;
+        ConfigFileMock configFile;
         configFile.SetConfigDirectory(L"./");
         configFile.Load(filename);
         DeleteFileW(filename.c_str());
@@ -113,6 +115,7 @@ public:
         Assert::AreEqual(TRUE, exists);
     }
 
-    };
+        };
 
+    }
 }

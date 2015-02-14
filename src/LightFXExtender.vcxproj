@@ -152,10 +152,10 @@
     <ClInclude Include="Devices\Device.h" />
     <ClInclude Include="Games\Game.h" />
     <ClInclude Include="LightFXExtender.h" />
+    <ClInclude Include="Managers\ChildOfManager.h" />
     <ClInclude Include="Managers\ConfigManager.h" />
     <ClInclude Include="Managers\DeviceManager.h" />
     <ClInclude Include="Managers\GameManager.h" />
-    <ClInclude Include="Devices\LightManager.h" />
     <ClInclude Include="Managers\LogManager.h" />
     <ClInclude Include="Managers\Manager.h" />
     <ClInclude Include="Managers\TrayManager.h" />
@@ -177,7 +177,6 @@
     <ClCompile Include="Config\ConfigFile.cpp" />
     <ClCompile Include="Config\MainConfigFile.cpp" />
     <ClCompile Include="Devices\Device.cpp" />
-    <ClCompile Include="Devices\LightManager.cpp" />
     <ClCompile Include="Games\Game.cpp" />
     <ClCompile Include="LightFXExtender.cpp" />
     <ClCompile Include="Managers\ConfigManager.cpp" />

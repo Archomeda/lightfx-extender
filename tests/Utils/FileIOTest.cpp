@@ -9,8 +9,10 @@ using namespace std;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace lightfx::utils;
 
-namespace utils {
-    TEST_CLASS(FileIOTest) {
+namespace lightfx_tests {
+    namespace utils {
+
+        TEST_CLASS(FileIOTest) {
 public:
 
     TEST_METHOD(DirectoryDoesNotExist) {
@@ -31,5 +33,6 @@ public:
         Assert::IsFalse(GetDataStorageFolder() == L"");
     }
 
-    };
+        };
+    }
 }

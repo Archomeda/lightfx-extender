@@ -32,13 +32,13 @@ namespace lightfx {
         }
 
 
-        LFXE_API void TrayManager::AttachDevice(const spDevice& device) {
+        //LFXE_API void TrayManager::AttachDevice(const spDevice& device) {
 
-        }
+        //}
 
-        LFXE_API void TrayManager::RemoveDevice(const spDevice& device) {
+        //LFXE_API void TrayManager::RemoveDevice(const spDevice& device) {
 
-        }
+        //}
 
 
         LFXE_API bool TrayManager::HasUpdateNotification() {

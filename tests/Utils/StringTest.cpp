@@ -6,8 +6,10 @@ using namespace std;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace lightfx::utils;
 
-namespace utils {
-    TEST_CLASS(StringTest) {
+namespace lightfx_tests {
+    namespace utils {
+
+        TEST_CLASS(StringTest) {
 public:
 
     TEST_METHOD(WstringToString) {
@@ -62,5 +64,6 @@ public:
         Assert::IsTrue(expected == actual);
     }
 
-    };
+        };
+    }
 }

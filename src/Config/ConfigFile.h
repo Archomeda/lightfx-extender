@@ -2,9 +2,11 @@
 
 // Standard includes
 #include <string>
+#include <memory>
 
 // Project includes
 #include "../Managers/ConfigManager.h"
+#include "../Managers/ChildOfManager.h"
 
 // API exports
 #include "../Common/ApiExports.h"
@@ -20,13 +22,10 @@ namespace lightfx {
 
     namespace config {
 
-        class LFXE_API ConfigFile {
+        class LFXE_API ConfigFile : public managers::ChildOfManager < managers::ConfigManager > {
 
         public:
             ConfigFile();
-
-            std::shared_ptr<managers::ConfigManager> GetConfigManager();
-            void SetConfigManager(std::shared_ptr<managers::ConfigManager> configManager);
 
             void Load(const std::wstring& fileName);
             void Save();
@@ -37,17 +36,17 @@ namespace lightfx {
             virtual void SetConfigDirectory(const std::wstring& directory);
 
         protected:
-
             virtual void LoadDefaults() = 0;
             virtual std::wstring Serialize() = 0;
             virtual void Deserialize(const std::wstring& data) = 0;
 
         private:
-            std::shared_ptr<managers::ConfigManager> configManager;
             std::wstring configFileName;
             std::wstring configDirectory;
 
         };
+
+        template class LFXE_API managers::ChildOfManager < managers::ConfigManager >;
 
     }
 }

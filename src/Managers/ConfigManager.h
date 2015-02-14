@@ -1,13 +1,7 @@
 #pragma once
 
-// Standard includes
-#include <string>
-#include <map>
-#include <memory>
-
 // Project includes
 #include "Manager.h"
-#include "../LightFXExtender.h"
 #include "../Config/ConfigFile.h"
 
 // API exports
@@ -19,11 +13,7 @@ namespace lightfx {
         class ConfigFile;
     }
 
-    class LightFXExtender;
-
     namespace managers {
-
-        template class LFXE_API Manager < config::ConfigFile, ConfigManager > ;
 
         class LFXE_API ConfigManager : public Manager < config::ConfigFile, ConfigManager > {
 
@@ -31,6 +21,8 @@ namespace lightfx {
             ConfigManager() {};
 
         };
+
+        template class LFXE_API Manager < config::ConfigFile, ConfigManager > ;
 
     }
 }

@@ -93,11 +93,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Config\MainConfigFileTest.cpp" />
+    <ClCompile Include="Config\ConfigFileTest.cpp" />
     <ClCompile Include="Managers\ManagerTest.cpp" />
     <ClCompile Include="Managers\VersionTest.cpp" />
     <ClCompile Include="Utils\FileIOTest.cpp" />
     <ClCompile Include="Utils\StringTest.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Config\ConfigFileMock.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

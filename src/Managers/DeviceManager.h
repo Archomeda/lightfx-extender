@@ -1,12 +1,7 @@
 #pragma once
 
-// Standard includes
-#include <string>
-#include <map>
-#include <memory>
-
 // Project includes
-#include "../LightFXExtender.h"
+#include "Manager.h"
 #include "../Devices/Device.h"
 
 // API exports
@@ -14,31 +9,20 @@
 
 
 namespace lightfx {
-    class LightFXExtender;
+    namespace devices {
+        class Device;
+    }
 
     namespace managers {
 
-        typedef std::shared_ptr<devices::Device> spDevice;
-        typedef std::map<std::wstring, spDevice> mapDevices;
-
-        class LFXE_API DeviceManager {
+        class LFXE_API DeviceManager : public Manager < devices::Device, DeviceManager > {
 
         public:
-            DeviceManager(const LightFXExtender* lightFXExtender);
-            ~DeviceManager();
-
-            void AddDevice(const std::wstring& deviceKey, const spDevice& device);
-            spDevice GetDevice(const std::wstring& deviceKey);
-
-#pragma warning(push)
-#pragma warning(disable : 4251)
-
-        private:
-            mapDevices devices = {};
-
-#pragma warning(pop)
+            DeviceManager() {};
 
         };
+
+        template class LFXE_API Manager < devices::Device, DeviceManager > ;
 
     }
 }

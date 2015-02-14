@@ -31,15 +31,6 @@ namespace lightfx {
         }
 
 
-        LFXE_API shared_ptr<ConfigManager> ConfigFile::GetConfigManager() {
-            return this->configManager;
-        }
-
-        LFXE_API void ConfigFile::SetConfigManager(shared_ptr<ConfigManager> configManager) {
-            this->configManager = configManager;
-        }
-
-
         LFXE_API void ConfigFile::Load(const wstring& fileName) {
             this->configFileName = fileName;
 
