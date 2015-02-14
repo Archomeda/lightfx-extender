@@ -20,7 +20,6 @@
 
 
 using namespace std;
-using namespace lightfx::managers;
 using namespace lightfx::utils;
 
 namespace lightfx {

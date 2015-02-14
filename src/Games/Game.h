@@ -3,18 +3,25 @@
 // Standard includes
 #include <string>
 
+// Project includes
+#include "../Managers/GameManager.h"
+#include "../Managers/ChildOfManager.h"
+
 // API exports
 #include "../Common/ApiExports.h"
 
 
 namespace lightfx {
+    namespace managers {
+        class GameManager;
+    }
+
     namespace games {
 
-        class LFXE_API Game {
+        class LFXE_API Game : public managers::ChildOfManager < managers::GameManager > {
 
         public:
             Game();
-            ~Game();
 
             bool IsEnabled();
             bool IsInitialized();

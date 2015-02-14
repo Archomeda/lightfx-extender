@@ -14,10 +14,6 @@ namespace lightfx {
 
         }
 
-        LFXE_API Game::~Game() {
-
-        }
-
 
         LFXE_API bool Game::IsEnabled() {
             return nullptr;

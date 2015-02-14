@@ -6,7 +6,6 @@
 
 
 using namespace std;
-using namespace lightfx::managers;
 
 namespace lightfx {
     namespace devices {

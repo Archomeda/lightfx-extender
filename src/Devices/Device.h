@@ -2,7 +2,6 @@
 
 // Standard includes
 #include <string>
-#include <memory>
 
 // Project includes
 #include "../Managers/DeviceManager.h"
