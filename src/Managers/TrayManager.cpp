@@ -12,6 +12,7 @@
 
 // Project includes
 #include "../Utils/Windows.h"
+#include "../Utils/FileIO.h"
 #include "../resource.h"
 
 
@@ -165,9 +166,7 @@ namespace lightfx {
                 DestroyMenu(hMenu);
 
                 if (result == confDirIndex) {
-                    // TODO: Implement LightFXExtender->ConfigManager in order to get the directory
-                    wstring directory;
-                    ShellExecuteW(NULL, L"explore", directory.c_str(), NULL, NULL, SW_SHOWNORMAL);
+                    ShellExecuteW(NULL, L"explore", GetDataStorageFolder().c_str(), NULL, NULL, SW_SHOWNORMAL);
                 } else if (updateUrlIndex > 0 && result == updateUrlIndex) {
                     ShellExecuteW(NULL, L"open", this->updateVersionUrl.c_str(), NULL, NULL, SW_SHOWDEFAULT);
                 } else if (result > 0 && result <= this->devices.size()) {
