@@ -69,7 +69,7 @@ public:
         DeleteFileW(filename.c_str());
         configFile.Save();
 
-        BOOL exists = SUCCEEDED(PathFileExistsW(filename.c_str()));
+        BOOL exists = PathFileExistsW(filename.c_str());
         DeleteFileW(filename.c_str());
         Assert::AreEqual(TRUE, exists);
     }
