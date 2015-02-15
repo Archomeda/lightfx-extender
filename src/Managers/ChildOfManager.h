@@ -7,9 +7,6 @@
 #include "../Common/ApiExports.h"
 
 
-#pragma warning(push)
-#pragma warning(disable : 4251)
-
 namespace lightfx {
 
     class LightFXExtender;
@@ -17,7 +14,7 @@ namespace lightfx {
     namespace managers {
 
         template<typename T>
-        class LFXE_API ChildOfManager {
+        class ChildOfManager {
 
         public:
             ChildOfManager() {}
@@ -38,5 +35,3 @@ namespace lightfx {
 
     }
 }
-
-#pragma warning(pop)

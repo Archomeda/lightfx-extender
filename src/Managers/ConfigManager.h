@@ -1,12 +1,15 @@
 #pragma once
 
 // Project includes
-#include "Manager.h"
+#include "ManagerWithChildren.h"
 #include "../Config/ConfigFile.h"
 
 // API exports
 #include "../Common/ApiExports.h"
 
+
+#pragma warning(push)
+#pragma warning(disable : 4251)
 
 namespace lightfx {
     namespace config {
@@ -15,14 +18,14 @@ namespace lightfx {
 
     namespace managers {
 
-        class LFXE_API ConfigManager : public Manager < config::ConfigFile, ConfigManager > {
+        class LFXE_API ConfigManager : public ManagerWithChildren < config::ConfigFile, ConfigManager > {
 
         public:
             ConfigManager() {};
 
         };
 
-        template class LFXE_API Manager < config::ConfigFile, ConfigManager > ;
-
     }
 }
+
+#pragma warning(pop)

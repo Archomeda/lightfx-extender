@@ -94,13 +94,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Config\ConfigFileTest.cpp" />
+    <ClCompile Include="Managers\ChildOfManagerTest.cpp" />
     <ClCompile Include="Managers\ManagerTest.cpp" />
+    <ClCompile Include="Managers\ManagerWithChildrenTest.cpp" />
     <ClCompile Include="Managers\VersionTest.cpp" />
     <ClCompile Include="Utils\FileIOTest.cpp" />
     <ClCompile Include="Utils\StringTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\ConfigFileMock.h" />
+    <ClInclude Include="Managers\ChildOfManagerMock.h" />
+    <ClInclude Include="Managers\ManagerMock.h" />
+    <ClInclude Include="Managers\ManagerWithChildrenMock.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

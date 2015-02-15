@@ -1,12 +1,15 @@
 #pragma once
 
 // Project includes
-#include "Manager.h"
+#include "ManagerWithChildren.h"
 #include "../Games/Game.h"
 
 // API exports
 #include "../Common/ApiExports.h"
 
+
+#pragma warning(push)
+#pragma warning(disable : 4251)
 
 namespace lightfx {
     namespace games {
@@ -15,14 +18,14 @@ namespace lightfx {
 
     namespace managers {
 
-        class LFXE_API GameManager : public Manager < games::Game, GameManager > {
+        class LFXE_API GameManager : public ManagerWithChildren < games::Game, GameManager > {
 
         public:
             GameManager() {}
 
         };
 
-        template class LFXE_API Manager < games::Game, GameManager >;
-
     }
 }
+
+#pragma warning(pop)

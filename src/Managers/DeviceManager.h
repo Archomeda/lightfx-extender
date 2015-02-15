@@ -1,12 +1,15 @@
 #pragma once
 
 // Project includes
-#include "Manager.h"
+#include "ManagerWithChildren.h"
 #include "../Devices/Device.h"
 
 // API exports
 #include "../Common/ApiExports.h"
 
+
+#pragma warning(push)
+#pragma warning(disable : 4251)
 
 namespace lightfx {
     namespace devices {
@@ -15,14 +18,14 @@ namespace lightfx {
 
     namespace managers {
 
-        class LFXE_API DeviceManager : public Manager < devices::Device, DeviceManager > {
+        class LFXE_API DeviceManager : public ManagerWithChildren < devices::Device, DeviceManager > {
 
         public:
             DeviceManager() {};
 
         };
 
-        template class LFXE_API Manager < devices::Device, DeviceManager > ;
-
     }
 }
+
+#pragma warning(pop)

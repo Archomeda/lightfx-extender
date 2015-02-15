@@ -75,6 +75,9 @@
     <ClInclude Include="Managers\ChildOfManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Managers\ManagerWithChildren.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LightFXExtender.rc">
