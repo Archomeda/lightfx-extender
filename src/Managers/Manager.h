@@ -23,7 +23,7 @@ namespace lightfx {
             virtual ~Manager() {}
 
             std::shared_ptr<LightFXExtender> GetLightFXExtender() {
-                return this->lightFXExtender;
+                return this->lightFXExtender.lock();
             }
 
             void SetLightFXExtender(std::shared_ptr<LightFXExtender> lightFXExtender) {
@@ -32,7 +32,7 @@ namespace lightfx {
 
 
         private:
-            std::shared_ptr<LightFXExtender> lightFXExtender;
+            std::weak_ptr<LightFXExtender> lightFXExtender;
 
         };
 

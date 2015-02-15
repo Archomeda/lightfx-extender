@@ -35,11 +35,11 @@ namespace lightfx {
             }
 
             std::shared_ptr<CT> GetChild(const std::wstring& childKey) {
-                return this->children[childKey].lock();
+                return this->children[childKey];
             }
 
         private:
-            std::map<std::wstring, std::weak_ptr<CT>> children = {};
+            std::map<std::wstring, std::shared_ptr<CT>> children = {};
 
         };
 
