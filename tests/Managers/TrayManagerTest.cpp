@@ -1,6 +1,6 @@
-#include "CppUnitTest.h"
 #include "../../src/Managers/TrayManager.h"
 #include "../Devices/DeviceMock.h"
+#include "CppUnitTest.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

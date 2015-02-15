@@ -4,30 +4,38 @@
 #include <string>
 
 // Project includes
-#include "../LightFXExtender.h"
+#include "Manager.h"
 #include "Version.h"
 
 // API exports
 #include "../Common/ApiExports.h"
 
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 namespace lightfx {
     class LightFXExtender;
 
     namespace managers {
 
-        class LFXE_API UpdateManager {
+        class LFXE_API UpdateManager : public Manager < UpdateManager > {
 
         public:
-            UpdateManager(const LightFXExtender* lightFXExtender);
-            ~UpdateManager();
+            UpdateManager() {}
 
             Version GetCurrentVersion();
             Version GetLiveVersion();
 
             std::wstring GetDownloadPageUrl();
 
+        protected:
+            const std::wstring GitHub_ApiTagsUrl = L"https://api.github.com/repos/Archomeda/lightfx-extender/tags";
+            const std::wstring GitHub_ReleasesUrl = L"https://github.com/Archomeda/lightfx-extender/releases";
+
         };
 
     }
 }
+
+#pragma warning(pop)
