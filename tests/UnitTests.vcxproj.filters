@@ -36,6 +36,9 @@
     <ClCompile Include="Managers\ChildOfManagerTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Managers\LogManagerTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\ConfigFileMock.h">
