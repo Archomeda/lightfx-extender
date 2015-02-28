@@ -1,0 +1,51 @@
+#include "CppUnitTest.h"
+
+// Project includes
+#include "DeviceMock.h"
+
+
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+using namespace std;
+using namespace lightfx;
+using namespace lightfx::devices;
+
+namespace lightfx_tests {
+    namespace devices {
+
+        TEST_CLASS(DeviceTest) {
+public:
+
+    TEST_METHOD(Enable) {
+        auto device = make_shared<DeviceMock>();
+        Assert::IsFalse(device->IsEnabled());
+        device->Enable();
+        Assert::IsTrue(device->IsEnabled());
+    }
+
+    TEST_METHOD(Disable) {
+        auto device = make_shared<DeviceMock>();
+        device->Enable();
+        Assert::IsTrue(device->IsEnabled());
+        device->Disable();
+        Assert::IsFalse(device->IsEnabled());
+    }
+
+    TEST_METHOD(Initialize) {
+        auto device = make_shared<DeviceMock>();
+        Assert::IsFalse(device->IsInitialized());
+        device->Initialize();
+        Assert::IsTrue(device->IsInitialized());
+    }
+
+    TEST_METHOD(Release) {
+        auto device = make_shared<DeviceMock>();
+        device->Initialize();
+        Assert::IsTrue(device->IsInitialized());
+        device->Release();
+        Assert::IsFalse(device->IsInitialized());
+    }
+
+        };
+
+    }
+}

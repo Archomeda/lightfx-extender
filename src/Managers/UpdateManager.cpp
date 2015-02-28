@@ -20,7 +20,7 @@
 #include "TrayManager.h"
 
 
-#define LOG(logLevel, line) this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"UpdateManager - ") + line)
+#define LOG(logLevel, line) if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"UpdateManager - ") + line); }
 
 using namespace std;
 using namespace rapidjson;

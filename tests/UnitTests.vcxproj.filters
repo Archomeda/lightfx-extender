@@ -45,6 +45,9 @@
     <ClCompile Include="Devices\DeviceMock.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Devices\DeviceTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\ConfigFileMock.h">
