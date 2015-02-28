@@ -23,6 +23,9 @@ namespace lightfx {
         public:
             GameManager() {}
 
+            size_t InitializeGames();
+            size_t UninitializeGames();
+
         };
 
     }

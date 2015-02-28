@@ -30,7 +30,6 @@ namespace lightfx {
                 this->lightFXExtender = lightFXExtender;
             }
 
-
         private:
             std::weak_ptr<LightFXExtender> lightFXExtender;
 

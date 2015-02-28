@@ -2,6 +2,7 @@
 
 // Standard includes
 #include <string>
+#include <thread>
 
 // Project includes
 #include "Manager.h"
@@ -23,6 +24,9 @@ namespace lightfx {
 
         public:
             UpdateManager() {}
+            ~UpdateManager();
+
+            void CheckAsync();
 
             Version GetCurrentVersion();
             Version GetLiveVersion();
@@ -32,6 +36,10 @@ namespace lightfx {
         protected:
             const std::wstring GitHub_ApiTagsUrl = L"https://api.github.com/repos/Archomeda/lightfx-extender/tags";
             const std::wstring GitHub_ReleasesUrl = L"https://github.com/Archomeda/lightfx-extender/releases";
+
+        private:
+            void CheckForUpdate();
+            std::thread updateCheckerThread;
 
         };
 

@@ -1,5 +1,9 @@
 #pragma once
 
+// READ FIRST
+// If you want to use ConfigManager::GetMainConfig, include MainConfigFile.h in your header
+
+
 // Project includes
 #include "ManagerWithChildren.h"
 #include "../Config/ConfigFile.h"
@@ -14,6 +18,7 @@
 namespace lightfx {
     namespace config {
         class ConfigFile;
+        class MainConfigFile;
     }
 
     namespace managers {
@@ -22,6 +27,10 @@ namespace lightfx {
 
         public:
             ConfigManager() {};
+
+            bool InitializeConfigs();
+
+            std::shared_ptr<config::MainConfigFile> GetMainConfig();
 
         };
 

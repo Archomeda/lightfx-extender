@@ -23,6 +23,9 @@ namespace lightfx {
         public:
             DeviceManager() {};
 
+            size_t InitializeDevices();
+            size_t UninitializeDevices();
+
         };
 
     }
