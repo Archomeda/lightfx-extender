@@ -38,6 +38,9 @@ namespace lightfx {
     public:
         LightAction() {}
 
+        LightAction(const size_t numLights)
+            : actionType(LightActionType::Instant), currentColor(numLights), startColor(numLights), endColor(numLights) {}
+
         LightAction(const size_t numLights, const LightColor& color)
             : actionType(LightActionType::Instant), currentColor(numLights), startColor(numLights, color), endColor(numLights) {}
 

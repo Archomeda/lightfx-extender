@@ -90,6 +90,12 @@
     <ClInclude Include="Devices\DeviceLightpack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Games\MumbleLink.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Games\GameGw2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LightFXExtender.rc">
@@ -154,6 +160,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Devices\DeviceLightpack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Games\GameGw2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

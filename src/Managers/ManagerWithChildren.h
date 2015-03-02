@@ -1,9 +1,10 @@
 #pragma once
 
 // Standard includes
-#include <string>
 #include <map>
 #include <memory>
+#include <string>
+#include <vector>
 
 // Project includes
 #include "Manager.h"
@@ -31,6 +32,7 @@ namespace lightfx {
 
             void AddChild(const std::wstring& childKey, std::shared_ptr<CT> child) {
                 this->children[childKey] = child;
+                this->childrenIndices.push_back(childKey);
                 child->SetManager(shared_from_this());
             }
 
@@ -38,8 +40,17 @@ namespace lightfx {
                 return this->children[childKey];
             }
 
+            std::shared_ptr<CT> GetChildByIndex(const size_t childIndex) {
+                return this->children[this->childrenIndices[childIndex]];
+            }
+
+            size_t GetChildrenCount() {
+                return this->childrenIndices.size();
+            }
+
         private:
             std::map<std::wstring, std::shared_ptr<CT>> children = {};
+            std::vector<std::wstring> childrenIndices = {};
 
         };
 

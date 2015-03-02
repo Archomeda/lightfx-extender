@@ -152,6 +152,8 @@
     <ClInclude Include="Devices\Device.h" />
     <ClInclude Include="Devices\DeviceLightpack.h" />
     <ClInclude Include="Devices\DeviceLogitech.h" />
+    <ClInclude Include="Games\GameGw2.h" />
+    <ClInclude Include="Games\MumbleLink.h" />
     <ClInclude Include="LightAction.h" />
     <ClInclude Include="Games\Game.h" />
     <ClInclude Include="LightFXExtender.h" />
@@ -184,6 +186,7 @@
     <ClCompile Include="Devices\Device.cpp" />
     <ClCompile Include="Devices\DeviceLightpack.cpp" />
     <ClCompile Include="Devices\DeviceLogitech.cpp" />
+    <ClCompile Include="Games\GameGw2.cpp" />
     <ClCompile Include="LightAction.cpp" />
     <ClCompile Include="Games\Game.cpp" />
     <ClCompile Include="LightFXExtender.cpp" />

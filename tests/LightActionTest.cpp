@@ -20,6 +20,11 @@ public:
     }
 
     TEST_METHOD(Constuctor2) {
+        LightAction lightAction(1);
+        Assert::AreEqual(size_t(1), lightAction.GetCurrentColor().size());
+    }
+
+    TEST_METHOD(Constuctor3) {
         LightActionType type = LightActionType::Morph;
         LightColor color(1, 2, 3, 4);
         unsigned int time = 2000;
@@ -29,7 +34,7 @@ public:
         Assert::AreEqual(time, lightAction.GetActionTime(), L"Time");
     }
 
-    TEST_METHOD(Constuctor3) {
+    TEST_METHOD(Constuctor4) {
         LightActionType type = LightActionType::Morph;
         LightColor color(1, 2, 3, 4);
         unsigned int time = 2000;
@@ -41,7 +46,7 @@ public:
         Assert::AreEqual(repeat, lightAction.GetActionRepeatAmount(), L"RepeatAmount");
     }
 
-    TEST_METHOD(Constuctor4) {
+    TEST_METHOD(Constuctor5) {
         LightActionType type = LightActionType::Morph;
         LightColor startColor(1, 2, 3, 4);
         LightColor endColor(5, 6, 7, 8);
