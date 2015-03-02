@@ -1,8 +1,14 @@
 #pragma once
 
+// Standard includes
+#include <vector>
+
 // API exports
 #include "Common/ApiExports.h"
 
+
+#pragma warning(push)
+#pragma warning(disable : 4251)
 
 namespace lightfx {
 
@@ -31,47 +37,58 @@ namespace lightfx {
 
     public:
         LightAction() {}
-        LightAction(const LightColor& color)
-            : actionType(LightActionType::Instant), startColor(color) {}
-        LightAction(const LightActionType& actionType, const LightColor& color, unsigned int actionTime)
-            : actionType(actionType), startColor(color), actionTime(actionTime) {}
-        LightAction(const LightActionType& actionType, const LightColor& color, unsigned int actionTime, unsigned int actionRepeatAmount)
-            : actionType(actionType), startColor(color), actionTime(actionTime), actionRepeatAmount(actionRepeatAmount) {}
-        LightAction(const LightActionType& actionType, const LightColor& startColor, const LightColor& endColor, unsigned int actionTime, unsigned int startColorHoldTime, unsigned int endColorHoldTime, unsigned int actionRepeatAmount)
-            : actionType(actionType), startColor(startColor), endColor(endColor), actionTime(actionTime), startColorHoldTime(startColorHoldTime), endColorHoldTime(endColorHoldTime), actionRepeatAmount(actionRepeatAmount) {}
 
-        LightColor GetStartColor();
-        LightColor GetEndColor();
+        LightAction(const size_t numLights, const LightColor& color)
+            : actionType(LightActionType::Instant), currentColor(numLights), startColor(numLights, color), endColor(numLights) {}
+
+        LightAction(const LightActionType& actionType, const size_t numLights, const LightColor& color, unsigned int actionTime)
+            : actionType(actionType), currentColor(numLights), startColor(numLights, color), endColor(numLights), actionTime(actionTime) {}
+
+        LightAction(const LightActionType& actionType, const size_t numLights, const LightColor& color, unsigned int actionTime, unsigned int actionRepeatAmount)
+            : actionType(actionType), currentColor(numLights), startColor(numLights, color), endColor(numLights), actionTime(actionTime), actionRepeatAmount(actionRepeatAmount) {}
+
+        LightAction(const LightActionType& actionType, const size_t numLights, const LightColor& startColor, const LightColor& endColor, unsigned int actionTime, unsigned int startColorHoldTime, unsigned int endColorHoldTime, unsigned int actionRepeatAmount)
+            : actionType(actionType), currentColor(numLights), startColor(numLights, startColor), endColor(numLights, endColor), actionTime(actionTime), startColorHoldTime(startColorHoldTime), endColorHoldTime(endColorHoldTime), actionRepeatAmount(actionRepeatAmount) {}
+
+        LightColor GetStartColor(size_t lightIndex);
+        std::vector<LightColor> GetStartColor();
+        LightColor GetEndColor(size_t lightIndex);
+        std::vector<LightColor> GetEndColor();
         LightActionType GetActionType();
         unsigned int GetActionTime();
         unsigned int GetStartColorHoldTime();
         unsigned int GetEndColorHoldTime();
         unsigned int GetActionRepeatAmount();
-
+        
         void SetStartColor(const LightColor& startColor);
+        void SetStartColor(const size_t lightIndex, const LightColor& startColor);
+        void SetStartColor(const std::vector<LightColor>& startColor);
         void SetEndColor(const LightColor& endColor);
+        void SetEndColor(const size_t lightIndex, const LightColor& endColor);
+        void SetEndColor(const std::vector<LightColor>& endColor);
         void SetActionType(const LightActionType& actionType);
         void SetActionTime(const unsigned int actionTime);
         void SetStartColorHoldTime(const unsigned int startColorHoldTime);
         void SetEndColorHoldTime(const unsigned int endColorHoldTime);
         void SetActionRepeatAmount(const unsigned int actionRepeatAmount);
 
-        LightColor GetCurrentColor();
+        LightColor GetCurrentColor(size_t lightIndex);
+        std::vector<LightColor> GetCurrentColor();
         bool CanUpdateCurrentColor();
         bool UpdateCurrentColor();
 
     private:
-        LightColor currentColor;
+        std::vector<LightColor> currentColor;
         unsigned long animatedColorStartTime = 0;
         bool canUpdateCurrentColor = true;
         bool UpdateCurrentColorMorph(const unsigned long timePassed);
         bool UpdateCurrentColorPulse(const unsigned long timePassed);
 
-        LightColor startColor;
-        LightColor endColor;
+        std::vector<LightColor> startColor;
+        std::vector<LightColor> endColor;
         LightActionType actionType;
 
-        LightColor prevColor;
+        std::vector<LightColor> prevColor;
 
         unsigned int actionTime = 200;
         unsigned int startColorHoldTime = 0;
@@ -83,3 +100,5 @@ namespace lightfx {
 
 
 }
+
+#pragma warning(pop)

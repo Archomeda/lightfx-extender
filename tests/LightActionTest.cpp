@@ -15,17 +15,17 @@ public:
 
     TEST_METHOD(Constuctor1) {
         LightColor color(1, 2, 3, 4);
-        LightAction lightAction(color);
-        Assert::IsTrue(color == lightAction.GetStartColor());
+        LightAction lightAction(1, color);
+        Assert::IsTrue(color == lightAction.GetStartColor(0));
     }
 
     TEST_METHOD(Constuctor2) {
         LightActionType type = LightActionType::Morph;
         LightColor color(1, 2, 3, 4);
         unsigned int time = 2000;
-        LightAction lightAction(type, color, time);
+        LightAction lightAction(type, 1, color, time);
         Assert::IsTrue(type == lightAction.GetActionType(), L"ActionType");
-        Assert::IsTrue(color == lightAction.GetStartColor(), L"Color");
+        Assert::IsTrue(color == lightAction.GetStartColor(0), L"Color");
         Assert::AreEqual(time, lightAction.GetActionTime(), L"Time");
     }
 
@@ -34,9 +34,9 @@ public:
         LightColor color(1, 2, 3, 4);
         unsigned int time = 2000;
         unsigned int repeat = 10;
-        LightAction lightAction(type, color, time, repeat);
+        LightAction lightAction(type, 1, color, time, repeat);
         Assert::IsTrue(type == lightAction.GetActionType(), L"ActionType");
-        Assert::IsTrue(color == lightAction.GetStartColor(), L"Color");
+        Assert::IsTrue(color == lightAction.GetStartColor(0), L"Color");
         Assert::AreEqual(time, lightAction.GetActionTime(), L"Time");
         Assert::AreEqual(repeat, lightAction.GetActionRepeatAmount(), L"RepeatAmount");
     }
@@ -49,10 +49,10 @@ public:
         unsigned int startHoldTime = 20;
         unsigned int endHoldTime = 30;
         unsigned int repeat = 10;
-        LightAction lightAction(type, startColor, endColor, time, startHoldTime, endHoldTime, repeat);
+        LightAction lightAction(type, 1, startColor, endColor, time, startHoldTime, endHoldTime, repeat);
         Assert::IsTrue(type == lightAction.GetActionType(), L"ActionType");
-        Assert::IsTrue(startColor == lightAction.GetStartColor(), L"StartColor");
-        Assert::IsTrue(endColor == lightAction.GetEndColor(), L"EndColor");
+        Assert::IsTrue(startColor == lightAction.GetStartColor(0), L"StartColor");
+        Assert::IsTrue(endColor == lightAction.GetEndColor(0), L"EndColor");
         Assert::AreEqual(time, lightAction.GetActionTime(), L"Time");
         Assert::AreEqual(startHoldTime, lightAction.GetStartColorHoldTime(), L"StartColorHoldTime");
         Assert::AreEqual(endHoldTime, lightAction.GetEndColorHoldTime(), L"EndColorHoldTime");
@@ -62,15 +62,15 @@ public:
     TEST_METHOD(SetStartColor) {
         LightColor color(11, 22, 33, 44);
         LightAction lightAction;
-        lightAction.SetStartColor(color);
-        Assert::IsTrue(color == lightAction.GetStartColor());
+        lightAction.SetStartColor(0, color);
+        Assert::IsTrue(color == lightAction.GetStartColor(0));
     }
 
     TEST_METHOD(SetEndColor) {
         LightColor color(11, 22, 33, 44);
         LightAction lightAction;
-        lightAction.SetEndColor(color);
-        Assert::IsTrue(color == lightAction.GetEndColor());
+        lightAction.SetEndColor(0, color);
+        Assert::IsTrue(color == lightAction.GetEndColor(0));
     }
 
     TEST_METHOD(SetActionType) {

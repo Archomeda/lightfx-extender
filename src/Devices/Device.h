@@ -27,7 +27,7 @@ namespace lightfx {
         class LFXE_API Device : public managers::ChildOfManager < managers::DeviceManager > {
 
         public:
-            Device();
+            Device() {}
             virtual ~Device();
 
             bool IsEnabled();
@@ -49,6 +49,8 @@ namespace lightfx {
 
             virtual const std::wstring GetDeviceName() = 0;
             virtual const unsigned char GetDeviceType() = 0;
+
+            virtual const size_t GetNumberOfLights() = 0;
 
         protected:
             LightAction CurrentLightAction = {};

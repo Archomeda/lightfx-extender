@@ -47,17 +47,19 @@ public:
 
     TEST_METHOD(QueueLightAction) {
         auto device = make_shared<DeviceMock>();
-        LightAction lightAction(LightColor(1, 2, 3, 4));
+        device->Reset();
+        LightAction lightAction(1, LightColor(1, 2, 3, 4));
         device->QueueLightAction(lightAction);
-        Assert::IsTrue(lightAction.GetStartColor() == device->GetQueuedLightAction().GetStartColor());
+        Assert::IsTrue(lightAction.GetStartColor(0) == device->GetQueuedLightAction().GetStartColor(0));
     }
 
     TEST_METHOD(QueueLightActionAndUpdate) {
         auto device = make_shared<DeviceMock>();
-        LightAction lightAction(LightColor(1, 2, 3, 4));
+        device->Reset();
+        LightAction lightAction(1, LightColor(1, 2, 3, 4));
         device->QueueLightAction(lightAction);
         device->Update();
-        Assert::IsTrue(lightAction.GetStartColor() == device->GetCurrentLightAction().GetStartColor());
+        Assert::IsTrue(lightAction.GetStartColor(0) == device->GetCurrentLightAction().GetStartColor(0));
     }
 
         };

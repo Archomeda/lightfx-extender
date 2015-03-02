@@ -17,10 +17,6 @@ using namespace lightfx::managers;
 namespace lightfx {
     namespace devices {
 
-        LFXE_API Device::Device() {
-            this->Reset();
-        }
-
         LFXE_API Device::~Device() {
             this->StopUpdateCurrentColor();
         }
@@ -51,6 +47,7 @@ namespace lightfx {
 
         LFXE_API bool Device::Initialize() {
             LOG(LogLevel::Info, L"Initializing");
+            this->Reset();
             this->isInitialized = true;
             return true;
         }
@@ -69,7 +66,7 @@ namespace lightfx {
         }
 
         LFXE_API bool Device::Reset() {
-            this->CurrentLightAction = LightAction(LightActionType::Instant, LightColor(0, 0, 0, 0), LightColor(0, 0, 0, 0), 200, 0, 0, 5);
+            this->CurrentLightAction = LightAction(LightActionType::Instant, this->GetNumberOfLights(), LightColor(0, 0, 0, 0), LightColor(0, 0, 0, 0), 200, 0, 0, 5);
             this->QueuedLightAction = LightAction(this->CurrentLightAction);
             return true;
         }
