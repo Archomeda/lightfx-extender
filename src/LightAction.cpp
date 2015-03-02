@@ -154,7 +154,7 @@ namespace lightfx {
         bool colorChanged = false;
         double progress = (double)timePassed / this->actionTime;
 
-        for (size_t i = 0; i < this->currentColor.size(); i++) {
+        for (size_t i = 0; i < this->currentColor.size(); ++i) {
             LightColor newColor;
             if (timePassed >= this->actionTime) {
                 // Time exceeded animation time, set to end color
@@ -188,7 +188,7 @@ namespace lightfx {
         unsigned int progressPhaseTransitionToStart = progressPhaseEndColor + this->endColorHoldTime;
         unsigned int progressPhaseStartColor2 = progressPhaseTransitionToStart + this->actionTime;
 
-        for (size_t i = 0; i < this->currentColor.size(); i++) {
+        for (size_t i = 0; i < this->currentColor.size(); ++i) {
             LightColor newColor;
             if (timePassed >= timeTotal) {
                 // Time exceeded animation time, reset to prev color
