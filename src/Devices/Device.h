@@ -57,9 +57,11 @@ namespace lightfx {
             virtual const std::wstring GetDeviceName() = 0;
             virtual const DeviceType GetDeviceType() = 0;
 
-            virtual const size_t GetNumberOfLights() = 0;
+            const size_t GetNumberOfLights();
 
         protected:
+            void SetNumberOfLights(const size_t numberOfLights);
+
             LightAction CurrentLightAction = {};
             LightAction QueuedLightAction;
 
@@ -70,6 +72,7 @@ namespace lightfx {
         private:
             bool isEnabled = false;
             bool isInitialized = false;
+            size_t numberOfLights = 1;
 
             std::thread lightActionUpdateThread;
             bool lightActionUpdateThreadRunning = false;

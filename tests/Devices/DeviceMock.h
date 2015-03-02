@@ -33,9 +33,11 @@ namespace lightfx_tests {
             virtual const std::wstring GetDeviceName() override { return L"DeviceMock"; }
             virtual const lightfx::devices::DeviceType GetDeviceType() override { return lightfx::devices::DeviceType::Other; }
 
-            virtual const size_t GetNumberOfLights() override { return 1; }
+            using Device::GetNumberOfLights;
 
         protected:
+            using Device::SetNumberOfLights;
+
             using Device::CurrentLightAction;
             using Device::QueuedLightAction;
 
