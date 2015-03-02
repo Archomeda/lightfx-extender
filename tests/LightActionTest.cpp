@@ -61,14 +61,14 @@ public:
 
     TEST_METHOD(SetStartColor) {
         LightColor color(11, 22, 33, 44);
-        LightAction lightAction;
+        LightAction lightAction(1, LightColor());
         lightAction.SetStartColor(0, color);
         Assert::IsTrue(color == lightAction.GetStartColor(0));
     }
 
     TEST_METHOD(SetEndColor) {
         LightColor color(11, 22, 33, 44);
-        LightAction lightAction;
+        LightAction lightAction(1, LightColor());
         lightAction.SetEndColor(0, color);
         Assert::IsTrue(color == lightAction.GetEndColor(0));
     }

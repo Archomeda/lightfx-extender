@@ -56,7 +56,7 @@ namespace lightfx {
     }
 
     LFXE_API void LightAction::SetStartColor(const size_t lightIndex, const LightColor& startColor) {
-        this->startColor.insert(this->startColor.begin() + lightIndex, startColor);
+        this->startColor[lightIndex] = startColor;
         this->canUpdateCurrentColor = true;
     }
 
@@ -71,7 +71,7 @@ namespace lightfx {
     }
 
     LFXE_API void LightAction::SetEndColor(const size_t lightIndex, const LightColor& endColor) {
-        this->endColor.insert(this->endColor.begin() + lightIndex, endColor);
+        this->endColor[lightIndex] = endColor;
         this->canUpdateCurrentColor = true;
     }
 
