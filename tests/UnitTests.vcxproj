@@ -96,6 +96,7 @@
     <ClCompile Include="Config\ConfigFileTest.cpp" />
     <ClCompile Include="Devices\DeviceTest.cpp" />
     <ClCompile Include="Devices\DeviceMock.h" />
+    <ClCompile Include="LightActionTest.cpp" />
     <ClCompile Include="Managers\ChildOfManagerTest.cpp" />
     <ClCompile Include="Managers\LogManagerTest.cpp" />
     <ClCompile Include="Managers\ManagerTest.cpp" />

@@ -150,6 +150,7 @@
     <ClInclude Include="Config\ConfigFile.h" />
     <ClInclude Include="Config\MainConfigFile.h" />
     <ClInclude Include="Devices\Device.h" />
+    <ClInclude Include="LightAction.h" />
     <ClInclude Include="Games\Game.h" />
     <ClInclude Include="LightFXExtender.h" />
     <ClInclude Include="Managers\ChildOfManager.h" />
@@ -179,6 +180,7 @@
     <ClCompile Include="Config\ConfigFile.cpp" />
     <ClCompile Include="Config\MainConfigFile.cpp" />
     <ClCompile Include="Devices\Device.cpp" />
+    <ClCompile Include="LightAction.cpp" />
     <ClCompile Include="Games\Game.cpp" />
     <ClCompile Include="LightFXExtender.cpp" />
     <ClCompile Include="Managers\ConfigManager.cpp" />
