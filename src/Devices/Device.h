@@ -24,6 +24,13 @@ namespace lightfx {
 
     namespace devices {
 
+        enum LFXE_API DeviceType {
+            Unknown,
+            Display,
+            Keyboard,
+            Other
+        };
+
         class LFXE_API Device : public managers::ChildOfManager < managers::DeviceManager > {
 
         public:
@@ -48,7 +55,7 @@ namespace lightfx {
             virtual bool PushColorToDevice() = 0;
 
             virtual const std::wstring GetDeviceName() = 0;
-            virtual const unsigned char GetDeviceType() = 0;
+            virtual const DeviceType GetDeviceType() = 0;
 
             virtual const size_t GetNumberOfLights() = 0;
 

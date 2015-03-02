@@ -31,7 +31,7 @@ namespace lightfx_tests {
             virtual bool PushColorToDevice() override { return false; }
 
             virtual const std::wstring GetDeviceName() override { return L"DeviceMock"; }
-            virtual const unsigned char GetDeviceType() override { return 0; }
+            virtual const lightfx::devices::DeviceType GetDeviceType() override { return lightfx::devices::DeviceType::Other; }
 
             virtual const size_t GetNumberOfLights() override { return 1; }
 
