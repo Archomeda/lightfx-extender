@@ -99,6 +99,15 @@ namespace lightfx {
 
         LFXE_API void Device::SetNumberOfLights(const size_t numberOfLights) {
             this->numberOfLights = numberOfLights;
+            this->lightData.resize(numberOfLights);
+        }
+
+        LFXE_API LightData Device::GetLightData(const size_t lightIndex) {
+            return this->lightData[lightIndex];
+        }
+
+        LFXE_API void Device::SetLightData(const size_t lightIndex, const LightData& lightData) {
+            this->lightData[lightIndex] = lightData;
         }
 
 

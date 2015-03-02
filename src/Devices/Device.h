@@ -31,6 +31,17 @@ namespace lightfx {
             Other
         };
 
+        struct LFXE_API DeviceLightPosition {
+            unsigned int x;
+            unsigned int y;
+            unsigned int z;
+        };
+
+        struct LFXE_API LightData {
+            std::wstring Name = L"";
+            DeviceLightPosition Position = {};
+        };
+
         class LFXE_API Device : public managers::ChildOfManager < managers::DeviceManager > {
 
         public:
@@ -58,6 +69,8 @@ namespace lightfx {
             virtual const DeviceType GetDeviceType() = 0;
 
             const size_t GetNumberOfLights();
+            LightData GetLightData(const size_t lightIndex);
+            void SetLightData(const size_t lightIndex, const LightData& lightData);
 
         protected:
             void SetNumberOfLights(const size_t numberOfLights);
@@ -73,6 +86,7 @@ namespace lightfx {
             bool isEnabled = false;
             bool isInitialized = false;
             size_t numberOfLights = 1;
+            std::vector<LightData> lightData = {};
 
             std::thread lightActionUpdateThread;
             bool lightActionUpdateThreadRunning = false;

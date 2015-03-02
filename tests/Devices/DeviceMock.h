@@ -34,6 +34,8 @@ namespace lightfx_tests {
             virtual const lightfx::devices::DeviceType GetDeviceType() override { return lightfx::devices::DeviceType::Other; }
 
             using Device::GetNumberOfLights;
+            using Device::GetLightData;
+            using Device::SetLightData;
 
         protected:
             using Device::SetNumberOfLights;
