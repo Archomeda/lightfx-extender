@@ -2,10 +2,13 @@
 
 // Standard includes
 #include <string>
+#include <mutex>
+#include <thread>
 
 // Project includes
 #include "../Managers/DeviceManager.h"
 #include "../Managers/ChildOfManager.h"
+#include "../LightAction.h"
 
 // API exports
 #include "../Common/ApiExports.h"
@@ -25,6 +28,7 @@ namespace lightfx {
 
         public:
             Device();
+            virtual ~Device();
 
             bool IsEnabled();
             bool IsInitialized();
@@ -37,13 +41,30 @@ namespace lightfx {
             virtual bool Update();
             virtual bool Reset();
 
+            LightAction GetCurrentLightAction();
+            LightAction GetQueuedLightAction();
+            void QueueLightAction(const LightAction& lightAction);
+            
+            virtual bool PushColorToDevice() = 0;
+
             virtual const std::wstring GetDeviceName() = 0;
             virtual const unsigned char GetDeviceType() = 0;
 
+        protected:
+            LightAction CurrentLightAction = {};
+            LightAction QueuedLightAction;
+
+            virtual void UpdateCurrentColorLoop();
+            virtual void StartUpdateCurrentColor();
+            virtual void StopUpdateCurrentColor();
 
         private:
             bool isEnabled = false;
             bool isInitialized = false;
+
+            std::thread lightActionUpdateThread;
+            bool lightActionUpdateThreadRunning = false;
+            std::mutex lightActionUpdateThreadRunningMutex;
 
         };
 

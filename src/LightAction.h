@@ -56,10 +56,22 @@ namespace lightfx {
         void SetEndColorHoldTime(const unsigned int endColorHoldTime);
         void SetActionRepeatAmount(const unsigned int actionRepeatAmount);
 
+        LightColor GetCurrentColor();
+        bool CanUpdateCurrentColor();
+        bool UpdateCurrentColor();
+
     private:
+        LightColor currentColor;
+        unsigned long animatedColorStartTime = 0;
+        bool canUpdateCurrentColor = true;
+        bool UpdateCurrentColorMorph(const unsigned long timePassed);
+        bool UpdateCurrentColorPulse(const unsigned long timePassed);
+
         LightColor startColor;
         LightColor endColor;
         LightActionType actionType;
+
+        LightColor prevColor;
 
         unsigned int actionTime = 200;
         unsigned int startColorHoldTime = 0;

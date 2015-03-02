@@ -24,8 +24,18 @@ namespace lightfx_tests {
             using Device::Update;
             using Device::Reset;
 
+            using Device::GetCurrentLightAction;
+            using Device::GetQueuedLightAction;
+            using Device::QueueLightAction;
+
+            virtual bool PushColorToDevice() override { return false; }
+
             virtual const std::wstring GetDeviceName() override { return L"DeviceMock"; }
             virtual const unsigned char GetDeviceType() override { return 0; }
+
+        protected:
+            using Device::CurrentLightAction;
+            using Device::QueuedLightAction;
 
         };
 

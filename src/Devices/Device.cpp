@@ -18,7 +18,11 @@ namespace lightfx {
     namespace devices {
 
         LFXE_API Device::Device() {
+            this->Reset();
+        }
 
+        LFXE_API Device::~Device() {
+            this->StopUpdateCurrentColor();
         }
 
 
@@ -39,6 +43,7 @@ namespace lightfx {
 
         LFXE_API bool Device::Disable() {
             LOG(LogLevel::Info, L"Disabling");
+            this->StopUpdateCurrentColor();
             this->isEnabled = false;
             return true;
         }
@@ -57,11 +62,82 @@ namespace lightfx {
         }
 
         LFXE_API bool Device::Update() {
-            return nullptr;
+            this->CurrentLightAction = LightAction(this->QueuedLightAction);
+            this->StopUpdateCurrentColor();
+            this->StartUpdateCurrentColor();
+            return true;
         }
 
         LFXE_API bool Device::Reset() {
-            return nullptr;
+            this->CurrentLightAction = LightAction(LightActionType::Instant, LightColor(0, 0, 0, 0), LightColor(0, 0, 0, 0), 200, 0, 0, 5);
+            this->QueuedLightAction = LightAction(this->CurrentLightAction);
+            return true;
+        }
+
+        LFXE_API LightAction Device::GetCurrentLightAction() {
+            return this->CurrentLightAction;
+        }
+
+        LFXE_API LightAction Device::GetQueuedLightAction() {
+            return this->QueuedLightAction;
+        }
+
+        LFXE_API void Device::QueueLightAction(const LightAction& lightAction) {
+            this->QueuedLightAction = lightAction;
+        }
+
+
+        LFXE_API void Device::UpdateCurrentColorLoop() {
+            while (true) {
+                this->lightActionUpdateThreadRunningMutex.lock();
+                bool isRunning = this->lightActionUpdateThreadRunning;
+                this->lightActionUpdateThreadRunningMutex.unlock();
+
+                if (!isRunning) {
+                    break;
+                }
+
+                if (this->CurrentLightAction.CanUpdateCurrentColor()) {
+                    if (this->CurrentLightAction.UpdateCurrentColor()) {
+                        this->PushColorToDevice();
+                    }
+                } else {
+                    // Finished updating
+                    break;
+                }
+
+                this_thread::sleep_for(chrono::milliseconds(5));
+            }
+
+            this->lightActionUpdateThreadRunningMutex.lock();
+            this->lightActionUpdateThreadRunning = false;
+            this->lightActionUpdateThreadRunningMutex.unlock();
+        }
+
+        LFXE_API void Device::StartUpdateCurrentColor() {
+            this->lightActionUpdateThreadRunningMutex.lock();
+            bool isRunning = this->lightActionUpdateThreadRunning;
+            this->lightActionUpdateThreadRunningMutex.unlock();
+            
+            if (!isRunning) {
+                this->lightActionUpdateThreadRunning = true;
+                this->lightActionUpdateThread = thread(&Device::UpdateCurrentColorLoop, this);
+            }
+        }
+
+        LFXE_API void Device::StopUpdateCurrentColor() {
+            this->lightActionUpdateThreadRunningMutex.lock();
+            bool isRunning = this->lightActionUpdateThreadRunning;
+            this->lightActionUpdateThreadRunningMutex.unlock();
+            
+            if (isRunning) {
+                this->lightActionUpdateThreadRunningMutex.lock();
+                this->lightActionUpdateThreadRunning = false;
+                this->lightActionUpdateThreadRunningMutex.unlock();
+
+                this->lightActionUpdateThread.join();
+                this->lightActionUpdateThread.~thread();
+            }
         }
 
     }
