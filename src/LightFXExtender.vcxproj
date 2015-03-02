@@ -150,6 +150,7 @@
     <ClInclude Include="Config\ConfigFile.h" />
     <ClInclude Include="Config\MainConfigFile.h" />
     <ClInclude Include="Devices\Device.h" />
+    <ClInclude Include="Devices\DeviceLightpack.h" />
     <ClInclude Include="Devices\DeviceLogitech.h" />
     <ClInclude Include="LightAction.h" />
     <ClInclude Include="Games\Game.h" />
@@ -181,6 +182,7 @@
     <ClCompile Include="Config\ConfigFile.cpp" />
     <ClCompile Include="Config\MainConfigFile.cpp" />
     <ClCompile Include="Devices\Device.cpp" />
+    <ClCompile Include="Devices\DeviceLightpack.cpp" />
     <ClCompile Include="Devices\DeviceLogitech.cpp" />
     <ClCompile Include="LightAction.cpp" />
     <ClCompile Include="Games\Game.cpp" />

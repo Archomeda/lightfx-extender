@@ -21,7 +21,7 @@ namespace lightfx {
             virtual bool PushColorToDevice() override;
 
             virtual const std::wstring GetDeviceName() override { return L"Logitech"; }
-            virtual const DeviceType GetDeviceType() override { return DeviceType::Keyboard; }
+            virtual const DeviceType GetDeviceType() override { return DeviceType::DeviceKeyboard; }
 
         private:
             int rangeOutMin = 0;

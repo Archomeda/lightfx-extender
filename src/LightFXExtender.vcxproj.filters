@@ -87,6 +87,9 @@
     <ClInclude Include="Devices\DeviceLogitech.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Devices\DeviceLightpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LightFXExtender.rc">
@@ -148,6 +151,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Devices\DeviceLogitech.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Devices\DeviceLightpack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

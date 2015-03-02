@@ -25,10 +25,10 @@ namespace lightfx {
     namespace devices {
 
         enum LFXE_API DeviceType {
-            Unknown,
-            Display,
-            Keyboard,
-            Other
+            DeviceUnknown,
+            DeviceDisplay,
+            DeviceKeyboard,
+            DeviceOther
         };
 
         struct LFXE_API DeviceLightPosition {
