@@ -30,6 +30,7 @@ namespace lightfx {
                     if (LogiLedInit()) {
                         // TODO: Support more Logitech customization (e.g. Logitech G910 single-key colors)
                         this->SetNumberOfLights(1);
+                        this->SetLightData(0, LightData());
 
                         return true;
                     }
