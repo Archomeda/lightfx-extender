@@ -24,16 +24,20 @@ namespace lightfx {
         class LFXE_API Game : public managers::ChildOfManager < managers::GameManager > {
 
         public:
-            Game();
+            Game() {}
+            virtual ~Game() {}
 
             bool IsEnabled();
             bool IsInitialized();
 
+            virtual bool Enable();
+            virtual bool Disable();
+
             virtual bool Initialize();
             virtual bool Release();
 
-            virtual std::wstring GetGameName() = 0;
-            virtual unsigned char GetFileName() = 0;
+            virtual const std::wstring GetGameName() = 0;
+            virtual const std::wstring GetFileName() = 0;
 
         private:
             bool isEnabled = false;
