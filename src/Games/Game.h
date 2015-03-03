@@ -30,9 +30,6 @@ namespace lightfx {
             bool IsEnabled();
             bool IsInitialized();
 
-            virtual bool Enable();
-            virtual bool Disable();
-
             virtual bool Initialize();
             virtual bool Release();
 

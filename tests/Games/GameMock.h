@@ -16,9 +16,6 @@ namespace lightfx_tests {
             using Game::IsEnabled;
             using Game::IsInitialized;
 
-            using Game::Enable;
-            using Game::Disable;
-
             using Game::Initialize;
             using Game::Release;
 

@@ -26,22 +26,6 @@ namespace lightfx {
         }
 
 
-        LFXE_API bool Game::Enable() {
-            if (!this->isEnabled) {
-                LOG(LogLevel::Info, L"Enabling");
-                this->isEnabled = true;
-            }
-            return true;
-        }
-
-        LFXE_API bool Game::Disable() {
-            if (this->isEnabled) {
-                LOG(LogLevel::Info, L"Disabling");
-                this->isEnabled = false;
-            }
-            return true;
-        }
-
         LFXE_API bool Game::Initialize() {
             if (!this->isInitialized) {
                 LOG(LogLevel::Info, L"Initializing");

@@ -23,7 +23,7 @@ namespace lightfx {
         public:
             GameManager() {}
 
-            size_t InitializeGames();
+            bool InitializeGame(const std::wstring& gameName);
             size_t UninitializeGames();
 
         };

@@ -50,12 +50,17 @@ namespace lightfx {
     }
 
     LFXE_API void LightFXExtender::Start() {
-        this->logManager->Log(LogLevel::Info, L"Connected to " + GetProcessName());
+        wstring processFileName;
+        wstring ext;
+        wstring processPath = GetProcessName(nullptr, nullptr, &processFileName, &ext);
+        processFileName = processFileName + L"." + ext;
+
+        this->logManager->Log(LogLevel::Info, L"Connected to " + processPath);
 
         this->configManager->InitializeConfigs();
         this->updateManager->CheckAsync();
         this->deviceManager->InitializeDevices();
-        this->gameManager->InitializeGames();
+        this->gameManager->InitializeGame(processFileName);
         this->trayManager->AddTrayIcon();
     }
 

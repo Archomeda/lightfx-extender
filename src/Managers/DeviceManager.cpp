@@ -13,7 +13,7 @@
 #include "../Devices/DeviceLogitech.h"
 
 
-#define LOG(logLevel, line) if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"DeviceMananger - ") + line); }
+#define LOG(logLevel, line) if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"DeviceManager - ") + line); }
 
 using namespace std;
 using namespace lightfx::config;
