@@ -21,7 +21,7 @@ namespace lightfx {
             wchar_t cdir[_MAX_DIR];
             wchar_t cfname[_MAX_FNAME];
             wchar_t cext[_MAX_EXT];
-            _wsplitpath_s(szFileName, cdrive, sizeof(cdrive), cdir, sizeof(cdir), cfname, sizeof(cfname), cext, sizeof(cext));
+            _wsplitpath_s(szFileName, cdrive, _countof(cdrive), cdir, _countof(cdir), cfname, _countof(cfname), cext, _countof(cext));
 
             if (drive != nullptr) {
                 *drive = wstring(cdrive);
