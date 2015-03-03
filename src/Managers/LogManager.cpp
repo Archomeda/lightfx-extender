@@ -61,7 +61,7 @@ namespace lightfx {
                         return;
                     }
                 }
-                filePath += this->logFileName;
+                filePath += L"/" + this->logFileName;
                 wofstream logStream;
                 logStream.imbue(locale(logStream.getloc(), new codecvt_utf8<wchar_t>));
                 logStream.open(filePath, wios::out | wios::binary);
