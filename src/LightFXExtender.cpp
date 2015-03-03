@@ -53,7 +53,7 @@ namespace lightfx {
         wstring processFileName;
         wstring ext;
         wstring processPath = GetProcessName(nullptr, nullptr, &processFileName, &ext);
-        processFileName = processFileName + L"." + ext;
+        processFileName = processFileName + ext;
 
         this->logManager->Log(LogLevel::Info, L"Connected to " + processPath);
 
