@@ -67,9 +67,9 @@ namespace lightfx {
         }
 
         LFXE_API bool Device::Update() {
+            this->StopUpdateCurrentColor();
             this->CurrentLightAction = LightAction(this->QueuedLightAction);
             this->QueuedLightAction = LightAction();
-            this->StopUpdateCurrentColor();
             this->StartUpdateCurrentColor();
             return true;
         }
@@ -130,7 +130,7 @@ namespace lightfx {
                     // Finished updating
                     break;
                 }
-                
+
                 try {
                     this_thread::sleep_for(chrono::milliseconds(5));
                 } catch (...) {
@@ -147,7 +147,7 @@ namespace lightfx {
             this->lightActionUpdateThreadRunningMutex.lock();
             bool isRunning = this->lightActionUpdateThreadRunning;
             this->lightActionUpdateThreadRunningMutex.unlock();
-            
+
             if (!isRunning) {
                 this->lightActionUpdateThreadRunning = true;
                 this->lightActionUpdateThread = thread(&Device::UpdateCurrentColorLoop, this);
@@ -156,16 +156,13 @@ namespace lightfx {
 
         LFXE_API void Device::StopUpdateCurrentColor() {
             this->lightActionUpdateThreadRunningMutex.lock();
-            bool isRunning = this->lightActionUpdateThreadRunning;
-            this->lightActionUpdateThreadRunningMutex.unlock();
-            
-            if (isRunning) {
-                this->lightActionUpdateThreadRunningMutex.lock();
+            if (this->lightActionUpdateThreadRunning) {
                 this->lightActionUpdateThreadRunning = false;
-                this->lightActionUpdateThreadRunningMutex.unlock();
+            }
+            this->lightActionUpdateThreadRunningMutex.unlock();
 
+            if (this->lightActionUpdateThread.joinable()) {
                 this->lightActionUpdateThread.join();
-                this->lightActionUpdateThread.~thread();
             }
         }
 
