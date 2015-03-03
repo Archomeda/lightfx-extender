@@ -11,6 +11,8 @@
 #include <strsafe.h>
 
 // Project includes
+#include "../LightFXExtender.h"
+#include "../Managers/DeviceManager.h"
 #include "../Utils/Windows.h"
 #include "../Utils/FileIO.h"
 #include "../resource.h"
@@ -86,30 +88,6 @@ namespace lightfx {
         }
 
 
-        LFXE_API void TrayManager::AttachDevice(const shared_ptr<Device>& device) {
-            if (this->GetDevice(device->GetDeviceName()) == nullptr) {
-                this->devices.push_back(device);
-            }
-        }
-
-        LFXE_API shared_ptr<Device> TrayManager::GetDevice(const wstring& deviceName) {
-            auto device = find_if(this->devices.begin(), this->devices.end(), [&deviceName](const weak_ptr<Device>& dev) {
-                return dev.lock()->GetDeviceName() == deviceName;
-            });
-            if (device != this->devices.end()) {
-                return device->lock();
-            } else {
-                return nullptr;
-            }
-        }
-
-        LFXE_API void TrayManager::RemoveDevice(const wstring& deviceName) {
-            this->devices.erase(remove_if(this->devices.begin(), this->devices.end(), [&deviceName](const weak_ptr<Device>& dev) {
-                return dev.lock()->GetDeviceName() == deviceName;
-            }));
-        }
-
-
         LFXE_API bool TrayManager::HasUpdateNotification() {
             return !this->updateVersionString.empty() && !this->updateVersionUrl.empty();
         }
@@ -144,8 +122,9 @@ namespace lightfx {
                 HMENU hMenu = CreatePopupMenu();
 
                 size_t index;
-                for (index = 1; index <= this->devices.size(); ++index) {
-                    shared_ptr<Device> device = this->devices[index - 1].lock();
+                auto deviceManager = this->GetLightFXExtender()->GetDeviceManager();
+                for (index = 1; index <= deviceManager->GetChildrenCount(); ++index) {
+                    auto device = deviceManager->GetChildByIndex(index - 1);
                     InsertMenuW(hMenu, index, device->IsEnabled() ? MF_CHECKED : MF_UNCHECKED, index, device->GetDeviceName().c_str());
                 }
                 InsertMenuW(hMenu, index, MF_SEPARATOR, 0, NULL);
@@ -169,9 +148,8 @@ namespace lightfx {
                     ShellExecuteW(NULL, L"explore", GetDataStorageFolder().c_str(), NULL, NULL, SW_SHOWNORMAL);
                 } else if (updateUrlIndex > 0 && result == updateUrlIndex) {
                     ShellExecuteW(NULL, L"open", this->updateVersionUrl.c_str(), NULL, NULL, SW_SHOWDEFAULT);
-                } else if (result > 0 && result <= this->devices.size()) {
-                    size_t index = result - 1;
-                    shared_ptr<Device> device = this->devices[index].lock();
+                } else if (result > 0 && result <= deviceManager->GetChildrenCount()) {
+                    auto device = deviceManager->GetChildByIndex(result - 1);
                     if (device->IsEnabled()) {
                         device->Disable();
                     } else {

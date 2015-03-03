@@ -34,15 +34,10 @@ namespace lightfx {
             void AddTrayIcon();
             void RemoveTrayIcon();
 
-            void AttachDevice(const std::shared_ptr<devices::Device>& device);
-            std::shared_ptr<devices::Device> GetDevice(const std::wstring& deviceName);
-            void RemoveDevice(const std::wstring& deviceName);
-
             bool HasUpdateNotification();
             void SetUpdateNotification(const std::wstring& versionString, const std::wstring& downloadUrl);
 
         protected:
-            std::vector<std::weak_ptr<devices::Device>> devices;
             std::wstring updateVersionString;
             std::wstring updateVersionUrl;
 

@@ -14,24 +14,6 @@ namespace lightfx_tests {
         TEST_CLASS(TrayManagerTest) {
 public:
 
-    TEST_METHOD(AttachDevice) {
-        auto manager = make_shared<TrayManager>();
-        auto device = make_shared<DeviceMock>();
-
-        manager->AttachDevice(device);
-        Assert::IsTrue(device == manager->GetDevice(device->GetDeviceName()));
-    }
-
-    TEST_METHOD(RemoveDevice) {
-        auto manager = make_shared<TrayManager>();
-        auto device = make_shared<DeviceMock>();
-
-        manager->AttachDevice(device);
-        Assert::IsTrue(device == manager->GetDevice(device->GetDeviceName()), L"Device not added");
-        manager->RemoveDevice(device->GetDeviceName());
-        Assert::IsTrue(nullptr == manager->GetDevice(device->GetDeviceName()), L"Device not removed");
-    }
-
     TEST_METHOD(HasNoUpdateNotification) {
         auto manager = make_shared<TrayManager>();
         Assert::IsFalse(manager->HasUpdateNotification());
