@@ -20,6 +20,43 @@ using namespace lightfx;
 using namespace lightfx::devices;
 using namespace lightfx::utils;
 
+
+unsigned char DeviceTypeToLfxDeviceType(const DeviceType deviceType) {
+    switch (deviceType) {
+    case DeviceType::DeviceDisplay:
+        return LFX_DEVTYPE_DISPLAY;
+    case DeviceType::DeviceKeyboard:
+        return LFX_DEVTYPE_KEYBOARD;
+    case DeviceType::DeviceOther:
+        return LFX_DEVTYPE_OTHER;
+    case DeviceType::DeviceUnknown:
+    default:
+        return LFX_DEVTYPE_UNKNOWN;
+    }
+}
+
+LFX_POSITION DeviceLightPositionToLfxPosition(const DeviceLightPosition position) {
+    return LFX_POSITION{ position.x, position.y, position.z };
+}
+
+LightColor LfxColorToLightColor(const LFX_COLOR color) {
+    return LightColor{ color.red, color.green, color.blue, color.brightness };
+}
+
+LFX_COLOR LightColorToLfxColor(const LightColor color) {
+    return LFX_COLOR{ color.red, color.green, color.blue, color.brightness };
+}
+
+LFX_COLOR IntToLfxColor(const unsigned int color) {
+    LFX_COLOR c;
+    c.blue = (color >> 24) & 0xFF;
+    c.green = (color >> 16) & 0xFF;
+    c.red = (color >> 8) & 0xFF;
+    c.brightness = color & 0xFF;
+    return c;
+}
+
+
 shared_ptr<LightFXExtender> lightFXExtender = make_shared<LightFXExtender>();
 unsigned int timing = 200;
 
@@ -119,20 +156,7 @@ extern "C" {
 
         try {
             sprintf_s(devDesc, devDescSize, deviceName.c_str());
-            switch (device->GetDeviceType()) {
-            case DeviceType::DeviceUnknown:
-                *devType = 0x00;
-                break;
-            case DeviceType::DeviceDisplay:
-                *devType = 0x04;
-                break;
-            case DeviceType::DeviceKeyboard:
-                *devType = 0x06;
-                break;
-            case DeviceType::DeviceOther:
-                *devType = 0xFF;
-                break;
-            }
+            *devType = DeviceTypeToLfxDeviceType(device->GetDeviceType());
         } catch (...) {
             return LFX_FAILURE;
         }
@@ -204,8 +228,7 @@ extern "C" {
         }
 
         try {
-            auto lightData = device->GetLightData(lightIndex);
-            *lightLoc = LFX_POSITION{ lightData.Position.x, lightData.Position.y, lightData.Position.z };
+            *lightLoc = DeviceLightPositionToLfxPosition(device->GetLightData(lightIndex).Position);
         } catch (...) {
             return LFX_FAILURE;
         }
@@ -229,8 +252,7 @@ extern "C" {
         }
 
         try {
-            auto lightColor = device->GetCurrentLightAction().GetCurrentColor(lightIndex);
-            *lightCol = LFX_COLOR{ lightColor.red, lightColor.green, lightColor.blue, lightColor.brightness };
+            *lightCol = LightColorToLfxColor(device->GetCurrentLightAction().GetCurrentColor(lightIndex));
         } catch (...) {
             return LFX_FAILURE;
         }
@@ -260,7 +282,7 @@ extern "C" {
 
         try {
             lightAction.SetActionType(LightActionType::Instant);
-            lightAction.SetStartColor(lightIndex, LightColor(lightCol->red, lightCol->green, lightCol->blue, lightCol->brightness));
+            lightAction.SetStartColor(lightIndex, LfxColorToLightColor(*lightCol));
             device->QueueLightAction(lightAction);
         } catch (...) {
             return LFX_FAILURE;
@@ -311,7 +333,7 @@ extern "C" {
 
         try {
             LightColor startColor;
-            LightColor endColor(primaryCol->red, primaryCol->green, primaryCol->blue, primaryCol->brightness);
+            LightColor endColor = LfxColorToLightColor(*primaryCol);
             LightActionType lightActionType = LightActionType::Instant;
             switch (actionType) {
             case LFX_ACTION_MORPH:
@@ -361,8 +383,8 @@ extern "C" {
         }
 
         try {
-            LightColor startColor(primaryCol->red, primaryCol->green, primaryCol->blue, primaryCol->brightness);
-            LightColor endColor(secondaryCol->red, secondaryCol->green, secondaryCol->blue, secondaryCol->brightness);
+            LightColor startColor = LfxColorToLightColor(*primaryCol);
+            LightColor endColor = LfxColorToLightColor(*secondaryCol);
             LightActionType lightActionType = LightActionType::Instant;
             switch (actionType) {
             case LFX_ACTION_MORPH:
@@ -394,11 +416,7 @@ extern "C" {
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_ActionColor(const unsigned int locationMask, const unsigned int actionType, const unsigned int primaryCol) {
         // Location mask not supported yet, so we set everything
-        LFX_COLOR color;
-        color.blue = (primaryCol >> 24) & 0xFF;
-        color.green = (primaryCol >> 16) & 0xFF;
-        color.red = (primaryCol >> 8) & 0xFF;
-        color.brightness = primaryCol & 0xFF;
+        LFX_COLOR color = IntToLfxColor(primaryCol);
 
         LFX_RESULT result;
         auto deviceManager = lightFXExtender->GetDeviceManager();
@@ -416,16 +434,8 @@ extern "C" {
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_ActionColorEx(const unsigned int locationMask, const unsigned int actionType, const unsigned int primaryCol, const unsigned int secondaryCol) {
         // Location mask not supported yet, so we set everything
-        LFX_COLOR color1;
-        color1.blue = (primaryCol >> 24) & 0xFF;
-        color1.green = (primaryCol >> 16) & 0xFF;
-        color1.red = (primaryCol >> 8) & 0xFF;
-        color1.brightness = primaryCol & 0xFF;
-        LFX_COLOR color2;
-        color2.blue = (secondaryCol >> 24) & 0xFF;
-        color2.green = (secondaryCol >> 16) & 0xFF;
-        color2.red = (secondaryCol >> 8) & 0xFF;
-        color2.brightness = secondaryCol & 0xFF;
+        LFX_COLOR color1 = IntToLfxColor(primaryCol);
+        LFX_COLOR color2 = IntToLfxColor(secondaryCol);
 
         LFX_RESULT result;
         auto deviceManager = lightFXExtender->GetDeviceManager();
