@@ -142,8 +142,7 @@ namespace lightfx {
             break;
 
         case LightActionType::Instant:
-            colorChanged = this->currentColor != this->startColor;
-            this->currentColor = vector<LightColor>(this->startColor);
+            colorChanged = this->UpdateCurrentColorInstant();
             break;
         }
 
@@ -227,6 +226,19 @@ namespace lightfx {
             }
         }
 
+        return colorChanged;
+    }
+
+    LFXE_API bool LightAction::UpdateCurrentColorInstant() {
+        bool colorChanged = false;
+        for (size_t i = 0; i < this->currentColor.size(); ++i) {
+            colorChanged = this->currentColor[i] != this->startColor[i];
+            if (colorChanged) {
+                break;
+            }
+        }
+        this->currentColor = vector<LightColor>(this->startColor);
+        this->canUpdateCurrentColor = false;
         return colorChanged;
     }
 

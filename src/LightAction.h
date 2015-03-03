@@ -86,6 +86,7 @@ namespace lightfx {
         bool canUpdateCurrentColor = true;
         bool UpdateCurrentColorMorph(const unsigned long timePassed);
         bool UpdateCurrentColorPulse(const unsigned long timePassed);
+        bool UpdateCurrentColorInstant();
 
         std::vector<LightColor> startColor = {};
         std::vector<LightColor> endColor = {};
