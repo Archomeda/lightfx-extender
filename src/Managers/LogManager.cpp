@@ -64,7 +64,7 @@ namespace lightfx {
                 filePath += L"/" + this->logFileName;
                 wofstream logStream;
                 logStream.imbue(locale(logStream.getloc(), new codecvt_utf8<wchar_t>));
-                logStream.open(filePath, wios::out | wios::binary);
+                logStream.open(filePath, wios::out | wios::binary | wios::app);
                 logStream << timePrefix << L" - " << logLevelPrefix << L" " << line << std::endl;
                 logStream.close();
             } catch (...) {
