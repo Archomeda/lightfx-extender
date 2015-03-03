@@ -39,24 +39,26 @@ namespace lightfx {
         LightAction() {}
 
         LightAction(const size_t numLights)
-            : actionType(LightActionType::Instant), currentColor(numLights), startColor(numLights), endColor(numLights) {}
+            : actionType(LightActionType::Instant), currentColor(numLights), startColor(numLights), endColor(numLights), resetColor(numLights) {}
 
         LightAction(const size_t numLights, const LightColor& color)
-            : actionType(LightActionType::Instant), currentColor(numLights), startColor(numLights, color), endColor(numLights) {}
+            : actionType(LightActionType::Instant), currentColor(numLights), startColor(numLights, color), endColor(numLights), resetColor(numLights) {}
 
         LightAction(const LightActionType& actionType, const size_t numLights, const LightColor& color, unsigned int actionTime)
-            : actionType(actionType), currentColor(numLights), startColor(numLights, color), endColor(numLights), actionTime(actionTime) {}
+            : actionType(actionType), currentColor(numLights), startColor(numLights, color), endColor(numLights), resetColor(numLights), actionTime(actionTime) {}
 
         LightAction(const LightActionType& actionType, const size_t numLights, const LightColor& color, unsigned int actionTime, unsigned int actionRepeatAmount)
-            : actionType(actionType), currentColor(numLights), startColor(numLights, color), endColor(numLights), actionTime(actionTime), actionRepeatAmount(actionRepeatAmount) {}
+            : actionType(actionType), currentColor(numLights), startColor(numLights, color), endColor(numLights), resetColor(numLights), actionTime(actionTime), actionRepeatAmount(actionRepeatAmount) {}
 
         LightAction(const LightActionType& actionType, const size_t numLights, const LightColor& startColor, const LightColor& endColor, unsigned int actionTime, unsigned int startColorHoldTime, unsigned int endColorHoldTime, unsigned int actionRepeatAmount)
-            : actionType(actionType), currentColor(numLights), startColor(numLights, startColor), endColor(numLights, endColor), actionTime(actionTime), startColorHoldTime(startColorHoldTime), endColorHoldTime(endColorHoldTime), actionRepeatAmount(actionRepeatAmount) {}
+            : actionType(actionType), currentColor(numLights), startColor(numLights, startColor), endColor(numLights, endColor), resetColor(numLights), actionTime(actionTime), startColorHoldTime(startColorHoldTime), endColorHoldTime(endColorHoldTime), actionRepeatAmount(actionRepeatAmount) {}
 
         LightColor GetStartColor(size_t lightIndex);
         std::vector<LightColor> GetStartColor();
         LightColor GetEndColor(size_t lightIndex);
         std::vector<LightColor> GetEndColor();
+        LightColor GetResetColor(size_t lightIndex);
+        std::vector<LightColor> GetResetColor();
         LightActionType GetActionType();
         unsigned int GetActionTime();
         unsigned int GetStartColorHoldTime();
@@ -69,6 +71,9 @@ namespace lightfx {
         void SetEndColor(const LightColor& endColor);
         void SetEndColor(const size_t lightIndex, const LightColor& endColor);
         void SetEndColor(const std::vector<LightColor>& endColor);
+        void SetResetColor(const LightColor& resetColor);
+        void SetResetColor(const size_t lightIndex, const LightColor& resetColor);
+        void SetResetColor(const std::vector<LightColor>& resetColor);
         void SetActionType(const LightActionType& actionType);
         void SetActionTime(const unsigned int actionTime);
         void SetStartColorHoldTime(const unsigned int startColorHoldTime);
@@ -90,18 +95,15 @@ namespace lightfx {
 
         std::vector<LightColor> startColor = {};
         std::vector<LightColor> endColor = {};
+        std::vector<LightColor> resetColor = {};
         LightActionType actionType;
-
-        std::vector<LightColor> prevColor;
 
         unsigned int actionTime = 200;
         unsigned int startColorHoldTime = 0;
         unsigned int endColorHoldTime = 0;
         unsigned int actionRepeatAmount = 5;
 
-
     };
-
 
 }
 

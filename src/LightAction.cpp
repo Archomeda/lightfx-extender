@@ -29,6 +29,14 @@ namespace lightfx {
         return this->endColor[lightIndex];
     }
 
+    LFXE_API vector<LightColor> LightAction::GetResetColor() {
+        return this->resetColor;
+    }
+
+    LFXE_API LightColor LightAction::GetResetColor(const size_t lightIndex) {
+        return this->resetColor[lightIndex];
+    }
+
     LFXE_API LightActionType LightAction::GetActionType() {
         return this->actionType;
     }
@@ -80,6 +88,21 @@ namespace lightfx {
         this->canUpdateCurrentColor = true;
     }
 
+    LFXE_API void LightAction::SetResetColor(const LightColor& resetColor) {
+        this->resetColor = vector<LightColor>(this->resetColor.size(), resetColor);
+        this->canUpdateCurrentColor = true;
+    }
+
+    LFXE_API void LightAction::SetResetColor(const size_t lightIndex, const LightColor& resetColor) {
+        this->resetColor[lightIndex] = resetColor;
+        this->canUpdateCurrentColor = true;
+    }
+
+    LFXE_API void LightAction::SetResetColor(const vector<LightColor>& resetColor) {
+        this->resetColor = resetColor;
+        this->canUpdateCurrentColor = true;
+    }
+
     LFXE_API void LightAction::SetActionType(const LightActionType& actionType) {
         this->actionType = actionType;
         this->canUpdateCurrentColor = true;
@@ -127,7 +150,6 @@ namespace lightfx {
 
         if (this->animatedColorStartTime == 0) {
             this->animatedColorStartTime = GetTickCount();
-            this->prevColor = vector<LightColor>(this->startColor);
         } else {
             timePassed = GetTickCount() - this->animatedColorStartTime;
         }
@@ -191,7 +213,7 @@ namespace lightfx {
             LightColor newColor;
             if (timePassed >= timeTotal) {
                 // Time exceeded animation time, reset to prev color
-                newColor = LightColor(this->prevColor[i]);
+                newColor = LightColor(this->resetColor[i]);
                 this->canUpdateCurrentColor = false;
             } else {
                 if (progress < progressPhaseTransitionToEnd) {

@@ -100,6 +100,7 @@ namespace lightfx {
                 for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
                     auto device = deviceManager->GetChildByIndex(i);
                     LightAction lightAction(LightActionType::Pulse, device->GetNumberOfLights(), startColor, endColor, 200, 100, 400, 5);
+                    lightAction.SetResetColor(device->GetCurrentLightAction().GetStartColor());
                     device->QueueLightAction(lightAction);
                     device->Update();
                 }

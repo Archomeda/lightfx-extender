@@ -78,6 +78,13 @@ public:
         Assert::IsTrue(color == lightAction.GetEndColor(0));
     }
 
+    TEST_METHOD(SetResetColor) {
+        LightColor color(11, 22, 33, 44);
+        LightAction lightAction(1, LightColor());
+        lightAction.SetResetColor(0, color);
+        Assert::IsTrue(color == lightAction.GetResetColor(0));
+    }
+
     TEST_METHOD(SetActionType) {
         LightActionType type = LightActionType::Pulse;
         LightAction lightAction;
