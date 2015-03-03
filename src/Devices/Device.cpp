@@ -122,12 +122,8 @@ namespace lightfx {
                     break;
                 }
 
-                if (this->CurrentLightAction.CanUpdateCurrentColor()) {
-                    if (this->CurrentLightAction.UpdateCurrentColor()) {
-                        this->PushColorToDevice();
-                    }
-                } else {
-                    // Finished updating
+                if (!this->UpdateCurrentColor()) {
+                    // Finished updating loop
                     break;
                 }
 
@@ -143,14 +139,30 @@ namespace lightfx {
             this->lightActionUpdateThreadRunningMutex.unlock();
         }
 
+        LFXE_API bool Device::UpdateCurrentColor() {
+            if (this->CurrentLightAction.CanUpdateCurrentColor()) {
+                if (this->CurrentLightAction.UpdateCurrentColor()) {
+                    this->PushColorToDevice();
+                }
+                return true;
+            }
+            return false;
+        }
+
         LFXE_API void Device::StartUpdateCurrentColor() {
             this->lightActionUpdateThreadRunningMutex.lock();
             bool isRunning = this->lightActionUpdateThreadRunning;
             this->lightActionUpdateThreadRunningMutex.unlock();
 
             if (!isRunning) {
-                this->lightActionUpdateThreadRunning = true;
-                this->lightActionUpdateThread = thread(&Device::UpdateCurrentColorLoop, this);
+                if (this->CurrentLightAction.GetActionType() == LightActionType::Instant) {
+                    // Don't start a new thread for this, since it's just one color update after all
+                    this->UpdateCurrentColor();
+                } else {
+                    // For everything else, start a new thread since there are multiple color steps in the animations
+                    this->lightActionUpdateThreadRunning = true;
+                    this->lightActionUpdateThread = thread(&Device::UpdateCurrentColorLoop, this);
+                }
             }
         }
 

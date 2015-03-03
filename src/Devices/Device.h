@@ -79,6 +79,7 @@ namespace lightfx {
             LightAction QueuedLightAction;
 
             virtual void UpdateCurrentColorLoop();
+            virtual bool UpdateCurrentColor();
             virtual void StartUpdateCurrentColor();
             virtual void StopUpdateCurrentColor();
 
