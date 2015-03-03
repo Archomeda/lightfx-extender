@@ -47,6 +47,8 @@ namespace lightfx {
                             light.Position = { posX, posY, 0 };
                             this->SetLightData(i, light);
                         }
+
+                        this->Reset();
                         return true;
                     }
                 }

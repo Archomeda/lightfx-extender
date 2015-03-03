@@ -32,6 +32,7 @@ namespace lightfx {
                         this->SetNumberOfLights(1);
                         this->SetLightData(0, LightData());
 
+                        this->Reset();
                         return true;
                     }
                 }
