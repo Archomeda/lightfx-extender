@@ -40,7 +40,7 @@ namespace lightfx {
             try {
                 wstring filePath = this->GetConfigDirectory();
                 if (DirExists(filePath)) {
-                    filePath += fileName;
+                    filePath += L"/" + fileName;
                     wifstream configStream;
                     configStream.imbue(locale(configStream.getloc(), new codecvt_utf8<wchar_t>));
                     configStream.open(filePath, wios::in | wios::binary);
@@ -75,7 +75,7 @@ namespace lightfx {
                         return;
                     }
                 }
-                filePath += fileName;
+                filePath += L"/" + fileName;
 
                 wofstream configStream;
                 configStream.imbue(locale(configStream.getloc(), new codecvt_utf8<wchar_t>));
