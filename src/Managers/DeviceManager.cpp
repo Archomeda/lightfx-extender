@@ -28,15 +28,15 @@ namespace lightfx {
 
             auto config = this->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
             auto lightpack = make_shared<DeviceLightpack>(config->LightpackHost, config->LightpackPort, config->LightpackKey);
+            this->AddChild(L"Lightpack", lightpack);
             if (lightpack->Initialize()) {
                 ++i;
-                this->AddChild(L"Lightpack", lightpack);
             }
 
             auto logitech = make_shared<DeviceLogitech>();
+            this->AddChild(L"Logitech", logitech);
             if (logitech->Initialize()) {
                 ++i;
-                this->AddChild(L"Logitech", logitech);
             }
 
             LOG(LogLevel::Info, L"Successfully initialized " + to_wstring(i) + L" devices");

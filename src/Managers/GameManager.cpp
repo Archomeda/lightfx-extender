@@ -24,9 +24,9 @@ namespace lightfx {
             // Guild Wars 2
             auto guildWars2 = make_shared<GameGw2>();
             if (guildWars2->GetFileName() == fileName) {
+                this->AddChild(guildWars2->GetGameName(), guildWars2);
                 if (guildWars2->Initialize()) {
                     LOG(LogLevel::Info, L"Guild Wars 2 found");
-                    this->AddChild(guildWars2->GetGameName(), guildWars2);
                     return true;
                 }
             }
@@ -44,6 +44,7 @@ namespace lightfx {
                 }
             }
 
+            LOG(LogLevel::Info, L"Successfully uninitialized " + to_wstring(i) + L" games");
             return i;
         }
 
