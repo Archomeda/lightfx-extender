@@ -7,10 +7,13 @@
 // Project includes
 #include "../LightFXExtender.h"
 #include "../Managers/ConfigManager.h"
+#include "../Managers/LogManager.h"
 #include "../Config/MainConfigFile.h"
 #include "../Devices/DeviceLightpack.h"
 #include "../Devices/DeviceLogitech.h"
 
+
+#define LOG(logLevel, line) if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"DeviceMananger - ") + line); }
 
 using namespace std;
 using namespace lightfx::config;
@@ -20,6 +23,7 @@ namespace lightfx {
     namespace managers {
 
         size_t DeviceManager::InitializeDevices() {
+            LOG(LogLevel::Info, L"Initializing devices");
             size_t i = 0;
 
             auto config = this->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
@@ -35,10 +39,12 @@ namespace lightfx {
                 this->AddChild(L"Logitech", logitech);
             }
 
+            LOG(LogLevel::Info, L"Successfully initialized " + to_wstring(i) + L" devices");
             return i;
         }
 
         size_t DeviceManager::UninitializeDevices() {
+            LOG(LogLevel::Info, L"Uninitializing devices");
             size_t i = 0;
 
             for (size_t j = 0; j < this->GetChildrenCount(); ++j) {
@@ -47,6 +53,7 @@ namespace lightfx {
                 }
             }
 
+            LOG(LogLevel::Info, L"Successfully uninitialized " + to_wstring(i) + L" devices");
             return i;
         }
 
