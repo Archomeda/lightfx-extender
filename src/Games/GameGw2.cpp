@@ -80,7 +80,7 @@ namespace lightfx {
                 // Therefore we can show the team color.
 
                 LightColor startColor(0, 0, 0, 0);
-                LightColor endColor(0, 0, 0, 0);
+                LightColor endColor(0, 0, 0, 255);
                 switch (teamColorId) {
                 case 9: // Blue
                     endColor.blue = 255;
