@@ -26,6 +26,8 @@ namespace lightfx {
         LightFXExtender() {}
         void Initialize();
 
+        bool IsInitialized();
+
         void Start();
         void Stop();
 
@@ -37,6 +39,8 @@ namespace lightfx {
         std::shared_ptr<managers::UpdateManager> GetUpdateManager() { return this->updateManager; }
 
     private:
+        bool isInitialized;
+
         std::shared_ptr<managers::ConfigManager> configManager;
         std::shared_ptr<managers::DeviceManager> deviceManager;
         std::shared_ptr<managers::GameManager> gameManager;

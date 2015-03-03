@@ -165,5 +165,8 @@
     <ClCompile Include="Games\GameGw2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LightFXExports.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

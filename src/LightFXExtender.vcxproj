@@ -187,6 +187,7 @@
     <ClCompile Include="Devices\DeviceLightpack.cpp" />
     <ClCompile Include="Devices\DeviceLogitech.cpp" />
     <ClCompile Include="Games\GameGw2.cpp" />
+    <ClCompile Include="LightFXExports.cpp" />
     <ClCompile Include="LightAction.cpp" />
     <ClCompile Include="Games\Game.cpp" />
     <ClCompile Include="LightFXExtender.cpp" />

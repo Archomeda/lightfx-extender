@@ -22,7 +22,7 @@ using namespace lightfx::utils;
 
 namespace lightfx {
 
-    void LightFXExtender::Initialize() {
+    LFXE_API void LightFXExtender::Initialize() {
         shared_ptr<ConfigManager> configMgr = make_shared<ConfigManager>();
         shared_ptr<DeviceManager> deviceMgr = make_shared<DeviceManager>();
         shared_ptr<GameManager> gameMgr = make_shared<GameManager>();
@@ -45,7 +45,11 @@ namespace lightfx {
         this->updateManager = updateMgr;
     }
 
-    void LightFXExtender::Start() {
+    LFXE_API bool LightFXExtender::IsInitialized() {
+        return this->isInitialized;
+    }
+
+    LFXE_API void LightFXExtender::Start() {
         this->logManager->Log(LogLevel::Info, L"Connected to " + GetProcessName());
 
         this->configManager->InitializeConfigs();
@@ -55,7 +59,7 @@ namespace lightfx {
         this->trayManager->AddTrayIcon();
     }
 
-    void LightFXExtender::Stop() {
+    LFXE_API void LightFXExtender::Stop() {
         this->trayManager->RemoveTrayIcon();
         this->configManager->GetMainConfig()->Save();
         this->deviceManager->UninitializeDevices();

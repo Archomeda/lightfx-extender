@@ -68,6 +68,7 @@ namespace lightfx {
 
         LFXE_API bool Device::Update() {
             this->CurrentLightAction = LightAction(this->QueuedLightAction);
+            this->QueuedLightAction = LightAction();
             this->StopUpdateCurrentColor();
             this->StartUpdateCurrentColor();
             return true;
