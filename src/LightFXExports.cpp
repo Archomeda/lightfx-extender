@@ -265,7 +265,7 @@ extern "C" {
         } catch (...) {
             return LFX_FAILURE;
         }
-        
+
         return LFX_SUCCESS;
     }
 
@@ -310,31 +310,34 @@ extern "C" {
         }
 
         try {
-            LightAction lightAction;
-            lightAction.SetEndColor(LightColor(primaryCol->red, primaryCol->green, primaryCol->blue, primaryCol->brightness));
-            lightAction.SetActionTime(timing);
+            LightColor startColor;
+            LightColor endColor(primaryCol->red, primaryCol->green, primaryCol->blue, primaryCol->brightness);
+            LightActionType lightActionType = LightActionType::Instant;
             switch (actionType) {
             case LFX_ACTION_MORPH:
-                lightAction.SetActionType(LightActionType::Morph);
+                lightActionType = LightActionType::Morph;
                 break;
 
             case LFX_ACTION_PULSE:
-                lightAction.SetActionType(LightActionType::Pulse);
+                lightActionType = LightActionType::Pulse;
+                break;
 
             default:
-                lightAction.SetActionType(LightActionType::Instant);
-                lightAction.SetStartColor(lightAction.GetEndColor());
+                startColor = LightColor(endColor);
+                break;
             }
 
-            for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
-                auto device = deviceManager->GetChildByIndex(i);
-                if (lightAction.GetActionType() != LightActionType::Instant) {
-                    for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
-                        lightAction.SetStartColor(j, device->GetCurrentLightAction().GetCurrentColor(j));
-                    }
+            auto device = deviceManager->GetChildByIndex(devIndex);
+            LightAction lightAction(device->GetNumberOfLights());
+            lightAction.SetEndColor(endColor);
+            lightAction.SetActionType(lightActionType);
+            lightAction.SetActionTime(timing);
+            if (lightActionType != LightActionType::Instant) {
+                for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
+                    lightAction.SetStartColor(j, device->GetCurrentLightAction().GetCurrentColor(j));
                 }
-                device->QueueLightAction(lightAction);
             }
+            device->QueueLightAction(lightAction);
         } catch (...) {
             return LFX_FAILURE;
         }
@@ -358,28 +361,30 @@ extern "C" {
         }
 
         try {
-            LightAction lightAction;
-            lightAction.SetStartColor(LightColor(primaryCol->red, primaryCol->green, primaryCol->blue, primaryCol->brightness));
-            lightAction.SetEndColor(LightColor(secondaryCol->red, secondaryCol->green, secondaryCol->blue, secondaryCol->brightness));
-            lightAction.SetActionTime(timing);
+            LightColor startColor(primaryCol->red, primaryCol->green, primaryCol->blue, primaryCol->brightness);
+            LightColor endColor(secondaryCol->red, secondaryCol->green, secondaryCol->blue, secondaryCol->brightness);
+            LightActionType lightActionType = LightActionType::Instant;
             switch (actionType) {
             case LFX_ACTION_MORPH:
-                lightAction.SetActionType(LightActionType::Morph);
+                lightActionType = LightActionType::Morph;
                 break;
 
             case LFX_ACTION_PULSE:
-                lightAction.SetActionType(LightActionType::Pulse);
+                lightActionType = LightActionType::Pulse;
                 break;
 
             default:
-                lightAction.SetActionType(LightActionType::Instant);
-                lightAction.SetStartColor(lightAction.GetEndColor());
+                startColor = LightColor(endColor);
                 break;
             }
 
-            for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
-                deviceManager->GetChildByIndex(i)->QueueLightAction(lightAction);
-            }
+            auto device = deviceManager->GetChildByIndex(devIndex);
+            LightAction lightAction(device->GetNumberOfLights());
+            lightAction.SetStartColor(startColor);
+            lightAction.SetEndColor(endColor);
+            lightAction.SetActionType(lightActionType);
+            lightAction.SetActionTime(timing);
+            device->QueueLightAction(lightAction);
         } catch (...) {
             return LFX_FAILURE;
         }
@@ -389,94 +394,51 @@ extern "C" {
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_ActionColor(const unsigned int locationMask, const unsigned int actionType, const unsigned int primaryCol) {
         // Location mask not supported yet, so we set everything
-        LightColor color;
+        LFX_COLOR color;
         color.blue = (primaryCol >> 24) & 0xFF;
         color.green = (primaryCol >> 16) & 0xFF;
         color.red = (primaryCol >> 8) & 0xFF;
         color.brightness = primaryCol & 0xFF;
 
-        if (!lightFXExtender->IsInitialized()) {
-            return LFX_ERROR_NOINIT;
-        }
-
+        LFX_RESULT result;
         auto deviceManager = lightFXExtender->GetDeviceManager();
-        try {
-            LightAction lightAction;
-            lightAction.SetEndColor(color);
-            lightAction.SetActionTime(timing);
-            switch (actionType) {
-            case LFX_ACTION_MORPH:
-                lightAction.SetActionType(LightActionType::Morph);
-                break;
-
-            case LFX_ACTION_PULSE:
-                lightAction.SetActionType(LightActionType::Pulse);
-
-            default:
-                lightAction.SetActionType(LightActionType::Instant);
-                lightAction.SetStartColor(lightAction.GetEndColor());
-            }
-
-            for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
-                auto device = deviceManager->GetChildByIndex(i);
-                if (lightAction.GetActionType() != LightActionType::Instant) {
-                    for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
-                        lightAction.SetStartColor(j, device->GetCurrentLightAction().GetCurrentColor(j));
-                    }
+        for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
+            auto device = deviceManager->GetChildByIndex(i);
+            for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
+                result = LFX_SetLightActionColor(i, j, actionType, &color);
+                if (result != LFX_SUCCESS) {
+                    return result;
                 }
-                device->QueueLightAction(lightAction);
             }
-        } catch (...) {
-            return LFX_FAILURE;
         }
-
-        return LFX_SUCCESS;
+        return result;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_ActionColorEx(const unsigned int locationMask, const unsigned int actionType, const unsigned int primaryCol, const unsigned int secondaryCol) {
         // Location mask not supported yet, so we set everything
-        LightColor color1;
+        LFX_COLOR color1;
         color1.blue = (primaryCol >> 24) & 0xFF;
         color1.green = (primaryCol >> 16) & 0xFF;
         color1.red = (primaryCol >> 8) & 0xFF;
         color1.brightness = primaryCol & 0xFF;
-        LightColor color2;
+        LFX_COLOR color2;
         color2.blue = (secondaryCol >> 24) & 0xFF;
         color2.green = (secondaryCol >> 16) & 0xFF;
         color2.red = (secondaryCol >> 8) & 0xFF;
         color2.brightness = secondaryCol & 0xFF;
 
-        if (!lightFXExtender->IsInitialized()) {
-            return LFX_ERROR_NOINIT;
-        }
-
+        LFX_RESULT result;
         auto deviceManager = lightFXExtender->GetDeviceManager();
-        try {
-            LightAction lightAction;
-            lightAction.SetStartColor(color1);
-            lightAction.SetEndColor(color2);
-            lightAction.SetActionTime(timing);
-            switch (actionType) {
-            case LFX_ACTION_MORPH:
-                lightAction.SetActionType(LightActionType::Morph);
-                break;
-
-            case LFX_ACTION_PULSE:
-                lightAction.SetActionType(LightActionType::Pulse);
-
-            default:
-                lightAction.SetActionType(LightActionType::Instant);
-                lightAction.SetStartColor(lightAction.GetEndColor());
+        for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
+            auto device = deviceManager->GetChildByIndex(i);
+            for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
+                result = LFX_SetLightActionColorEx(i, j, actionType, &color1, &color2);
+                if (result != LFX_SUCCESS) {
+                    return result;
+                }
             }
-
-            for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
-                deviceManager->GetChildByIndex(i)->QueueLightAction(lightAction);
-            }
-        } catch (...) {
-            return LFX_FAILURE;
         }
-
-        return LFX_SUCCESS;
+        return result;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_SetTiming(const int newTiming) {
