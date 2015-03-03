@@ -27,11 +27,22 @@ namespace lightfx {
         LFXE_API bool DeviceLogitech::Initialize() {
             if (!this->IsInitialized()) {
                 if (Device::Initialize()) {
-                    if (LogiLedInit()) {
-                        // TODO: Support more Logitech customization (e.g. Logitech G910 single-key colors)
-                        this->SetNumberOfLights(1);
-                        this->SetLightData(0, LightData());
+                    // Just do an initial pass to set how many LEDs there are available
+                    // TODO: Support more Logitech customization (e.g. Logitech G910 single-key colors)
+                    this->SetNumberOfLights(1);
+                    this->SetLightData(0, LightData());
 
+                    this->Reset();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        LFXE_API bool DeviceLogitech::Enable() {
+            if (!this->IsEnabled()) {
+                if (Device::Enable()) {
+                    if (LogiLedInit()) {
                         this->Reset();
                         return true;
                     }
@@ -40,9 +51,9 @@ namespace lightfx {
             return false;
         }
 
-        LFXE_API bool DeviceLogitech::Release() {
-            if (this->IsInitialized()) {
-                if (Device::Release()) {
+        LFXE_API bool DeviceLogitech::Disable() {
+            if (this->IsEnabled()) {
+                if (Device::Disable()) {
                     LogiLedShutdown();
                     return true;
                 }

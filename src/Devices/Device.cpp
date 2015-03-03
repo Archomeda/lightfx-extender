@@ -60,6 +60,7 @@ namespace lightfx {
 
         LFXE_API bool Device::Release() {
             if (this->isInitialized) {
+                this->Disable();
                 LOG(LogLevel::Info, L"Releasing");
                 this->isInitialized = false;
             }
@@ -67,11 +68,14 @@ namespace lightfx {
         }
 
         LFXE_API bool Device::Update() {
-            this->StopUpdateCurrentColor();
-            this->CurrentLightAction = LightAction(this->QueuedLightAction);
-            this->QueuedLightAction = LightAction();
-            this->StartUpdateCurrentColor();
-            return true;
+            if (this->isEnabled) {
+                this->StopUpdateCurrentColor();
+                this->CurrentLightAction = LightAction(this->QueuedLightAction);
+                this->QueuedLightAction = LightAction();
+                this->StartUpdateCurrentColor();
+                return true;
+            }
+            return false;
         }
 
         LFXE_API bool Device::Reset() {

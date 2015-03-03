@@ -34,6 +34,7 @@ namespace lightfx {
         bool DeviceLightpack::Initialize() {
             if (!this->IsInitialized()) {
                 if (Device::Initialize()) {
+                    // Just do an initial pass to check how many LEDs there are available
                     if (this->ConnectAPI()) {
                         this->SetNumberOfLights(this->GetCountLeds());
                         auto leds = this->GetLeds();
@@ -49,6 +50,7 @@ namespace lightfx {
                         }
 
                         this->Reset();
+                        this->DisconnectAPI();
                         return true;
                     }
                 }
@@ -56,9 +58,21 @@ namespace lightfx {
             return false;
         }
 
-        bool DeviceLightpack::Release() {
-            if (this->IsInitialized()) {
-                if (Device::Release()) {
+        bool DeviceLightpack::Enable() {
+            if (!this->IsEnabled()) {
+                if (Device::Enable()) {
+                    if (this->ConnectAPI()) {
+                        this->Reset();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        bool DeviceLightpack::Disable() {
+            if (this->IsEnabled()) {
+                if (Device::Disable()) {
                     this->DisconnectAPI();
                     return true;
                 }

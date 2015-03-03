@@ -50,7 +50,8 @@ namespace lightfx {
             DeviceLightpack(const std::wstring& hostname, const std::wstring& port, const std::wstring& key);
 
             virtual bool Initialize() override;
-            virtual bool Release() override;
+            virtual bool Enable() override;
+            virtual bool Disable() override;
 
             virtual bool PushColorToDevice() override;
 

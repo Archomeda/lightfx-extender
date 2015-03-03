@@ -56,6 +56,7 @@ public:
     TEST_METHOD(QueueLightActionAndUpdate) {
         auto device = make_shared<DeviceMock>();
         device->Reset();
+        device->Enable();
         LightAction lightAction(1, LightColor(1, 2, 3, 4));
         device->QueueLightAction(lightAction);
         device->Update();

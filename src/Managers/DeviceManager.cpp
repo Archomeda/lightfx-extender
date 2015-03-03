@@ -40,6 +40,16 @@ namespace lightfx {
             }
 
             LOG(LogLevel::Info, L"Successfully initialized " + to_wstring(i) + L" devices");
+
+            // Enable devices where needed
+            for (pair<wstring, bool> device : config->EnabledDevices) {
+                if (device.first == L"Lightpack" && device.second) {
+                    lightpack->Enable();
+                } else if (device.first == L"Logitech" && device.second) {
+                    logitech->Enable();
+                }
+            }
+
             return i;
         }
 
