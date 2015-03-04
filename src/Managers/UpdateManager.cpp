@@ -104,8 +104,7 @@ namespace lightfx {
 
         LFXE_API void UpdateManager::CheckForUpdate() {
             Version currentVersion = this->GetCurrentVersion();
-            LOG(LogLevel::Info, L"Checking for updates... (current version: " +
-                to_wstring(currentVersion.GetMajor()) + L"." + to_wstring(currentVersion.GetMinor()) + L"." + to_wstring(currentVersion.GetBuild()) + L")");
+            LOG(LogLevel::Info, L"Checking for updates...");
 
             Version liveVersion = this->GetLiveVersion();
             if (liveVersion > currentVersion) {

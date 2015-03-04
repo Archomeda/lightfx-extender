@@ -50,6 +50,8 @@ namespace lightfx {
     }
 
     LFXE_API void LightFXExtender::Start() {
+        this->logManager->Log(LogLevel::Info, L"LightFX Extender v" + this->updateManager->GetCurrentVersion().ToString());
+
         wstring processFileName;
         wstring ext;
         wstring processPath = GetProcessName(nullptr, nullptr, &processFileName, &ext);

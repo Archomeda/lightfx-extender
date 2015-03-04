@@ -19,6 +19,7 @@ namespace lightfx {
     namespace managers {
 
         enum LogLevel {
+            Debug,
             Info,
             Warning,
             Error

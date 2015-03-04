@@ -28,7 +28,7 @@ namespace lightfx {
 
         LFXE_API bool Game::Initialize() {
             if (!this->isInitialized) {
-                LOG(LogLevel::Info, L"Initializing");
+                LOG(LogLevel::Debug, L"Initializing");
                 this->isInitialized = true;
             }
             return true;
@@ -36,7 +36,7 @@ namespace lightfx {
 
         LFXE_API bool Game::Release() {
             if (this->isInitialized) {
-                LOG(LogLevel::Info, L"Releasing");
+                LOG(LogLevel::Debug, L"Releasing");
                 this->isInitialized = false;
             }
             return true;

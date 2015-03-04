@@ -23,7 +23,7 @@ namespace lightfx {
     namespace managers {
 
         size_t DeviceManager::InitializeDevices() {
-            LOG(LogLevel::Info, L"Initializing devices");
+            LOG(LogLevel::Debug, L"Initializing devices");
             size_t i = 0;
 
             auto config = this->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
@@ -54,7 +54,7 @@ namespace lightfx {
         }
 
         size_t DeviceManager::UninitializeDevices() {
-            LOG(LogLevel::Info, L"Uninitializing devices");
+            LOG(LogLevel::Debug, L"Uninitializing devices");
             size_t i = 0;
 
             for (size_t j = 0; j < this->GetChildrenCount(); ++j) {

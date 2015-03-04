@@ -28,6 +28,8 @@ namespace lightfx {
             unsigned int GetMinor() { return this->minorVer; }
             unsigned int GetBuild() { return this->buildVer; }
 
+            std::wstring ToString();
+
             friend inline bool operator==(const Version& a, const Version& b) {
                 return a.majorVer == b.majorVer && a.minorVer == b.minorVer && a.buildVer == b.buildVer;
             }

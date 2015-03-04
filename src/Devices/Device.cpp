@@ -33,7 +33,7 @@ namespace lightfx {
 
         LFXE_API bool Device::Enable() {
             if (!this->isEnabled) {
-                LOG(LogLevel::Info, L"Enabling");
+                LOG(LogLevel::Debug, L"Enabling");
                 this->isEnabled = true;
             }
             return true;
@@ -41,7 +41,7 @@ namespace lightfx {
 
         LFXE_API bool Device::Disable() {
             if (this->isEnabled) {
-                LOG(LogLevel::Info, L"Disabling");
+                LOG(LogLevel::Debug, L"Disabling");
                 this->StopUpdateCurrentColor();
                 this->isEnabled = false;
             }
@@ -51,7 +51,7 @@ namespace lightfx {
 
         LFXE_API bool Device::Initialize() {
             if (!this->isInitialized) {
-                LOG(LogLevel::Info, L"Initializing");
+                LOG(LogLevel::Debug, L"Initializing");
                 this->Reset();
                 this->isInitialized = true;
             }
@@ -61,7 +61,7 @@ namespace lightfx {
         LFXE_API bool Device::Release() {
             if (this->isInitialized) {
                 this->Disable();
-                LOG(LogLevel::Info, L"Releasing");
+                LOG(LogLevel::Debug, L"Releasing");
                 this->isInitialized = false;
             }
             return true;

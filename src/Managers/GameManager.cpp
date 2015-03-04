@@ -19,7 +19,7 @@ namespace lightfx {
     namespace managers {
 
         bool GameManager::InitializeGame(const std::wstring& fileName) {
-            LOG(LogLevel::Info, L"Initializing special game support");
+            LOG(LogLevel::Debug, L"Initializing special game support");
 
             // Guild Wars 2
             auto guildWars2 = make_shared<GameGw2>();

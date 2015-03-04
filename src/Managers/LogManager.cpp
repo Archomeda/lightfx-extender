@@ -78,7 +78,7 @@ namespace lightfx {
             //Get the error message, if any.
             DWORD errorMessageID = GetLastError();
             if (errorMessageID == 0) {
-                return this->Log(LogLevel::Info, L"No Windows error found");
+                return this->Log(LogLevel::Debug, L"No Windows error found");
             }
 
             LPWSTR messageBuffer = nullptr;

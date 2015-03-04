@@ -14,6 +14,10 @@ using namespace lightfx::utils;
 namespace lightfx {
     namespace managers {
 
+        LFXE_API wstring Version::ToString() {
+            return to_wstring(this->GetMajor()) + L"." + to_wstring(this->GetMinor()) + L"." + to_wstring(this->GetBuild());
+        }
+
         LFXE_API Version::Version(const string& str) {
             vector<string> splitted = split(str, '.');
             if (splitted.size() == 0) {

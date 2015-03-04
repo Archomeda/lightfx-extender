@@ -84,15 +84,15 @@ namespace lightfx {
                 switch (teamColorId) {
                 case 9: // Blue
                     endColor.blue = 255;
-                    LOG(LogLevel::Info, L"Mumble Link - Detected PvP/WvW blue team");
+                    LOG(LogLevel::Debug, L"Mumble Link - Detected PvP/WvW blue team");
                     break;
                 case 55: // Green
                     endColor.green = 255;
-                    LOG(LogLevel::Info, L"Mumble Link - Detected PvP/WvW green team");
+                    LOG(LogLevel::Debug, L"Mumble Link - Detected PvP/WvW green team");
                     break;
                 case 376: // Red
                     endColor.red = 255;
-                    LOG(LogLevel::Info, L"Mumble Link - Detected PvP/WvW red team");
+                    LOG(LogLevel::Debug, L"Mumble Link - Detected PvP/WvW red team");
                     break;
                 }
 
@@ -112,7 +112,7 @@ namespace lightfx {
         }
 
         LFXE_API void GameGw2::MumbleLinkLoop() {
-            LOG(LogLevel::Info, L"Mumble Link started");
+            LOG(LogLevel::Debug, L"Mumble Link started");
 
             while (this->mumbleLinkLoopRunning) {
                 if (this->lastTick != this->mumbleLinkedMem->uiTick) {
