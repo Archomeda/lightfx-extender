@@ -290,7 +290,7 @@ extern "C" {
 
         try {
             lightAction.SetActionType(LightActionType::Instant);
-            lightAction.SetStartColor(lightIndex, LfxColorToLightColor(*lightCol));
+            lightAction.SetEndColor(lightIndex, LfxColorToLightColor(*lightCol));
             device->QueueLightAction(lightAction);
         } catch (...) {
             return LFX_FAILURE;

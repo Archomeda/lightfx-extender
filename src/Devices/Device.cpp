@@ -79,7 +79,7 @@ namespace lightfx {
         }
 
         LFXE_API bool Device::Reset() {
-            this->CurrentLightAction = LightAction();
+            this->CurrentLightAction = LightAction(this->GetNumberOfLights());
             this->QueuedLightAction = LightAction(this->CurrentLightAction);
             return true;
         }
