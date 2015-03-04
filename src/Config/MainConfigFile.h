@@ -9,6 +9,7 @@
 
 // Project includes
 #include "ConfigFile.h"
+#include "../Managers/LogManager.h"
 
 // API exports
 #include "../Common/ApiExports.h"
@@ -23,6 +24,8 @@ namespace lightfx {
         class LFXE_API MainConfigFile : public ConfigFile {
 
         public:
+            managers::LogLevel MinimumLogLevel = managers::LogLevel::Info;
+
             std::map<std::wstring, bool> EnabledDevices = {};
 
             int LogitechColorRangeOutMin = 0;

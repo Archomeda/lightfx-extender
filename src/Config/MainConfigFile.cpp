@@ -6,6 +6,8 @@
 
 
 #pragma region Configuration keys
+#define CONF_MINIMUMLOGLEVEL L"MinimumLogLevel"
+
 #define CONF_ENABLEDDEVICES L"EnabledDevices"
 
 #define CONF_LOGITECHCOLORRANGE L"LogitechColorRange"
@@ -32,6 +34,8 @@ namespace lightfx {
         }
 
         LFXE_API void MainConfigFile::LoadDefaults() {
+            this->MinimumLogLevel = LogLevel::Info;
+
             this->LogitechColorRangeOutMin = 0;
             this->LogitechColorRangeOutMax = 255;
             this->LogitechColorRangeInMin = 0;
@@ -45,6 +49,25 @@ namespace lightfx {
         LFXE_API wstring MainConfigFile::Serialize() {
             WDocument::AllocatorType& allocator = this->doc.GetAllocator();
             this->doc.SetObject();
+
+            // Minimum log level
+            WValue minimumLogLevel;
+            switch (this->MinimumLogLevel) {
+            case LogLevel::Debug:
+                minimumLogLevel = this->MakeJsonWString(L"Debug", allocator);
+                break;
+            case LogLevel::Warning:
+                minimumLogLevel = this->MakeJsonWString(L"Warning", allocator);
+                break;
+            case LogLevel::Error:
+                minimumLogLevel = this->MakeJsonWString(L"Error", allocator);
+                break;
+            case LogLevel::Info:
+            default:
+                minimumLogLevel = this->MakeJsonWString(L"Info", allocator);
+                break;
+            }
+            this->doc.AddMember(CONF_MINIMUMLOGLEVEL, minimumLogLevel, allocator);
 
             // Enabled devices
             WValue enabledDevices(kObjectType);
@@ -79,6 +102,20 @@ namespace lightfx {
 
             if (!this->doc.IsObject()) {
                 return;
+            }
+
+            // Minimum log level
+            if (this->doc.HasMember(CONF_MINIMUMLOGLEVEL) && this->doc[CONF_MINIMUMLOGLEVEL].IsString()) {
+                wstring minimumLogLevel = this->doc[CONF_MINIMUMLOGLEVEL].GetString();
+                if (minimumLogLevel == L"Debug") {
+                    this->MinimumLogLevel = LogLevel::Debug;
+                } else if (minimumLogLevel == L"Info") {
+                    this->MinimumLogLevel = LogLevel::Info;
+                } else if (minimumLogLevel == L"Warning") {
+                    this->MinimumLogLevel = LogLevel::Warning;
+                } else if (minimumLogLevel == L"Error") {
+                    this->MinimumLogLevel = LogLevel::Error;
+                }
             }
 
             // Enabled devices

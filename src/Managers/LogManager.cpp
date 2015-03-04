@@ -15,6 +15,9 @@
 #include <time.h>
 
 // Project includes
+#include "../LightFXExtender.h"
+#include "../Managers/ConfigManager.h"
+#include "../Config/MainConfigFile.h"
 #include "../Utils/FileIO.h"
 
 
@@ -30,6 +33,14 @@ namespace lightfx {
 
 
         LFXE_API void LogManager::Log(const LogLevel logLevel, const std::wstring& line) {
+            // Check if the log level is equal or higher than the minimum log level set in the config
+            if (this->GetLightFXExtender() != nullptr) {
+                auto config = this->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
+                if (config != nullptr && logLevel < config->MinimumLogLevel) {
+                    return;
+                }
+            }
+
             // Get a nice date/time prefix first
             wchar_t buff[20];
             time_t t = time(0);
@@ -41,6 +52,9 @@ namespace lightfx {
             // Determine the log level prefix
             wstring logLevelPrefix;
             switch (logLevel) {
+            case LogLevel::Debug:
+                logLevelPrefix = L"[DEBUG]";
+                break;
             case LogLevel::Info:
                 logLevelPrefix = L"[INFO]";
                 break;
