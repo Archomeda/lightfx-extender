@@ -41,17 +41,25 @@ namespace lightfx {
         LightAction(const size_t numLights)
             : actionType(LightActionType::Instant), currentColor(numLights), startColor(numLights), endColor(numLights), resetColor(numLights) {}
 
-        LightAction(const size_t numLights, const LightColor& color)
-            : actionType(LightActionType::Instant), currentColor(numLights), startColor(numLights, color), endColor(numLights), resetColor(numLights) {}
+        static LightAction NewInstant(const size_t numLights, const LightColor& color) {
+            return LightAction(numLights, color);
+        }
 
-        LightAction(const LightActionType& actionType, const size_t numLights, const LightColor& color, unsigned int actionTime)
-            : actionType(actionType), currentColor(numLights), startColor(numLights, color), endColor(numLights), resetColor(numLights), actionTime(actionTime) {}
+        static LightAction NewMorph(const size_t numLights, const LightColor& startColor, const LightColor& endColor, unsigned int morphTime) {
+            return LightAction(numLights, startColor, endColor, morphTime);
+        }
 
-        LightAction(const LightActionType& actionType, const size_t numLights, const LightColor& color, unsigned int actionTime, unsigned int actionRepeatAmount)
-            : actionType(actionType), currentColor(numLights), startColor(numLights, color), endColor(numLights), resetColor(numLights), actionTime(actionTime), actionRepeatAmount(actionRepeatAmount) {}
+        static LightAction NewPulse(const size_t numLights, const LightColor& startColor, const LightColor& endColor, unsigned int pulseTime, unsigned int pulseAmount) {
+            return NewPulse(numLights, startColor, endColor, pulseTime, 0, 0, pulseAmount);
+        }
 
-        LightAction(const LightActionType& actionType, const size_t numLights, const LightColor& startColor, const LightColor& endColor, unsigned int actionTime, unsigned int startColorHoldTime, unsigned int endColorHoldTime, unsigned int actionRepeatAmount)
-            : actionType(actionType), currentColor(numLights), startColor(numLights, startColor), endColor(numLights, endColor), resetColor(numLights), actionTime(actionTime), startColorHoldTime(startColorHoldTime), endColorHoldTime(endColorHoldTime), actionRepeatAmount(actionRepeatAmount) {}
+        static LightAction NewPulse(const size_t numLights, const LightColor& startColor, const LightColor& endColor, unsigned int pulseTime, unsigned int startColorHoldTime, unsigned int endColorHoldTime, unsigned int pulseAmount) {
+            return NewPulse(numLights, startColor, endColor, startColor, pulseTime, startColorHoldTime, endColorHoldTime, pulseAmount);
+        }
+
+        static LightAction NewPulse(const size_t numLights, const LightColor& startColor, const LightColor& endColor, const LightColor& resetColor, unsigned int pulseTime, unsigned int startColorHoldTime, unsigned int endColorHoldTime, unsigned int pulseAmount) {
+            return LightAction(numLights, startColor, endColor, resetColor, pulseTime, startColorHoldTime, endColorHoldTime, pulseAmount);
+        }
 
         LightColor GetStartColor(size_t lightIndex);
         std::vector<LightColor> GetStartColor();
@@ -85,6 +93,16 @@ namespace lightfx {
         bool CanUpdateCurrentColor();
         bool UpdateCurrentColor();
 
+    protected:
+        LightAction(const size_t numLights, const LightColor& color)
+            : actionType(LightActionType::Instant), currentColor(numLights), startColor(numLights, color), endColor(numLights, color), resetColor(numLights, color) {}
+
+        LightAction(const size_t numLights, const LightColor& startColor, const LightColor& endColor, unsigned int actionTime)
+            : actionType(LightActionType::Morph), currentColor(numLights), startColor(numLights, startColor), endColor(numLights, endColor), resetColor(numLights, endColor), actionTime(actionTime) {}
+
+        LightAction(const size_t numLights, const LightColor& startColor, const LightColor& endColor, const LightColor& resetColor, unsigned int actionTime, unsigned int startColorHoldTime, unsigned int endColorHoldTime, unsigned int actionRepeatAmount)
+            : actionType(LightActionType::Pulse), currentColor(numLights), startColor(numLights, startColor), endColor(numLights, endColor), resetColor(numLights, resetColor), actionTime(actionTime), startColorHoldTime(startColorHoldTime), endColorHoldTime(endColorHoldTime), actionRepeatAmount(actionRepeatAmount) {}
+
     private:
         std::vector<LightColor> currentColor = {};
         unsigned long animatedColorStartTime = 0;
@@ -96,7 +114,7 @@ namespace lightfx {
         std::vector<LightColor> startColor = {};
         std::vector<LightColor> endColor = {};
         std::vector<LightColor> resetColor = {};
-        LightActionType actionType;
+        LightActionType actionType = LightActionType::Instant;
 
         unsigned int actionTime = 200;
         unsigned int startColorHoldTime = 0;

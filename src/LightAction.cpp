@@ -254,12 +254,12 @@ namespace lightfx {
     LFXE_API bool LightAction::UpdateCurrentColorInstant() {
         bool colorChanged = false;
         for (size_t i = 0; i < this->currentColor.size(); ++i) {
-            colorChanged = this->currentColor[i] != this->startColor[i];
+            colorChanged = this->currentColor[i] != this->endColor[i];
             if (colorChanged) {
                 break;
             }
         }
-        this->currentColor = vector<LightColor>(this->startColor);
+        this->currentColor = vector<LightColor>(this->endColor);
         this->canUpdateCurrentColor = false;
         return colorChanged;
     }
