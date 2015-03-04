@@ -17,10 +17,6 @@ using namespace lightfx::managers;
 namespace lightfx {
     namespace games {
 
-        LFXE_API bool Game::IsEnabled() {
-            return this->isEnabled;
-        }
-
         LFXE_API bool Game::IsInitialized() {
             return this->isInitialized;
         }

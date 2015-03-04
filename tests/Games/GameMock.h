@@ -13,7 +13,6 @@ namespace lightfx_tests {
         class GameMock : public lightfx::games::Game {
 
         public:
-            using Game::IsEnabled;
             using Game::IsInitialized;
 
             using Game::Initialize;

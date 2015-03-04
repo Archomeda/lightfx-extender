@@ -27,7 +27,6 @@ namespace lightfx {
             Game() {}
             virtual ~Game() {}
 
-            bool IsEnabled();
             bool IsInitialized();
 
             virtual bool Initialize();
