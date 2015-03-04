@@ -87,25 +87,76 @@ public:
         Assert::AreEqual(repeat, lightAction.GetActionRepeatAmount(), L"RepeatAmount");
     }
 
-    TEST_METHOD(SetStartColor) {
+    TEST_METHOD(SetStartColorByIndex) {
         LightColor color(11, 22, 33, 44);
-        LightAction lightAction(1);
+        LightAction lightAction(2);
         lightAction.SetStartColor(0, color);
         Assert::IsTrue(color == lightAction.GetStartColor(0));
+        Assert::IsFalse(color == lightAction.GetStartColor(1));
     }
 
-    TEST_METHOD(SetEndColor) {
+    TEST_METHOD(SetStartColorAll) {
         LightColor color(11, 22, 33, 44);
-        LightAction lightAction(1);
+        LightAction lightAction(2);
+        lightAction.SetStartColor(color);
+        Assert::IsTrue(color == lightAction.GetStartColor(0));
+        Assert::IsTrue(color == lightAction.GetStartColor(1));
+    }
+
+    TEST_METHOD(SetStartColorByVector) {
+        vector<LightColor> colors = { LightColor(11, 22, 33, 44), LightColor(22, 33, 44, 55) };
+        LightAction lightAction(2);
+        lightAction.SetStartColor(colors);
+        Assert::IsTrue(colors[0] == lightAction.GetStartColor()[0]);
+        Assert::IsTrue(colors[1] == lightAction.GetStartColor()[1]);
+    }
+
+    TEST_METHOD(SetEndColorByIndex) {
+        LightColor color(11, 22, 33, 44);
+        LightAction lightAction(2);
         lightAction.SetEndColor(0, color);
         Assert::IsTrue(color == lightAction.GetEndColor(0));
+        Assert::IsFalse(color == lightAction.GetEndColor(1));
     }
 
-    TEST_METHOD(SetResetColor) {
+    TEST_METHOD(SetEndColorAll) {
         LightColor color(11, 22, 33, 44);
-        LightAction lightAction(1);
+        LightAction lightAction(2);
+        lightAction.SetEndColor(color);
+        Assert::IsTrue(color == lightAction.GetEndColor(0));
+        Assert::IsTrue(color == lightAction.GetEndColor(1));
+    }
+    
+    TEST_METHOD(SetEndColorByVector) {
+        vector<LightColor> colors = { LightColor(11, 22, 33, 44), LightColor(22, 33, 44, 55) };
+        LightAction lightAction(2);
+        lightAction.SetEndColor(colors);
+        Assert::IsTrue(colors[0] == lightAction.GetEndColor()[0]);
+        Assert::IsTrue(colors[1] == lightAction.GetEndColor()[1]);
+    }
+
+    TEST_METHOD(SetResetColorByIndex) {
+        LightColor color(11, 22, 33, 44);
+        LightAction lightAction(2);
         lightAction.SetResetColor(0, color);
         Assert::IsTrue(color == lightAction.GetResetColor(0));
+        Assert::IsFalse(color == lightAction.GetResetColor(1));
+    }
+
+    TEST_METHOD(SetResetColorAll) {
+        LightColor color(11, 22, 33, 44);
+        LightAction lightAction(2);
+        lightAction.SetResetColor(color);
+        Assert::IsTrue(color == lightAction.GetResetColor(0));
+        Assert::IsTrue(color == lightAction.GetResetColor(1));
+    }
+
+    TEST_METHOD(SetResetColorByVector) {
+        vector<LightColor> colors = { LightColor(11, 22, 33, 44), LightColor(22, 33, 44, 55) };
+        LightAction lightAction(2);
+        lightAction.SetResetColor(colors);
+        Assert::IsTrue(colors[0] == lightAction.GetResetColor()[0]);
+        Assert::IsTrue(colors[1] == lightAction.GetResetColor()[1]);
     }
 
     TEST_METHOD(SetActionType) {
