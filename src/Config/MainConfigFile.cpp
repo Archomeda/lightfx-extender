@@ -4,6 +4,10 @@
 
 #include "MainConfigFile.h"
 
+// Project includes
+#include "../LightFXExtender.h"
+#include "../Managers/DeviceManager.h"
+
 
 #pragma region Configuration keys
 #define CONF_AUTOUPDATESENABLED L"AutoUpdatesEnabled"
@@ -51,13 +55,7 @@ namespace lightfx {
             this->doc.SetObject();
 
             // Auto updates enabled
-            WValue autoUpdatesEnabled;
-            if (this->AutoUpdatesEnabled) {
-                autoUpdatesEnabled = WValue(kTrueType);
-            } else {
-                autoUpdatesEnabled = WValue(kFalseType);
-            }
-            this->doc.AddMember(CONF_AUTOUPDATESENABLED, autoUpdatesEnabled, allocator);
+            this->doc.AddMember(CONF_AUTOUPDATESENABLED, this->AutoUpdatesEnabled, allocator);
 
             // Minimum log level
             WValue minimumLogLevel;
@@ -80,8 +78,10 @@ namespace lightfx {
 
             // Enabled devices
             WValue enabledDevices(kObjectType);
-            for (auto itr : this->EnabledDevices) {
-                enabledDevices.AddMember(WValue(itr.first.c_str(), allocator).Move(), WValue(itr.second), allocator);
+            auto deviceManager = this->GetManager()->GetLightFXExtender()->GetDeviceManager();
+            for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
+                auto device = deviceManager->GetChildByIndex(i);
+                enabledDevices.AddMember(WValue(device->GetDeviceName().c_str(), allocator).Move(), WValue(device->IsEnabled()), allocator);
             }
             this->doc.AddMember(CONF_ENABLEDDEVICES, enabledDevices, allocator);
 
