@@ -21,3 +21,6 @@ deploy:
   artifact: bin\LightFX-Extender-v$(appveyor_build_version).zip
   on:
     appveyor_repo_tag: true
+
+environment:
+  access_token: fHXemLwKHEg/6UXe2alr3/fUlPoZrNLmIsWgErk4u7vjCgMKGHYys+msNct3REOY

@@ -10,6 +10,10 @@ if ($env:APPVEYOR_REPO_TAG -eq "false") {
     }
 }
 
-Write-Host "Update build version to $version" -ForegroundColor "Yellow"
+Write-Host "Current build version: $version" -ForegroundColor "Yellow"
+
+Write-Host "  - Apply to $file" -ForegroundColor "Yellow"
 (gc $file) -replace "#define CURRENT_VERSION ""0.0.0""","#define CURRENT_VERSION ""$version""" | Set-Content $file
+
+Write-Host "  - Send to AppVeyor Build Worker API" -ForegroundColor "Yellow"
 Update-AppveyorBuild -Version $version
