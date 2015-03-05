@@ -8,7 +8,7 @@ before_build:
 build:
   project: msbuild/ReleaseTestAndRelease.proj
 
-test:
+test_script:
   - vstest.console /logger:Appveyor bin/Release_Tests/UnitTests.dll
 
 artifacts:
