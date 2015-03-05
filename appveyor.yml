@@ -1,7 +1,5 @@
 version: 0.0.{build}
 
-configuration: Release
-
 before_build:
   - ps: appveyor/UpdateBuildVersion.ps1
 
