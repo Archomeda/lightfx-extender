@@ -27,4 +27,5 @@ deploy:
     appveyor_repo_tag: true
 
 environment:
-  access_token: fHXemLwKHEg/6UXe2alr3/fUlPoZrNLmIsWgErk4u7vjCgMKGHYys+msNct3REOY
+  access_token:
+    secure: fHXemLwKHEg/6UXe2alr3/fUlPoZrNLmIsWgErk4u7vjCgMKGHYys+msNct3REOY
