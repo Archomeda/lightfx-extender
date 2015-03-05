@@ -15,7 +15,10 @@ enable the devices that you want to have LightFX Extender support for.
 
 For advanced configuration, please check the file `settings.json` in the
 configuration folder (`%APPDATA%\LightFX Extender`) or right-click on the icon
-in your taskbar and choose *Open configuration folder*.
+in your taskbar and choose *Open configuration folder*. This file will be
+created after you launched and closed the game after installing LightFX Extender
+for the first time. Deleting this file will cause the settings to be reset to
+default.
 
 ### Updating
 LightFX Extender has support for automatic updates. However, there is always a
