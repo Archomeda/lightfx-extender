@@ -11,13 +11,13 @@ test_script:
 
 artifacts:
   - path: bin\Release
-    name: LightFX Extender v$(appveyor_build_version)
+    name: LightFX-Extender-v$(appveyor_build_version)
     type: zip
 
 deploy:
   provider: GitHub
   auth_token:
     secure: fHXemLwKHEg/6UXe2alr3/fUlPoZrNLmIsWgErk4u7vjCgMKGHYys+msNct3REOY
-  artifact: bin\LightFX Extender v$(appveyor_build_version).zip
+  artifact: bin\LightFX-Extender-v$(appveyor_build_version).zip
   on:
     appveyor_repo_tag: true
