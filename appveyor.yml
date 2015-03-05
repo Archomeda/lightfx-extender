@@ -5,6 +5,7 @@ before_build:
 
 build:
   project: msbuild\ReleaseTestAndRelease.proj
+  verbosity: minimal
 
 test_script:
   - vstest.console /logger:Appveyor bin/Release_Tests/UnitTests.dll
