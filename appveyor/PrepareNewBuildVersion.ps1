@@ -16,8 +16,8 @@ if ($env:APPVEYOR_REPO_TAG -eq "true") {
     git config --global user.email $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL
     Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
     git remote add github "https://github.com/$($env:APPVEYOR_REPO_NAME).git"
-    git checkout $env:APPVEYOR_REPO_BRANCH
-    git add appveyor.yml
-    git commit -m "[AppVeyor] Prepare for version $newVersion [ci skip]"
-    git push github master
+    git checkout -q $env:APPVEYOR_REPO_BRANCH
+    git add -q appveyor.yml
+    git commit -q -m "[AppVeyor] Prepare for version $newVersion [ci skip]"
+    git push -q github master
 }
