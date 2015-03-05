@@ -9,6 +9,9 @@ build:
 test_script:
   - vstest.console /logger:Appveyor bin/Release_Tests/UnitTests.dll
 
+on_success:
+  - ps: appveyor\PrepareNewBuildVersion.ps1
+
 artifacts:
   - path: bin\Release
     name: LightFX-Extender-v$(appveyor_build_version)
