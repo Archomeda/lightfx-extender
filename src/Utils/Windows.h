@@ -15,6 +15,8 @@ namespace lightfx {
         HMODULE GetCurrentModule();
         std::wstring GetProcessName();
         std::wstring GetProcessName(std::wstring* drive, std::wstring* dir, std::wstring* fname, std::wstring* ext);
+        std::wstring GetDllName();
+        std::wstring GetDllName(std::wstring* drive, std::wstring* dir, std::wstring* fname, std::wstring* ext);
 
     }
 }

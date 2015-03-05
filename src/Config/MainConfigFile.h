@@ -24,6 +24,7 @@ namespace lightfx {
         class LFXE_API MainConfigFile : public ConfigFile {
 
         public:
+            bool AutoUpdatesEnabled = true;
             managers::LogLevel MinimumLogLevel = managers::LogLevel::Info;
 
             std::map<std::wstring, bool> EnabledDevices = {};

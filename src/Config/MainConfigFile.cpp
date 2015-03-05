@@ -6,8 +6,8 @@
 
 
 #pragma region Configuration keys
+#define CONF_AUTOUPDATESENABLED L"AutoUpdatesEnabled"
 #define CONF_MINIMUMLOGLEVEL L"MinimumLogLevel"
-
 #define CONF_ENABLEDDEVICES L"EnabledDevices"
 
 #define CONF_LOGITECHCOLORRANGE L"LogitechColorRange"
@@ -49,6 +49,15 @@ namespace lightfx {
         LFXE_API wstring MainConfigFile::Serialize() {
             WDocument::AllocatorType& allocator = this->doc.GetAllocator();
             this->doc.SetObject();
+
+            // Auto updates enabled
+            WValue autoUpdatesEnabled;
+            if (this->AutoUpdatesEnabled) {
+                autoUpdatesEnabled = WValue(kTrueType);
+            } else {
+                autoUpdatesEnabled = WValue(kFalseType);
+            }
+            this->doc.AddMember(CONF_AUTOUPDATESENABLED, autoUpdatesEnabled, allocator);
 
             // Minimum log level
             WValue minimumLogLevel;
@@ -102,6 +111,11 @@ namespace lightfx {
 
             if (!this->doc.IsObject()) {
                 return;
+            }
+
+            // Auto updates enabled
+            if (this->doc.HasMember(CONF_AUTOUPDATESENABLED) && this->doc[CONF_AUTOUPDATESENABLED].IsBool()) {
+                this->AutoUpdatesEnabled = this->doc[CONF_AUTOUPDATESENABLED].GetBool();
             }
 
             // Minimum log level

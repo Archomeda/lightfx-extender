@@ -27,6 +27,11 @@ namespace lightfx {
             return false;
         }
 
+        LFXE_API bool FileExists(const wstring& path) {
+            DWORD fileType = GetFileAttributesW(path.c_str());
+            return fileType != INVALID_FILE_ATTRIBUTES;
+        }
+
         LFXE_API wstring GetDataStorageFolder() {
             wstring path = L"";
             wchar_t* appData = nullptr;
