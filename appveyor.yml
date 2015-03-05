@@ -1,24 +1,23 @@
 version: 0.1.{build}
 
 before_build:
-  - ps: appveyor/UpdateBuildVersion.ps1
+  - ps: appveyor\UpdateBuildVersion.ps1
 
 build:
-  project: msbuild/ReleaseTestAndRelease.proj
+  project: msbuild\ReleaseTestAndRelease.proj
 
 test_script:
   - vstest.console /logger:Appveyor bin/Release_Tests/UnitTests.dll
 
 artifacts:
-  - path: bin/Release
+  - path: bin\Release
     name: LightFX Extender v$(appveyor_build_version)
     type: zip
 
 deploy:
-  release: lightfx-extender-v$(appveyor_build_version)
   provider: GitHub
   auth_token:
     secure: fHXemLwKHEg/6UXe2alr3/fUlPoZrNLmIsWgErk4u7vjCgMKGHYys+msNct3REOY
-  artifact: bin/LightFX Extender v$(appveyor_build_version).zip
+  artifact: bin\LightFX Extender v$(appveyor_build_version).zip
   on:
     appveyor_repo_tag: true
