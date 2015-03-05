@@ -1,3 +1,7 @@
+#ifndef LFXE_EXPORTS
+#define LFXE_EXPORTS
+#endif
+
 #include "FileIO.h"
 
 // Windows includes
@@ -6,12 +10,14 @@
 #include <ShlObj.h>
 
 
+#define STORAGEFOLDER L"LightFX Extender"
+
 using namespace std;
 
 namespace lightfx {
     namespace utils {
 
-        bool DirExists(const wstring& path) {
+        LFXE_API bool DirExists(const wstring& path) {
             DWORD fileType = GetFileAttributesW(path.c_str());
             if (fileType == INVALID_FILE_ATTRIBUTES) {
                 return false;
@@ -21,15 +27,24 @@ namespace lightfx {
             return false;
         }
 
-        bool GetRoamingAppDataFolder(wstring& path) {
-            path = L"";
+        LFXE_API bool FileExists(const wstring& path) {
+            DWORD fileType = GetFileAttributesW(path.c_str());
+            return fileType != INVALID_FILE_ATTRIBUTES;
+        }
+
+        LFXE_API wstring GetDataStorageFolder() {
+            wstring path = L"";
             wchar_t* appData = nullptr;
             if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &appData))) {
                 path = wstring(appData);
             }
             CoTaskMemFree(appData);
 
-            return !path.empty();
+            if (!path.empty()) {
+                return path + L"/" + STORAGEFOLDER;
+            } else {
+                return L"";
+            }
         }
 
     }

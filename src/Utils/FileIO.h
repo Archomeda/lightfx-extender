@@ -3,14 +3,17 @@
 // Standard includes
 #include <string>
 
+// API exports
+#include "../Common/ApiExports.h"
 
-#define APPDATA_FOLDER L"LightFX Extender"
+
 
 namespace lightfx {
     namespace utils {
 
-        bool DirExists(const std::wstring& path);
-        bool GetRoamingAppDataFolder(std::wstring& path);
+        LFXE_API bool DirExists(const std::wstring& path);
+        LFXE_API bool FileExists(const std::wstring& path);
+        LFXE_API std::wstring GetDataStorageFolder();
 
     }
 }

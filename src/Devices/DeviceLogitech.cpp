@@ -1,3 +1,7 @@
+#ifndef LFXE_EXPORTS
+#define LFXE_EXPORTS
+#endif
+
 #include "DeviceLogitech.h"
 
 // Windows includes
@@ -10,58 +14,62 @@
 
 using namespace std;
 
-#define DEVICENAME L"Logitech"
-#define DEVICETYPE LFX_DEVTYPE_KEYBOARD
-
 namespace lightfx {
     namespace devices {
 
-        void DeviceLogitech::SetRange(const int outMin, const int outMax, const int inMin, const int inMax) {
+        LFXE_API void DeviceLogitech::SetRange(const int outMin, const int outMax, const int inMin, const int inMax) {
             this->rangeOutMin = outMin;
             this->rangeOutMax = outMax;
             this->rangeInMin = inMin;
             this->rangeInMax = inMax;
         }
 
-        bool DeviceLogitech::Initialize() {
+        LFXE_API bool DeviceLogitech::Initialize() {
             if (!this->IsInitialized()) {
-                if (LogiLedInit()) {
-                    this->Lights.clear();
+                if (Device::Initialize()) {
+                    // Just do an initial pass to set how many LEDs there are available
+                    // TODO: Support more Logitech customization (e.g. Logitech G910 single-key colors)
+                    this->SetNumberOfLights(1);
+                    this->SetLightData(0, LightData());
 
-                    // TODO: Customizable Logitech config
-                    DeviceLight light;
-                    this->Lights.push_back(light);
-
-                    return DeviceBase::Initialize();
+                    this->Reset();
+                    return true;
                 }
             }
-            return true;
+            return false;
         }
 
-        bool DeviceLogitech::Release() {
-            if (this->IsInitialized()) {
-                LogiLedShutdown();
-                return DeviceBase::Release();
+        LFXE_API bool DeviceLogitech::Enable() {
+            if (!this->IsEnabled()) {
+                if (Device::Enable()) {
+                    if (LogiLedInit()) {
+                        this->Reset();
+                        return true;
+                    }
+                }
             }
-            return true;
+            return false;
         }
 
-        bool DeviceLogitech::PushColorToDevice() {
+        LFXE_API bool DeviceLogitech::Disable() {
+            if (this->IsEnabled()) {
+                if (Device::Disable()) {
+                    LogiLedShutdown();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        LFXE_API bool DeviceLogitech::PushColorToDevice() {
+            LightColor color = this->CurrentLightAction.GetCurrentColor(0);
             double divider = (this->rangeOutMax - this->rangeOutMin) / ((this->rangeInMax - this->rangeInMin) / 100.0) / 100.0;
-            double brightness = this->CurrentColor[0].brightness / 255.0;
-            double red = (this->CurrentColor[0].red - this->rangeOutMin) / divider * brightness + this->rangeInMin;
-            double green = (this->CurrentColor[0].green - this->rangeOutMin) / divider * brightness + this->rangeInMin;
-            double blue = (this->CurrentColor[0].blue - this->rangeOutMin) / divider * brightness + this->rangeInMin;
+            double brightness = color.brightness / 255.0;
+            double red = (color.red - this->rangeOutMin) / divider * brightness + this->rangeInMin;
+            double green = (color.green - this->rangeOutMin) / divider * brightness + this->rangeInMin;
+            double blue = (color.blue - this->rangeOutMin) / divider * brightness + this->rangeInMin;
 
             return LogiLedSetLighting((int)red, (int)green, (int)blue);
-        }
-
-        wstring DeviceLogitech::GetDeviceName() {
-            return DEVICENAME;
-        }
-
-        unsigned char DeviceLogitech::GetDeviceType() {
-            return DEVICETYPE;
         }
 
     }

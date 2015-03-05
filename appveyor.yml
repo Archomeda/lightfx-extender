@@ -5,10 +5,13 @@ configuration: Release
 before_build:
   - ps: appveyor/UpdateBuildVersion.ps1
 
+build:
+  project: msbuild/ReleaseTestAndRelease.proj
+
 test:
-  - vstest.console /logger:Appveyor bin/test/%CONFIGURATION%/UnitTests.dll
+  - vstest.console /logger:Appveyor bin/Release_Tests/UnitTests.dll
 
 artifacts:
-  - path: bin/$(configuration)
+  - path: bin/Release
     name: LightFX Extender v$(appveyor_build_version)
     type: zip

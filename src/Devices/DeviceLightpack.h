@@ -1,26 +1,25 @@
 #pragma once
 
 // Windows includes
-#include "../Common/Windows.h" // Since WinSock2.h includes Windows.h we need to make sure to configure some things first
+#include "../Common/Windows.h"
 #include <WinSock2.h>
 
 // Project includes
-#include "DeviceBase.h"
-
+#include "Device.h"
 
 namespace lightfx {
     namespace devices {
 
         enum LightpackStatus {
-            Success = 0,
-            Fail,
-            On,
-            Off,
-            Busy,
-            Idle,
-            NotLocked,
-            Error,
-            Unknown
+            LightpackSuccess = 0,
+            LightpackFail,
+            LightpackOn,
+            LightpackOff,
+            LightpackBusy,
+            LightpackIdle,
+            LightpackNotLocked,
+            LightpackError,
+            LightpackUnknown
         };
 
         struct LightpackLed {
@@ -45,18 +44,19 @@ namespace lightfx {
             int height;
         };
 
-        class DeviceLightpack : public DeviceBase {
+        class DeviceLightpack : public Device {
 
         public:
             DeviceLightpack(const std::wstring& hostname, const std::wstring& port, const std::wstring& key);
 
             virtual bool Initialize() override;
-            virtual bool Release() override;
+            virtual bool Enable() override;
+            virtual bool Disable() override;
 
             virtual bool PushColorToDevice() override;
 
-            virtual std::wstring GetDeviceName() override;
-            virtual unsigned char GetDeviceType() override;
+            virtual const std::wstring GetDeviceName() override { return L"Lightpack"; }
+            virtual const DeviceType GetDeviceType() override { return DeviceType::DeviceDisplay; }
 
         protected:
             bool ConnectAPI();

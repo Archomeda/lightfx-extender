@@ -9,8 +9,10 @@
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
+[Dd]ebug_[Tt]ests/
 [Rr]elease/
 [Rr]eleases/
+[Rr]elease_[Tt]ests/
 #x64/
 #x86/
 build/

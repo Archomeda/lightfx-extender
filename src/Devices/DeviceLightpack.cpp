@@ -1,3 +1,7 @@
+#ifndef LFXE_EXPORTS
+#define LFXE_EXPORTS
+#endif
+
 #include "DeviceLightpack.h"
 
 // Windows includes
@@ -5,15 +9,16 @@
 #pragma comment(lib, "Ws2_32.lib")
 
 // Project includes
-#include "../Utils/Log.h"
+#include "../LightFXExtender.h"
+#include "../Managers/LogManager.h"
 #include "../Utils/String.h"
 
 
-using namespace std;
-using namespace lightfx::utils;
+#define LOG(logLevel, line) if (this->GetManager() != nullptr) { this->GetManager()->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"Device ") + this->GetDeviceName() + L" - " + line); }
 
-#define DEVICENAME L"Lightpack"
-#define DEVICETYPE LFX_DEVTYPE_DISPLAY
+using namespace std;
+using namespace lightfx::managers;
+using namespace lightfx::utils;
 
 #define API_BUFFLEN 8192
 
@@ -28,62 +33,73 @@ namespace lightfx {
 
         bool DeviceLightpack::Initialize() {
             if (!this->IsInitialized()) {
-                if (this->ConnectAPI()) {
-                    this->Lights.clear();
+                if (Device::Initialize()) {
+                    // Just do an initial pass to check how many LEDs there are available
+                    if (this->ConnectAPI()) {
+                        this->SetNumberOfLights(this->GetCountLeds());
+                        auto leds = this->GetLeds();
+                        LightpackScreen screen = this->GetScreenSize();
+                        double divider = max(screen.width - screen.x, screen.height - screen.y) / 100.0;
+                        for (size_t i = 0; i < this->GetNumberOfLights(); ++i) {
+                            LightData light;
+                            light.Name = to_wstring(leds[i].index);
+                            int posX = int(((leds[i].x - screen.x) + (leds[i].width / 2)) / divider);
+                            int posY = int(((screen.height - leds[i].y - screen.y) + (leds[i].height / 2)) / divider);
+                            light.Position = { posX, posY, 0 };
+                            this->SetLightData(i, light);
+                        }
 
-                    int amountLeds = this->GetCountLeds();
-                    auto leds = this->GetLeds();
-                    LightpackScreen screen = this->GetScreenSize();
-                    double divider = max(screen.width - screen.x, screen.height - screen.y) / 100.0;
-                    for (int i = 0; i < amountLeds; ++i) {
-                        DeviceLight light;
-                        light.Name = to_wstring(leds[i].index);
-                        int posX = int(((leds[i].x - screen.x) + (leds[i].width / 2)) / divider);
-                        int posY = int(((screen.height - leds[i].y - screen.y) + (leds[i].height / 2)) / divider);
-                        light.Position = { posX, posY, 0 };
-                        this->Lights.push_back(light);
+                        this->Reset();
+                        this->DisconnectAPI();
+                        return true;
                     }
-
-                    return DeviceBase::Initialize();
                 }
             }
-            return true;
+            return false;
         }
 
-        bool DeviceLightpack::Release() {
-            if (this->IsInitialized()) {
-                this->DisconnectAPI();
-                return DeviceBase::Release();
+        bool DeviceLightpack::Enable() {
+            if (!this->IsEnabled()) {
+                if (Device::Enable()) {
+                    if (this->ConnectAPI()) {
+                        this->Reset();
+                        return true;
+                    }
+                }
             }
-            return true;
+            return false;
+        }
+
+        bool DeviceLightpack::Disable() {
+            if (this->IsEnabled()) {
+                if (Device::Disable()) {
+                    this->DisconnectAPI();
+                    return true;
+                }
+            }
+            return false;
         }
 
         bool DeviceLightpack::PushColorToDevice() {
             vector<LightpackColor> newLights = {};
-            for (size_t i = 0; i < this->Lights.size(); ++i) {
-                double brightness = this->CurrentColor[i].brightness / 255.0;
-                int red = int(this->CurrentColor[i].red * brightness);
-                int green = int(this->CurrentColor[i].green * brightness);
-                int blue = int(this->CurrentColor[i].blue * brightness);
+            for (size_t i = 0; i < this->GetNumberOfLights(); ++i) {
+                LightColor color = this->CurrentLightAction.GetCurrentColor(i);
+                double brightness = color.brightness / 255.0;
+                int red = int(color.red * brightness);
+                int green = int(color.green * brightness);
+                int blue = int(color.blue * brightness);
                 newLights.push_back({ i + 1, red, green, blue });
             }
             this->SetColors(newLights);
             return true;
         }
-            
-        wstring DeviceLightpack::GetDeviceName() {
-            return DEVICENAME;
-        }
 
-        unsigned char DeviceLightpack::GetDeviceType() {
-            return DEVICETYPE;
-        }
 
         bool DeviceLightpack::ConnectAPI() {
             WSADATA wsaData;
             if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
                 // WSAStartup failed
-                Log(L"WSAStartup failed");
+                LOG(LogLevel::Error, L"WSAStartup failed");
                 return false;
             }
 
@@ -96,7 +112,7 @@ namespace lightfx {
 
             if (GetAddrInfoW(this->hostname.c_str(), this->port.c_str(), &hints, &result) != 0) {
                 // GetAddrInfoW failed
-                Log(L"GetAddrInfoW failed");
+                LOG(LogLevel::Error, L"GetAddrInfoW failed");
                 WSACleanup();
                 return false;
             }
@@ -104,7 +120,7 @@ namespace lightfx {
             this->lightpackSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
             if (this->lightpackSocket == INVALID_SOCKET) {
                 // Invalid socket
-                Log(L"Invalid socket");
+                LOG(LogLevel::Error, L"Invalid socket");
                 FreeAddrInfoW(result);
                 WSACleanup();
                 return false;
@@ -112,7 +128,7 @@ namespace lightfx {
 
             if (connect(this->lightpackSocket, result->ai_addr, (int)result->ai_addrlen) == SOCKET_ERROR) {
                 // Connection error
-                Log(L"Connection error");
+                LOG(LogLevel::Error, L"Connection error");
                 closesocket(this->lightpackSocket);
                 this->lightpackSocket = INVALID_SOCKET;
                 FreeAddrInfoW(result);
@@ -122,8 +138,8 @@ namespace lightfx {
 
             FreeAddrInfoW(result);
             this->ReceiveAPI();
-            if (this->ApiKey(this->key) == Success) {
-                if (this->Lock() != Success) {
+            if (this->ApiKey(this->key) == LightpackSuccess) {
+                if (this->Lock() != LightpackSuccess) {
                     this->DisconnectAPI();
                     return false;
                 }
@@ -179,11 +195,11 @@ namespace lightfx {
             this->SendAPI(L"apikey:" + key);
             wstring result = this->ReceiveAPI();
             if (result == L"ok") {
-                return Success;
+                return LightpackSuccess;
             } else if (result == L"fail") {
-                return Fail;
+                return LightpackFail;
             } else {
-                return Error;
+                return LightpackError;
             }
         }
 
@@ -191,11 +207,11 @@ namespace lightfx {
             this->SendAPI(L"lock");
             wstring result = this->ReceiveAPI();
             if (result == L"lock:success") {
-                return Success;
+                return LightpackSuccess;
             } else if (result == L"lock:busy") {
-                return Busy;
+                return LightpackBusy;
             } else {
-                return Error;
+                return LightpackError;
             }
         }
 
@@ -203,11 +219,11 @@ namespace lightfx {
             this->SendAPI(L"unlock");
             wstring result = this->ReceiveAPI();
             if (result == L"unlock:success") {
-                return Success;
+                return LightpackSuccess;
             } else if (result == L"unlock:not locked") {
-                return NotLocked;
+                return LightpackNotLocked;
             } else {
-                return Error;
+                return LightpackError;
             }
         }
 
@@ -276,7 +292,7 @@ namespace lightfx {
         }
 
         LightpackScreen DeviceLightpack::GetScreenSize() {
-            // Command is not working properly, so determine screensize by the LED positions
+            // Command is not working properly, so determine screen size by the LED positions
             auto leds = this->GetLeds();
             LightpackScreen result = {};
             for (auto led : leds) {
@@ -301,8 +317,7 @@ namespace lightfx {
                     if (pos != string::npos) {
                         wstring subresult = result.substr(0, pos);
                         result.erase(0, pos + 1);
-                        switch (i)
-                        {
+                        switch (i) {
                         case 0:
                             screen.x = stoi(subresult);
                             break;
@@ -338,13 +353,13 @@ namespace lightfx {
             this->SendAPI(cmd);
             wstring result = this->ReceiveAPI();
             if (result == L"ok") {
-                return Success;
+                return LightpackSuccess;
             } else if (result == L"busy") {
-                return Busy;
+                return LightpackBusy;
             } else if (result == L"not locked") {
-                return NotLocked;
+                return LightpackNotLocked;
             } else {
-                return Error;
+                return LightpackError;
             }
         }
 
@@ -356,13 +371,13 @@ namespace lightfx {
             this->SendAPI(cmd);
             wstring result = this->ReceiveAPI();
             if (result == L"ok") {
-                return Success;
+                return LightpackSuccess;
             } else if (result == L"busy") {
-                return Busy;
+                return LightpackBusy;
             } else if (result == L"not locked") {
-                return NotLocked;
+                return LightpackNotLocked;
             } else {
-                return Error;
+                return LightpackError;
             }
         }
 

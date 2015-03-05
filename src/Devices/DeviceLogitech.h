@@ -1,24 +1,28 @@
 #pragma once
 
-// Project includes
-#include "DeviceBase.h"
+// Windows includes
+#include "Device.h"
+
+// API exports
+#include "../Common/ApiExports.h"
 
 
 namespace lightfx {
     namespace devices {
 
-        class DeviceLogitech : public DeviceBase {
+        class LFXE_API DeviceLogitech : public Device {
 
-        public:
+        public: 
             void SetRange(const int outMin, const int outMax, const int inMin, const int inMax);
 
             virtual bool Initialize() override;
-            virtual bool Release() override;
+            virtual bool Enable() override;
+            virtual bool Disable() override;
 
             virtual bool PushColorToDevice() override;
 
-            virtual std::wstring GetDeviceName() override;
-            virtual unsigned char GetDeviceType() override;
+            virtual const std::wstring GetDeviceName() override { return L"Logitech"; }
+            virtual const DeviceType GetDeviceType() override { return DeviceType::DeviceKeyboard; }
 
         private:
             int rangeOutMin = 0;
