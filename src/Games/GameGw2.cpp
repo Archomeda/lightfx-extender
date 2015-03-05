@@ -12,8 +12,10 @@
 
 // Project includes
 #include "../LightFXExtender.h"
+#include "../Managers/ConfigManager.h"
 #include "../Managers/DeviceManager.h"
 #include "../Managers/LogManager.h"
+#include "../Config/MainConfigFile.h"
 
 
 #define LOG(logLevel, line) if (this->GetManager() != nullptr) { this->GetManager()->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"Game ") + this->GetGameName() + L" - " + line); }
@@ -125,9 +127,12 @@ namespace lightfx {
                             GenericDocument<UTF16<>> doc;
                             doc.Parse<0>(identity);
 
-                            // Check the team color
-                            if (doc.HasMember(L"team_color_id") && doc[L"team_color_id"].IsUint()) {
-                                this->UpdateLightsWithTeamColor(doc[L"team_color_id"].GetUint());
+                            // Check the team color (if setting is enabled)
+                            auto config = this->GetManager()->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
+                            if (config->GuildWars2TeamColorEnabled) {
+                                if (doc.HasMember(L"team_color_id") && doc[L"team_color_id"].IsUint()) {
+                                    this->UpdateLightsWithTeamColor(doc[L"team_color_id"].GetUint());
+                                }
                             }
                         } catch (...) {}
                     }

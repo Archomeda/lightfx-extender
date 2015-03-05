@@ -24,6 +24,9 @@
 #define CONF_LIGHTPACKHOST L"Hostname"
 #define CONF_LIGHTPACKPORT L"PortNumber"
 #define CONF_LIGHTPACKKEY L"Key"
+
+#define CONF_GUILDWARS2 L"GuildWars2"
+#define CONF_GUILDWARS2_TEAMCOLORENABLED L"TeamColorEnabled"
 #pragma endregion
 
 using namespace std;
@@ -48,6 +51,8 @@ namespace lightfx {
             this->LightpackHost = L"127.0.0.1";
             this->LightpackPort = L"3636";
             this->LightpackKey = L"";
+
+            this->GuildWars2TeamColorEnabled = true;
         }
 
         LFXE_API wstring MainConfigFile::Serialize() {
@@ -99,6 +104,11 @@ namespace lightfx {
             lightpackApi.AddMember(CONF_LIGHTPACKPORT, this->MakeJsonWString(this->LightpackPort, allocator), allocator);
             lightpackApi.AddMember(CONF_LIGHTPACKKEY, this->MakeJsonWString(this->LightpackKey, allocator), allocator);
             this->doc.AddMember(CONF_LIGHTPACKAPI, lightpackApi, allocator);
+
+            // Guild Wars 2
+            WValue gw2(kObjectType);
+            gw2.AddMember(CONF_GUILDWARS2_TEAMCOLORENABLED, this->GuildWars2TeamColorEnabled, allocator);
+            this->doc.AddMember(CONF_GUILDWARS2, gw2, allocator);
 
             WStringBuffer buffer;
             WPrettyWriter writer(buffer);
@@ -172,6 +182,14 @@ namespace lightfx {
                 }
                 if (api.HasMember(CONF_LIGHTPACKKEY) && api[CONF_LIGHTPACKKEY].IsString()) {
                     this->LightpackKey = api[CONF_LIGHTPACKKEY].GetString();
+                }
+            }
+
+            // Guild Wars 2
+            if (this->doc.HasMember(CONF_GUILDWARS2) && this->doc[CONF_GUILDWARS2].IsObject()) {
+                const WValue& gw2 = this->doc[CONF_GUILDWARS2];
+                if (gw2.HasMember(CONF_GUILDWARS2_TEAMCOLORENABLED) && gw2[CONF_GUILDWARS2_TEAMCOLORENABLED].IsBool()) {
+                    this->GuildWars2TeamColorEnabled = gw2[CONF_GUILDWARS2_TEAMCOLORENABLED].GetBool();
                 }
             }
         }

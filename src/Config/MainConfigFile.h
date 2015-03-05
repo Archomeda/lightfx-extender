@@ -38,6 +38,8 @@ namespace lightfx {
             std::wstring LightpackPort = L"3636";
             std::wstring LightpackKey = L"";
 
+            bool GuildWars2TeamColorEnabled = true;
+
             void Load();
             using ConfigFile::Load;
 
