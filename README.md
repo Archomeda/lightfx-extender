@@ -20,16 +20,17 @@ in your taskbar and choose *Open configuration folder*.
 ### Updating
 LightFX Extender has support for automatic updates. However, there is always a
 possibility that this might fail. If this happens, just follow the instructions
-under *Installation*. If you want to disable automatic updates, open
-`settings.json` within the configuration folder (see *Installation*) and change
-the entry `AutoUpdatesEnabled` to `false`.
+under [Installation](#Installation). If you want to disable automatic updates,
+open `settings.json` within the configuration folder (see
+[Installation](#Installation)) and change the entry `AutoUpdatesEnabled` to
+`false`.
 
 ## Support
 ### Hardware
 - Logitech keyboards and mice with LEDs through Logitech Gaming Software
 8.57.145 or higher
 - Lightpack devices through a recent version of Prismatik (or similar hardware
-and software that support the same API)
+and software that support the same API, tested on version 5.11.1 only)
 
 ### Extended game features
 - Guild Wars 2 through the officially supported Mumble Link API (pulse color
