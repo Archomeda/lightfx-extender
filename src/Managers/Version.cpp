@@ -15,8 +15,11 @@ namespace lightfx {
     namespace managers {
 
         LFXE_API wstring Version::ToString() {
-            return to_wstring(this->GetMajor()) + L"." + to_wstring(this->GetMinor()) + L"."
-                + to_wstring(this->GetSubMinor()) + L"." + to_wstring(this->GetBuild()) + L"-" + this->GetDescription();
+            wstring version = to_wstring(this->GetMajor()) + L"." + to_wstring(this->GetMinor()) + L"." + to_wstring(this->GetSubMinor()) + L"." + to_wstring(this->GetBuild());
+            if (this->GetDescription() != L"") {
+                version += L"-" + this->GetDescription();
+            }
+            return version;
         }
 
         LFXE_API void Version::SetFromString(const string& str) {

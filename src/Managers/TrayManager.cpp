@@ -12,7 +12,8 @@
 
 // Project includes
 #include "../LightFXExtender.h"
-#include "../Managers/DeviceManager.h"
+#include "DeviceManager.h"
+#include "UpdateManager.h"
 #include "../Utils/Windows.h"
 #include "../Utils/FileIO.h"
 #include "../resource.h"
@@ -52,12 +53,13 @@ namespace lightfx {
             wstring fname, ext;
             wstring filename = GetProcessName(nullptr, nullptr, &fname, &ext);
 
+            wstring currentVersion = this->GetLightFXExtender()->GetUpdateManager()->GetCurrentVersion().ToString();
             this->trayIconData = {};
             this->trayIconData.cbSize = sizeof(NOTIFYICONDATAW);
             this->trayIconData.hWnd = this->hTrayIconWindow;
             this->trayIconData.uID = TRAYID;
             this->trayIconData.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
-            StringCchCopyW(this->trayIconData.szTip, ARRAYSIZE(this->trayIconData.szTip), (L"LightFX for " + fname + ext).c_str());
+            StringCchCopyW(this->trayIconData.szTip, ARRAYSIZE(this->trayIconData.szTip), (L"LightFX for " + fname + ext + L" (v" + currentVersion + L")").c_str());
             this->trayIconData.uVersion = NOTIFYICON_VERSION_4;
             this->trayIconData.uCallbackMessage = WM_TRAYICON;
 
