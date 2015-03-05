@@ -1,4 +1,4 @@
-version: 0.0.{build}
+version: 0.1.{build}
 
 before_build:
   - ps: appveyor/UpdateBuildVersion.ps1
