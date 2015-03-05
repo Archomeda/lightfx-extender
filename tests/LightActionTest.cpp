@@ -92,7 +92,6 @@ public:
         LightAction lightAction(2);
         lightAction.SetStartColor(0, color);
         Assert::IsTrue(color == lightAction.GetStartColor(0));
-        Assert::IsFalse(color == lightAction.GetStartColor(1));
     }
 
     TEST_METHOD(SetStartColorAll) {
@@ -116,7 +115,6 @@ public:
         LightAction lightAction(2);
         lightAction.SetEndColor(0, color);
         Assert::IsTrue(color == lightAction.GetEndColor(0));
-        Assert::IsFalse(color == lightAction.GetEndColor(1));
     }
 
     TEST_METHOD(SetEndColorAll) {
@@ -140,7 +138,6 @@ public:
         LightAction lightAction(2);
         lightAction.SetResetColor(0, color);
         Assert::IsTrue(color == lightAction.GetResetColor(0));
-        Assert::IsFalse(color == lightAction.GetResetColor(1));
     }
 
     TEST_METHOD(SetResetColorAll) {
