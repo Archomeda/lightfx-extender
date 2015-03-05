@@ -72,7 +72,7 @@ namespace lightfx {
                             for (SizeType j = 0; j < assets.Size(); ++j) {
                                 if (assets[j].HasMember("name") && assets[j]["name"].IsString()) {
                                     string assetName = assets[j]["name"].GetString();
-                                    if (assetName.compare(assetName.length() - 5, 4, ".zip") == 0) {
+                                    if (assetName.compare(assetName.length() - 4, 4, ".zip") == 0) {
                                         if (assets[j].HasMember("browser_download_url") && assets[j]["browser_download_url"].IsString()) {
                                             assetUrl = assets[j]["browser_download_url"].GetString();
                                         }
