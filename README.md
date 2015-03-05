@@ -1,4 +1,6 @@
 # LightFX Extender
+[![Build status](https://ci.appveyor.com/api/projects/status/ual57rxoe7wf0pm3/branch/master?svg=true)](https://ci.appveyor.com/project/Archomeda/lightfx-extender/branch/master)
+
 This plugin allows gamers to take advantage of LightFX (or AlienFX) features in
 order to extend it to other hardware such as Logitech keyboards and Lightpack
 devices. It also adds some small extra features for specific games that have one
