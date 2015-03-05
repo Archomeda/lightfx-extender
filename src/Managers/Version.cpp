@@ -15,51 +15,46 @@ namespace lightfx {
     namespace managers {
 
         LFXE_API wstring Version::ToString() {
-            return to_wstring(this->GetMajor()) + L"." + to_wstring(this->GetMinor()) + L"." + to_wstring(this->GetBuild());
+            return to_wstring(this->GetMajor()) + L"." + to_wstring(this->GetMinor()) + L"."
+                + to_wstring(this->GetSubMinor()) + L"." + to_wstring(this->GetBuild()) + L"-" + this->GetDescription();
         }
 
-        LFXE_API Version::Version(const string& str) {
-            vector<string> splitted = split(str, '.');
-            if (splitted.size() == 0) {
-                Version::Version();
-            }
-
-            try {
-                this->majorVer = splitted.size() >= 1 ? stoi(splitted.at(0)) : 0;
-            } catch (const invalid_argument&) {
-                this->majorVer = 0;
-            }
-            try {
-                this->minorVer = splitted.size() >= 2 ? stoi(splitted.at(1)) : 0;
-            } catch (const invalid_argument&) {
-                this->minorVer = 0;
-            }
-            try {
-                this->buildVer = splitted.size() >= 3 ? stoi(splitted.at(2)) : 0;
-            } catch (const invalid_argument&) {
-                this->buildVer = 0;
-            }
+        LFXE_API void Version::SetFromString(const string& str) {
+            this->SetFromString(string_to_wstring(str));
         }
 
-        LFXE_API Version::Version(const wstring& str) {
-            vector<wstring> splitted = split(str, '.');
-            if (splitted.size() == 0) {
-                Version::Version();
-            }
+        LFXE_API void Version::SetFromString(const wstring& str) {
+            vector<wstring> splitted1 = split(str, '-', 2);
+            if (splitted1.size() > 0) {
+                vector<wstring> splitted2 = split(splitted1[0], '.');
+                try {
+                    this->majorVer = splitted2.size() >= 1 ? stoi(splitted2[0]) : 0;
+                } catch (const invalid_argument&) {
+                    this->majorVer = 0;
+                }
+                try {
+                    this->minorVer = splitted2.size() >= 2 ? stoi(splitted2[1]) : 0;
+                } catch (const invalid_argument&) {
+                    this->minorVer = 0;
+                }
+                try {
+                    this->subMinorVer = splitted2.size() >= 3 ? stoi(splitted2[2]) : 0;
+                } catch (const invalid_argument&) {
+                    this->subMinorVer = 0;
+                }
+                try {
+                    this->buildVer = splitted2.size() >= 4 ? stoi(splitted2[3]) : 0;
+                } catch (const invalid_argument&) {
+                    this->buildVer = 0;
+                }
 
-            try {
-                this->majorVer = splitted.size() >= 1 ? stoi(splitted.at(0)) : 0;
-            } catch (const invalid_argument&) {
+                if (splitted1.size() >= 2) {
+                    this->description = splitted1[1];
+                }
+            } else {
                 this->majorVer = 0;
-            }
-            try {
-                this->minorVer = splitted.size() >= 2 ? stoi(splitted.at(1)) : 0;
-            } catch (const invalid_argument&) {
                 this->minorVer = 0;
-            }
-            try {
-                this->buildVer = splitted.size() >= 3 ? stoi(splitted.at(2)) : 0;
-            } catch (const invalid_argument&) {
+                this->subMinorVer = 0;
                 this->buildVer = 0;
             }
         }
