@@ -64,7 +64,7 @@ public:
 
         bool success = false;
         for (int i = 0; i < 500; ++i) {
-            if (lightAction.GetStartColor(0) == device->GetActiveLightAction().GetStartColor(0)) {
+            if (device->GetActiveLightAction().GetStartColor().size() > 0 && lightAction.GetStartColor(0) == device->GetActiveLightAction().GetStartColor(0)) {
                 success = true;
                 break;
             }
@@ -88,7 +88,17 @@ public:
         device->QueueLightAction(lightAction2);
         device->Update(false);
 
-        Assert::IsFalse(lightAction2.GetStartColor(0) == device->GetActiveLightAction().GetStartColor(0));
+        bool success = false;
+        for (int i = 0; i < 500; ++i) {
+            if (device->GetActiveLightAction().GetStartColor().size() > 0 && lightAction2.GetStartColor(0) != device->GetActiveLightAction().GetStartColor(0)) {
+                success = true;
+                break;
+            }
+            this_thread::sleep_for(chrono::milliseconds(1));
+        }
+        if (!success) {
+            Assert::Fail(L"Active light actions do not match after an extended period of time");
+        }
         device->Disable();
     }
 
