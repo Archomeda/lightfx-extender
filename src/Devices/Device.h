@@ -90,7 +90,7 @@ namespace lightfx {
         private:
             bool isEnabled = false;
             bool isInitialized = false;
-            size_t numberOfLights = 1;
+            size_t numberOfLights = 0;
             std::vector<LightData> lightData = {};
 
             std::thread lightActionUpdateThread;

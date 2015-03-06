@@ -152,7 +152,7 @@ extern "C" {
 
         auto deviceManager = lightFXExtender->GetDeviceManager();
         unsigned int numberOfDevices = deviceManager->GetChildrenCount();
-        if (devIndex > numberOfDevices) {
+        if (devIndex >= numberOfDevices) {
             return LFX_ERROR_NODEVS;
         }
 
@@ -178,7 +178,7 @@ extern "C" {
         }
 
         auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (devIndex > deviceManager->GetChildrenCount()) {
+        if (devIndex >= deviceManager->GetChildrenCount()) {
             return LFX_ERROR_NODEVS;
         }
 
@@ -197,12 +197,12 @@ extern "C" {
         }
 
         auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (devIndex > deviceManager->GetChildrenCount()) {
+        if (devIndex >= deviceManager->GetChildrenCount()) {
             return LFX_ERROR_NODEVS;
         }
 
         auto device = deviceManager->GetChildByIndex(devIndex);
-        if (lightIndex > device->GetNumberOfLights()) {
+        if (lightIndex >= device->GetNumberOfLights()) {
             return LFX_ERROR_NOLIGHTS;
         }
 
@@ -226,12 +226,12 @@ extern "C" {
         }
 
         auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (devIndex > deviceManager->GetChildrenCount()) {
+        if (devIndex >= deviceManager->GetChildrenCount()) {
             return LFX_ERROR_NODEVS;
         }
 
         auto device = deviceManager->GetChildByIndex(devIndex);
-        if (lightIndex > device->GetNumberOfLights()) {
+        if (lightIndex >= device->GetNumberOfLights()) {
             return LFX_ERROR_NOLIGHTS;
         }
 
@@ -250,12 +250,12 @@ extern "C" {
         }
 
         auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (devIndex > deviceManager->GetChildrenCount()) {
+        if (devIndex >= deviceManager->GetChildrenCount()) {
             return LFX_ERROR_NODEVS;
         }
 
         auto device = deviceManager->GetChildByIndex(devIndex);
-        if (lightIndex > device->GetNumberOfLights()) {
+        if (lightIndex >= device->GetNumberOfLights()) {
             return LFX_ERROR_NOLIGHTS;
         }
 
@@ -274,12 +274,12 @@ extern "C" {
         }
 
         auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (devIndex > deviceManager->GetChildrenCount()) {
+        if (devIndex >= deviceManager->GetChildrenCount()) {
             return LFX_ERROR_NODEVS;
         }
 
         auto device = deviceManager->GetChildByIndex(devIndex);
-        if (lightIndex > device->GetNumberOfLights()) {
+        if (lightIndex >= device->GetNumberOfLights()) {
             return LFX_ERROR_NOLIGHTS;
         }
 
@@ -329,12 +329,12 @@ extern "C" {
         }
 
         auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (devIndex > deviceManager->GetChildrenCount()) {
+        if (devIndex >= deviceManager->GetChildrenCount()) {
             return LFX_ERROR_NODEVS;
         }
 
         auto device = deviceManager->GetChildByIndex(devIndex);
-        if (lightIndex > device->GetNumberOfLights()) {
+        if (lightIndex >= device->GetNumberOfLights()) {
             return LFX_ERROR_NOLIGHTS;
         }
 
@@ -368,12 +368,12 @@ extern "C" {
         }
 
         auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (devIndex > deviceManager->GetChildrenCount()) {
+        if (devIndex >= deviceManager->GetChildrenCount()) {
             return LFX_ERROR_NODEVS;
         }
 
         auto device = deviceManager->GetChildByIndex(devIndex);
-        if (lightIndex > device->GetNumberOfLights()) {
+        if (lightIndex >= device->GetNumberOfLights()) {
             return LFX_ERROR_NOLIGHTS;
         }
 
