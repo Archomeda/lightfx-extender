@@ -4,9 +4,8 @@
 
 #include "LightAction.h"
 
-// Windows includes
-#include "Common/Windows.h"
-#include <Windows.h>
+// Standard includes
+#include <chrono>
 
 
 using namespace std;
@@ -145,13 +144,13 @@ namespace lightfx {
             return false;
         }
 
-        unsigned long timePassed = 0;
+        unsigned long long timePassed = 0;
         bool colorChanged = false;
 
         if (this->animatedColorStartTime == 0) {
-            this->animatedColorStartTime = GetTickCount();
+            this->animatedColorStartTime = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
         } else {
-            timePassed = GetTickCount() - this->animatedColorStartTime;
+            timePassed = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count() - this->animatedColorStartTime;
         }
 
         switch (this->actionType) {
@@ -171,7 +170,7 @@ namespace lightfx {
         return colorChanged;
     }
 
-    LFXE_API bool LightAction::UpdateCurrentColorMorph(const unsigned long timePassed) {
+    LFXE_API bool LightAction::UpdateCurrentColorMorph(const unsigned long long timePassed) {
         bool colorChanged = false;
         double progress = (double)timePassed / this->actionTime;
 
@@ -197,7 +196,7 @@ namespace lightfx {
         return colorChanged;
     }
 
-    LFXE_API bool LightAction::UpdateCurrentColorPulse(const unsigned long timePassed) {
+    LFXE_API bool LightAction::UpdateCurrentColorPulse(const unsigned long long timePassed) {
         bool colorChanged = false;
         unsigned int timePhase = 2 * this->actionTime + this->startColorHoldTime + this->endColorHoldTime;
         unsigned int timeTotal = timePhase * this->actionRepeatAmount;

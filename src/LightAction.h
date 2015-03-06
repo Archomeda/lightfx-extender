@@ -105,10 +105,10 @@ namespace lightfx {
 
     private:
         std::vector<LightColor> currentColor = {};
-        unsigned long animatedColorStartTime = 0;
+        unsigned long long animatedColorStartTime = 0;
         bool canUpdateCurrentColor = true;
-        bool UpdateCurrentColorMorph(const unsigned long timePassed);
-        bool UpdateCurrentColorPulse(const unsigned long timePassed);
+        bool UpdateCurrentColorMorph(const unsigned long long timePassed);
+        bool UpdateCurrentColorPulse(const unsigned long long timePassed);
         bool UpdateCurrentColorInstant();
 
         std::vector<LightColor> startColor = {};
