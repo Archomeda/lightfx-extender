@@ -134,7 +134,9 @@ namespace lightfx {
                                     this->UpdateLightsWithTeamColor(doc[L"team_color_id"].GetUint());
                                 }
                             }
-                        } catch (...) {}
+                        } catch (...) {
+                            LOG(LogLevel::Error, L"Error when parsing Mumble Link identity: " + wstring(identity));
+                        }
                     }
                 }
 

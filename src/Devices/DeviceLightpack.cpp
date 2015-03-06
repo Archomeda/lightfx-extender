@@ -36,7 +36,9 @@ namespace lightfx {
                 if (Device::Initialize()) {
                     // Just do an initial pass to check how many LEDs there are available
                     if (this->ConnectAPI()) {
-                        this->SetNumberOfLights(this->GetCountLeds());
+                        int countLeds = this->GetCountLeds();
+                        LOG(LogLevel::Debug, to_wstring(countLeds) + L" LEDs available");
+                        this->SetNumberOfLights(countLeds);
                         auto leds = this->GetLeds();
                         LightpackScreen screen = this->GetScreenSize();
                         double divider = max(screen.width - screen.x, screen.height - screen.y) / 100.0;
@@ -46,6 +48,7 @@ namespace lightfx {
                             int posX = int(((leds[i].x - screen.x) + (leds[i].width / 2)) / divider);
                             int posY = int(((screen.height - leds[i].y - screen.y) + (leds[i].height / 2)) / divider);
                             light.Position = { posX, posY, 0 };
+                            LOG(LogLevel::Debug, L"Get LED " + to_wstring(i) + L" pos: (" + to_wstring(posX) + L"," + to_wstring(posY) + L")");
                             this->SetLightData(i, light);
                         }
 
@@ -96,9 +99,10 @@ namespace lightfx {
 
 
         bool DeviceLightpack::ConnectAPI() {
+            LOG(LogLevel::Debug, L"ConnectAPI()");
+
             WSADATA wsaData;
             if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-                // WSAStartup failed
                 LOG(LogLevel::Error, L"WSAStartup failed");
                 return false;
             }
@@ -111,7 +115,6 @@ namespace lightfx {
             hints.ai_protocol = IPPROTO_TCP;
 
             if (GetAddrInfoW(this->hostname.c_str(), this->port.c_str(), &hints, &result) != 0) {
-                // GetAddrInfoW failed
                 LOG(LogLevel::Error, L"GetAddrInfoW failed");
                 WSACleanup();
                 return false;
@@ -119,7 +122,6 @@ namespace lightfx {
 
             this->lightpackSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
             if (this->lightpackSocket == INVALID_SOCKET) {
-                // Invalid socket
                 LOG(LogLevel::Error, L"Invalid socket");
                 FreeAddrInfoW(result);
                 WSACleanup();
@@ -127,7 +129,6 @@ namespace lightfx {
             }
 
             if (connect(this->lightpackSocket, result->ai_addr, (int)result->ai_addrlen) == SOCKET_ERROR) {
-                // Connection error
                 LOG(LogLevel::Error, L"Connection error");
                 closesocket(this->lightpackSocket);
                 this->lightpackSocket = INVALID_SOCKET;
@@ -150,6 +151,8 @@ namespace lightfx {
         }
 
         bool DeviceLightpack::DisconnectAPI() {
+            LOG(LogLevel::Debug, L"DisconnectAPI()");
+
             this->Unlock();
 
             if (shutdown(this->lightpackSocket, SD_SEND) == SOCKET_ERROR) {
@@ -165,6 +168,8 @@ namespace lightfx {
         }
 
         bool DeviceLightpack::SendAPI(const wstring& cmd) {
+            LOG(LogLevel::Debug, L"SendAPI(\"" + cmd + L"\")");
+
             wstring s = cmd + L"\n";
             int result = send(this->lightpackSocket, wstring_to_string(s).c_str(), s.length(), 0);
             if (result == SOCKET_ERROR) {
@@ -176,19 +181,20 @@ namespace lightfx {
         }
 
         wstring DeviceLightpack::ReceiveAPI() {
+            wstring wresult = L"";
             char buff[API_BUFFLEN];
             int result = recv(this->lightpackSocket, buff, API_BUFFLEN, 0);
             if (result > 0) {
                 string result = string(buff);
-                result = result.substr(0, result.find("\n") - 1);
-                return string_to_wstring(result);
+                wresult = string_to_wstring(result.substr(0, result.find("\n") - 1));
             } else if (result == 0) {
                 // Connection closed
-                return L"";
             } else {
                 // Error
-                return L"";
             }
+
+            LOG(LogLevel::Debug, L"ReceiveAPI(): " + wresult);
+            return wresult;
         }
 
         LightpackStatus DeviceLightpack::ApiKey(const wstring& key) {
@@ -300,6 +306,7 @@ namespace lightfx {
                 result.height = max(result.height, led.y + led.height);
             }
 
+            LOG(LogLevel::Debug, L"GetScreenSize(): (" + to_wstring(result.x) + L"," + to_wstring(result.y) + L"," + to_wstring(result.width) + L"," + to_wstring(result.height) + L")");
             return result;
 
             /*

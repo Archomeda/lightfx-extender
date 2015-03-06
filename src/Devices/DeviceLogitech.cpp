@@ -11,8 +11,15 @@
 // 3rd party includes
 #include "LogitechLEDLib.h"
 
+// Project includes
+#include "../LightFXExtender.h"
+#include "../Managers/LogManager.h"
+
+
+#define LOG(logLevel, line) if (this->GetManager() != nullptr) { this->GetManager()->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"Device ") + this->GetDeviceName() + L" - " + line); }
 
 using namespace std;
+using namespace lightfx::managers;
 
 namespace lightfx {
     namespace devices {
@@ -68,6 +75,8 @@ namespace lightfx {
             double red = (color.red - this->rangeOutMin) / divider * brightness + this->rangeInMin;
             double green = (color.green - this->rangeOutMin) / divider * brightness + this->rangeInMin;
             double blue = (color.blue - this->rangeOutMin) / divider * brightness + this->rangeInMin;
+
+            LOG(LogLevel::Debug, L"Update color to (" + to_wstring(red) + L"," + to_wstring(green) + L"," + to_wstring(blue) + L")");
 
             return LogiLedSetLighting((int)red, (int)green, (int)blue);
         }
