@@ -58,7 +58,7 @@ namespace lightfx {
 
             virtual bool Initialize();
             virtual bool Release();
-            virtual bool Update();
+            virtual bool Update(bool flushQueue = true);
             virtual bool Reset();
 
             LightAction GetActiveLightAction();
@@ -80,6 +80,7 @@ namespace lightfx {
             LightAction QueuedLightAction;
             std::queue<LightAction> LightActionQueue;
             std::mutex LightActionQueueMutex;
+            bool LightActionQueueFlush = false;
 
             void StartUpdateCurrentColorWorker();
             void StopUpdateCurrentColorWorker();

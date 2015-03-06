@@ -68,12 +68,16 @@ namespace lightfx {
             return true;
         }
 
-        LFXE_API bool Device::Update() {
+        LFXE_API bool Device::Update(bool flushQueue) {
             if (this->isEnabled) {
                 // Place the pre-queued item into the queue
                     {
                         lock_guard<mutex> lock1(this->LightActionQueueMutex);
                         lock_guard<mutex> lock2(this->lightActionUpdateThreadMutex);
+                        if (flushQueue) {
+                            this->LightActionQueue = {};
+                            this->LightActionQueueFlush = true;
+                        }
                         this->LightActionQueue.push(this->QueuedLightAction);
                         this->QueuedLightAction = {};
                     }
@@ -166,7 +170,7 @@ namespace lightfx {
             bool isUpdating = false;
 
             while (this->lightActionUpdateThreadRunning) {
-                if (!isUpdating) {
+                if (!isUpdating || this->LightActionQueueFlush) {
                     if (this->LightActionQueue.empty()) {
                         // Only wait for an update if we are not currently busy updating the colors and there's nothing in the queue
                         unique_lock<mutex> lock(this->lightActionUpdateThreadMutex);
@@ -180,6 +184,7 @@ namespace lightfx {
 
                     {
                         lock_guard<mutex> lock(this->LightActionQueueMutex);
+                        this->LightActionQueueFlush = false;
                         this->ActiveLightAction = this->LightActionQueue.front();
                         this->LightActionQueue.pop();
                     }
