@@ -1,14 +1,20 @@
-$file = "appveyor.yml"
+$fileAppveyor = "appveyor.yml"
+$fileVersionHeader = "src/VersionInfo.h"
+
+$regexFileAppveyor = "version: (\d+)\.(\d+)\.(\d+)\.\{build\}"
+$regexFileVersionHeader = "#define CURRENT_VERSION "".+"""
 
 if ($env:APPVEYOR_REPO_TAG -eq "true") {
-    $regex = "version: (\d+)\.(\d+)\.(\d+)\.\{build\}"
-    $match = select-string -Path $file -Pattern $regex
+    $match = select-string -Path $fileAppveyor -Pattern $regexFileAppveyor
 
     $newVersion = $match.Matches[0].Groups[1].Value + "." + $match.Matches[0].Groups[2].Value + "." + ([convert]::ToInt32($match.Matches[0].Groups[3].Value, 10) + 1)
     Write-Host "Prepare for next version automatically: $newVersion" -ForegroundColor "Yellow"
 
-    Write-Host "  - Apply to appveyor.yml" -ForegroundColor "Yellow"
-    (gc $file) -replace $regex,"version: $newVersion.{build}" | Set-Content $file
+    Write-Host "  - Apply to $fileAppveyor" -ForegroundColor "Yellow"
+    (gc $fileAppveyor) -replace $regexFileAppveyor,"version: $newVersion.{build}" | Set-Content $fileAppveyor
+
+    Write-Host "  - Apply to $fileVersionHeader" -ForegroundColor "Yellow"
+    (gc $fileVersionHeader) -replace $regexFileVersionHeader,"#define CURRENT_VERSION ""$newVersion-dev""" | Set-Content $fileVersionHeader
 
     Write-Host "  - Commit and push to GitHub repository" -ForegroundColor "Yellow"
     git config --global credential.helper store
@@ -17,7 +23,9 @@ if ($env:APPVEYOR_REPO_TAG -eq "true") {
     Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
     git remote add github "https://github.com/$($env:APPVEYOR_REPO_NAME).git"
     git checkout -q $env:APPVEYOR_REPO_BRANCH
-    git add -q appveyor.yml
+    git add -q $fileAppveyor $fileVersionHeader
     git commit -q -m "[AppVeyor] Prepare for version $newVersion [ci skip]"
     git push -q github master
+} else {
+    Write-Host "No tag has been pushed; skip preparing for a new version" -ForegroundColor "Yellow"
 }
