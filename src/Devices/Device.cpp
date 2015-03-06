@@ -90,17 +90,21 @@ namespace lightfx {
         }
 
         LFXE_API bool Device::Reset() {
-            if (this->lightActionUpdateThreadRunning) {
+            bool running = this->lightActionUpdateThreadRunning;
+
+            if (running) {
                 this->StopUpdateCurrentColorWorker();
-                this->ActiveLightAction = LightAction(this->GetNumberOfLights());
-                this->QueuedLightAction = {};
-                this->LightActionQueue = {};
-                this->StartUpdateCurrentColorWorker();
-            } else {
-                this->ActiveLightAction = LightAction(this->GetNumberOfLights());
-                this->QueuedLightAction = {};
-                this->LightActionQueue = {};
             }
+
+            this->ActiveLightAction = LightAction(this->GetNumberOfLights());
+            this->QueuedLightAction = {};
+            this->LightActionQueue = {};
+            this->LightActionQueueFlush = false;
+            
+            if (running) {
+                this->StartUpdateCurrentColorWorker();
+            }
+
             return true;
         }
 
