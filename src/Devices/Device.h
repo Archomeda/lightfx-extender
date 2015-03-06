@@ -3,7 +3,9 @@
 // Standard includes
 #include <string>
 #include <mutex>
+#include <condition_variable>
 #include <thread>
+#include <queue>
 
 // Project includes
 #include "../Managers/DeviceManager.h"
@@ -59,11 +61,10 @@ namespace lightfx {
             virtual bool Update();
             virtual bool Reset();
 
-            LightAction GetCurrentLightAction();
+            LightAction GetActiveLightAction();
             LightAction GetQueuedLightAction();
+            LightAction GetLastLightAction();
             void QueueLightAction(const LightAction& lightAction);
-            
-            virtual bool PushColorToDevice() = 0;
 
             virtual const std::wstring GetDeviceName() = 0;
             virtual const DeviceType GetDeviceType() = 0;
@@ -75,13 +76,15 @@ namespace lightfx {
         protected:
             void SetNumberOfLights(const size_t numberOfLights);
 
-            LightAction CurrentLightAction = {};
+            LightAction ActiveLightAction = {};
             LightAction QueuedLightAction;
+            std::queue<LightAction> LightActionQueue;
+            std::mutex LightActionQueueMutex;
 
-            virtual void UpdateCurrentColorLoop();
-            virtual bool UpdateCurrentColor();
-            virtual void StartUpdateCurrentColor();
-            virtual void StopUpdateCurrentColor();
+            void StartUpdateCurrentColorWorker();
+            void StopUpdateCurrentColorWorker();
+            void UpdateCurrentColorWorkerThread();
+            virtual bool PushColorToDevice() = 0;
 
         private:
             bool isEnabled = false;
@@ -91,7 +94,8 @@ namespace lightfx {
 
             std::thread lightActionUpdateThread;
             bool lightActionUpdateThreadRunning = false;
-            std::mutex lightActionUpdateThreadRunningMutex;
+            std::mutex lightActionUpdateThreadMutex;
+            std::condition_variable lightActionUpdateThreadConditionVariable;
 
         };
 

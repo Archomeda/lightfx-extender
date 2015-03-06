@@ -62,7 +62,7 @@ namespace lightfx {
         }
 
         LFXE_API bool DeviceLogitech::PushColorToDevice() {
-            LightColor color = this->CurrentLightAction.GetCurrentColor(0);
+            LightColor color = this->GetActiveLightAction().GetCurrentColor(0);
             double divider = (this->rangeOutMax - this->rangeOutMin) / ((this->rangeInMax - this->rangeInMin) / 100.0) / 100.0;
             double brightness = color.brightness / 255.0;
             double red = (color.red - this->rangeOutMin) / divider * brightness + this->rangeInMin;

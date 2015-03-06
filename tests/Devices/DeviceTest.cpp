@@ -20,6 +20,7 @@ public:
         Assert::IsFalse(device->IsEnabled());
         device->Enable();
         Assert::IsTrue(device->IsEnabled());
+        device->Disable();
     }
 
     TEST_METHOD(Disable) {
@@ -60,7 +61,19 @@ public:
         LightAction lightAction = LightAction::NewInstant(1, LightColor(1, 2, 3, 4));
         device->QueueLightAction(lightAction);
         device->Update();
-        Assert::IsTrue(lightAction.GetStartColor(0) == device->GetCurrentLightAction().GetStartColor(0));
+
+        bool success = false;
+        for (int i = 0; i < 500; ++i) {
+            if (lightAction.GetStartColor(0) == device->GetActiveLightAction().GetStartColor(0)) {
+                success = true;
+                break;
+            }
+            this_thread::sleep_for(chrono::milliseconds(1));
+        }
+        if (!success) {
+            Assert::Fail(L"Active light actions do not match after an extended period of time");
+        }
+        device->Disable();
     }
 
         };

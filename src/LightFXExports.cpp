@@ -260,7 +260,7 @@ extern "C" {
         }
 
         try {
-            *lightCol = LightColorToLfxColor(device->GetCurrentLightAction().GetCurrentColor(lightIndex));
+            *lightCol = LightColorToLfxColor(device->GetActiveLightAction().GetCurrentColor(lightIndex));
         } catch (...) {
             return LFX_FAILURE;
         }
@@ -353,7 +353,7 @@ extern "C" {
                 lightAction = LightAction::NewInstant(device->GetNumberOfLights(), LfxColorToLightColor(*primaryCol));
                 break;
             }
-            lightAction.SetStartColor(device->GetCurrentLightAction().GetCurrentColor());
+            lightAction.SetStartColor(device->GetActiveLightAction().GetCurrentColor());
             deviceManager->GetChildByIndex(devIndex)->QueueLightAction(lightAction);
         } catch (...) {
             return LFX_FAILURE;

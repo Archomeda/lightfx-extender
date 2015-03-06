@@ -18,7 +18,7 @@ namespace lightfx {
     namespace devices {
 
         LFXE_API Device::~Device() {
-            this->StopUpdateCurrentColor();
+            this->StopUpdateCurrentColorWorker();
         }
 
 
@@ -34,6 +34,7 @@ namespace lightfx {
         LFXE_API bool Device::Enable() {
             if (!this->isEnabled) {
                 LOG(LogLevel::Debug, L"Enabling");
+                this->StartUpdateCurrentColorWorker();
                 this->isEnabled = true;
             }
             return true;
@@ -42,7 +43,7 @@ namespace lightfx {
         LFXE_API bool Device::Disable() {
             if (this->isEnabled) {
                 LOG(LogLevel::Debug, L"Disabling");
-                this->StopUpdateCurrentColor();
+                this->StopUpdateCurrentColorWorker();
                 this->isEnabled = false;
             }
             return true;
@@ -69,28 +70,50 @@ namespace lightfx {
 
         LFXE_API bool Device::Update() {
             if (this->isEnabled) {
-                this->StopUpdateCurrentColor();
-                this->CurrentLightAction = LightAction(this->QueuedLightAction);
-                this->QueuedLightAction = LightAction();
-                this->StartUpdateCurrentColor();
+                // Place the pre-queued item into the queue
+                    {
+                        lock_guard<mutex> lock1(this->LightActionQueueMutex);
+                        lock_guard<mutex> lock2(this->lightActionUpdateThreadMutex);
+                        this->LightActionQueue.push(this->QueuedLightAction);
+                        this->QueuedLightAction = {};
+                    }
+
+                // Signal the update thread
+                this->lightActionUpdateThreadConditionVariable.notify_one();
                 return true;
             }
             return false;
         }
 
         LFXE_API bool Device::Reset() {
-            this->CurrentLightAction = LightAction(this->GetNumberOfLights());
-            this->QueuedLightAction = LightAction(this->CurrentLightAction);
+            if (this->lightActionUpdateThreadRunning) {
+                this->StopUpdateCurrentColorWorker();
+                this->ActiveLightAction = LightAction(this->GetNumberOfLights());
+                this->QueuedLightAction = {};
+                this->LightActionQueue = {};
+                this->StartUpdateCurrentColorWorker();
+            } else {
+                this->ActiveLightAction = LightAction(this->GetNumberOfLights());
+                this->QueuedLightAction = {};
+                this->LightActionQueue = {};
+            }
             return true;
         }
 
 
-        LFXE_API LightAction Device::GetCurrentLightAction() {
-            return this->CurrentLightAction;
+        LFXE_API LightAction Device::GetActiveLightAction() {
+            return this->ActiveLightAction;
         }
 
         LFXE_API LightAction Device::GetQueuedLightAction() {
             return this->QueuedLightAction;
+        }
+
+        LFXE_API LightAction Device::GetLastLightAction() {
+            if (!this->LightActionQueue.empty()) {
+                return this->LightActionQueue.back();
+            }
+            return this->ActiveLightAction;
         }
 
         LFXE_API void Device::QueueLightAction(const LightAction& lightAction) {
@@ -116,69 +139,67 @@ namespace lightfx {
         }
 
 
-        LFXE_API void Device::UpdateCurrentColorLoop() {
-            while (true) {
-                this->lightActionUpdateThreadRunningMutex.lock();
-                bool isRunning = this->lightActionUpdateThreadRunning;
-                this->lightActionUpdateThreadRunningMutex.unlock();
+        LFXE_API void Device::StartUpdateCurrentColorWorker() {
+            if (!this->lightActionUpdateThreadRunning) {
+                // Start the update thread
+                this->lightActionUpdateThreadRunning = true;
+                this->lightActionUpdateThread = thread(&Device::UpdateCurrentColorWorkerThread, this);
+            }
+        }
 
-                if (!isRunning) {
-                    break;
+        LFXE_API void Device::StopUpdateCurrentColorWorker() {
+            if (this->lightActionUpdateThreadRunning) {
+                // Notify the update thread to exit
+                    {
+                        lock_guard<mutex> lock(this->lightActionUpdateThreadMutex);
+                        this->lightActionUpdateThreadRunning = false;
+                    }
+
+                this->lightActionUpdateThreadConditionVariable.notify_one();
+                if (this->lightActionUpdateThread.joinable()) {
+                    this->lightActionUpdateThread.join();
+                }
+            }
+        }
+
+        LFXE_API void Device::UpdateCurrentColorWorkerThread() {
+            bool isUpdating = false;
+
+            while (this->lightActionUpdateThreadRunning) {
+                if (!isUpdating) {
+                    if (this->LightActionQueue.empty()) {
+                        // Only wait for an update if we are not currently busy updating the colors and there's nothing in the queue
+                        unique_lock<mutex> lock(this->lightActionUpdateThreadMutex);
+                        this->lightActionUpdateThreadConditionVariable.wait(lock, [&] { return !this->LightActionQueue.empty() || !this->lightActionUpdateThreadRunning; });
+
+                        if (!this->lightActionUpdateThreadRunning) {
+                            // Make sure to exit the loop before trying to update the colors if the thread should be exited
+                            break;
+                        }
+                    }
+
+                    {
+                        lock_guard<mutex> lock(this->LightActionQueueMutex);
+                        this->ActiveLightAction = this->LightActionQueue.front();
+                        this->LightActionQueue.pop();
+                    }
                 }
 
-                if (!this->UpdateCurrentColor()) {
-                    // Finished updating loop
-                    break;
+                // Update color if possible
+                if (this->ActiveLightAction.CanUpdateCurrentColor()) {
+                    if (this->ActiveLightAction.UpdateCurrentColor()) {
+                        this->PushColorToDevice();
+                    }
+                    isUpdating = true;
+                } else {
+                    isUpdating = false;
                 }
 
                 try {
-                    this_thread::sleep_for(chrono::milliseconds(5));
+                    this_thread::sleep_for(chrono::milliseconds(1));
                 } catch (...) {
                     return;
                 }
-            }
-
-            this->lightActionUpdateThreadRunningMutex.lock();
-            this->lightActionUpdateThreadRunning = false;
-            this->lightActionUpdateThreadRunningMutex.unlock();
-        }
-
-        LFXE_API bool Device::UpdateCurrentColor() {
-            if (this->CurrentLightAction.CanUpdateCurrentColor()) {
-                if (this->CurrentLightAction.UpdateCurrentColor()) {
-                    this->PushColorToDevice();
-                }
-                return true;
-            }
-            return false;
-        }
-
-        LFXE_API void Device::StartUpdateCurrentColor() {
-            this->lightActionUpdateThreadRunningMutex.lock();
-            bool isRunning = this->lightActionUpdateThreadRunning;
-            this->lightActionUpdateThreadRunningMutex.unlock();
-
-            if (!isRunning) {
-                if (this->CurrentLightAction.GetActionType() == LightActionType::Instant) {
-                    // Don't start a new thread for this, since it's just one color update after all
-                    this->UpdateCurrentColor();
-                } else {
-                    // For everything else, start a new thread since there are multiple color steps in the animations
-                    this->lightActionUpdateThreadRunning = true;
-                    this->lightActionUpdateThread = thread(&Device::UpdateCurrentColorLoop, this);
-                }
-            }
-        }
-
-        LFXE_API void Device::StopUpdateCurrentColor() {
-            this->lightActionUpdateThreadRunningMutex.lock();
-            if (this->lightActionUpdateThreadRunning) {
-                this->lightActionUpdateThreadRunning = false;
-            }
-            this->lightActionUpdateThreadRunningMutex.unlock();
-
-            if (this->lightActionUpdateThread.joinable()) {
-                this->lightActionUpdateThread.join();
             }
         }
 

@@ -24,8 +24,9 @@ namespace lightfx_tests {
             using Device::Update;
             using Device::Reset;
 
-            using Device::GetCurrentLightAction;
+            using Device::GetActiveLightAction;
             using Device::GetQueuedLightAction;
+            using Device::GetLastLightAction;
             using Device::QueueLightAction;
 
             virtual bool PushColorToDevice() override { return false; }
@@ -36,12 +37,6 @@ namespace lightfx_tests {
             using Device::GetNumberOfLights;
             using Device::GetLightData;
             using Device::SetLightData;
-
-        protected:
-            using Device::SetNumberOfLights;
-
-            using Device::CurrentLightAction;
-            using Device::QueuedLightAction;
 
         };
 

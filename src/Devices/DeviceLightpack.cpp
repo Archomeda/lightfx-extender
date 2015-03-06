@@ -83,7 +83,7 @@ namespace lightfx {
         bool DeviceLightpack::PushColorToDevice() {
             vector<LightpackColor> newLights = {};
             for (size_t i = 0; i < this->GetNumberOfLights(); ++i) {
-                LightColor color = this->CurrentLightAction.GetCurrentColor(i);
+                LightColor color = this->GetActiveLightAction().GetCurrentColor(i);
                 double brightness = color.brightness / 255.0;
                 int red = int(color.red * brightness);
                 int green = int(color.green * brightness);
