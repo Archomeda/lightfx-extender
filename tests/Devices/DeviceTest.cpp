@@ -76,6 +76,50 @@ public:
         device->Disable();
     }
 
+    TEST_METHOD(QueueLightActionAndUpdateNoFlush) {
+        auto device = make_shared<DeviceMock>();
+        device->Reset();
+        device->Enable();
+        LightAction lightAction1 = LightAction::NewMorph(1, LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
+        LightAction lightAction2 = LightAction::NewInstant(1, LightColor(3, 4, 5, 6));
+        device->QueueLightAction(lightAction1);
+        device->Update();
+
+        device->QueueLightAction(lightAction2);
+        device->Update(false);
+
+        Assert::IsFalse(lightAction2.GetStartColor(0) == device->GetActiveLightAction().GetStartColor(0));
+        device->Disable();
+    }
+
+    TEST_METHOD(LastLightActionActive) {
+        auto device = make_shared<DeviceMock>();
+        device->Reset();
+        device->Enable();
+        LightAction lightAction = LightAction::NewMorph(1, LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
+        device->QueueLightAction(lightAction);
+        device->Update();
+
+        Assert::IsTrue(lightAction.GetStartColor(0) == device->GetLastLightAction().GetStartColor(0));
+        device->Disable();
+    }
+
+    TEST_METHOD(LastLightActionQueued) {
+        auto device = make_shared<DeviceMock>();
+        device->Reset();
+        device->Enable();
+        LightAction lightAction1 = LightAction::NewMorph(1, LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
+        LightAction lightAction2 = LightAction::NewInstant(1, LightColor(3, 4, 5, 6));
+        device->QueueLightAction(lightAction1);
+        device->Update();
+
+        device->QueueLightAction(lightAction2);
+        device->Update(false);
+
+        Assert::IsTrue(lightAction2.GetStartColor(0) == device->GetLastLightAction().GetStartColor(0));
+        device->Disable();
+    }
+
         };
 
     }
