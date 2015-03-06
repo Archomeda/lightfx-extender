@@ -23,7 +23,7 @@ if ($env:APPVEYOR_REPO_TAG -eq "true") {
     Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
     git remote add github "https://github.com/$($env:APPVEYOR_REPO_NAME).git"
     git checkout -q $env:APPVEYOR_REPO_BRANCH
-    git add -q $fileAppveyor $fileVersionHeader
+    git add $fileAppveyor $fileVersionHeader
     git commit -q -m "[AppVeyor] Prepare for version $newVersion [ci skip]"
     git push -q github master
 } else {
