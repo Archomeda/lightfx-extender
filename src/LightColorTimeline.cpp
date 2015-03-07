@@ -68,6 +68,17 @@ namespace lightfx {
         }
     }
 
+    LFXE_API wstring LightColorTimeline::ToString() {
+        wstring result;
+        for (size_t i = 0; i < this->actions.size(); ++i) {
+            if (i != 0) {
+                result += L"->";
+            }
+            result += L"(" + this->actions[i].ToString() + L")";
+        }
+        return result;
+    }
+
 
     LFXE_API LightColorTimeline LightColorTimeline::NewInstant(const LightColor& color) {
         LightColorTimeline timeline;
@@ -93,9 +104,9 @@ namespace lightfx {
     LFXE_API LightColorTimeline LightColorTimeline::NewPulse(const LightColor& startColor, const LightColor& endColor, const LightColor& resetColor, const unsigned long pulseTime, const unsigned long pulseAmount, const unsigned long startColorHoldTime, const unsigned long endColorHoldTime, const unsigned long startDelay) {
         LightColorTimelineAction actionStart(startColor, 0, 0);
 
-        LightColorTimelineAction actionStartToEndColorFirst(endColor, pulseTime / 2, startDelay + startColorHoldTime / 2);
-        LightColorTimelineAction actionStartToEndColorOther(endColor, pulseTime / 2, startColorHoldTime);
-        LightColorTimelineAction actionEndToStartColor(startColor, pulseTime / 2, endColorHoldTime);
+        LightColorTimelineAction actionStartToEndColorFirst(endColor, pulseTime, startDelay + startColorHoldTime / 2);
+        LightColorTimelineAction actionStartToEndColorOther(endColor, pulseTime, startColorHoldTime);
+        LightColorTimelineAction actionEndToStartColor(startColor, pulseTime, endColorHoldTime);
 
         LightColorTimelineAction actionReset(resetColor, 0, startColorHoldTime / 2);
 

@@ -1,13 +1,14 @@
 #pragma once
 
 // Standard includes
+#include <string>
 #include <vector>
-
-// API exports
-#include "Common/ApiExports.h"
 
 // Project includes
 #include "LightColorTimelineAction.h"
+
+// API exports
+#include "Common/ApiExports.h"
 
 
 #pragma warning(push)
@@ -26,6 +27,7 @@ namespace lightfx {
         unsigned long GetTotalDuration();
         LightColor GetColorAtTime(const unsigned long time);
 
+        std::wstring ToString();
 
         static LightColorTimeline NewInstant(const LightColor& color);
         static LightColorTimeline NewMorph(const LightColor& startColor, const LightColor& endColor, const unsigned long morphTime, const unsigned long startDelay = 0);

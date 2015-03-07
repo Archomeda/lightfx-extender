@@ -46,25 +46,25 @@ public:
         Assert::IsFalse(device->IsInitialized());
     }
 
-    TEST_METHOD(QueueLightAction) {
+    TEST_METHOD(QueueTimeline) {
         auto device = make_shared<DeviceMock>();
         device->Reset();
-        LightAction lightAction = LightAction::NewInstant(1, LightColor(1, 2, 3, 4));
-        device->QueueLightAction(lightAction);
-        Assert::IsTrue(lightAction.GetStartColor(0) == device->GetQueuedLightAction().GetStartColor(0));
+        LightColorTimeline timeline = LightColorTimeline::NewInstant(LightColor(1, 2, 3, 4));
+        device->QueueTimeline(LightColorsTimeline(1, timeline));
+        Assert::IsTrue(timeline.GetColorAtTime(0) == device->GetQueuedTimeline().GetColorAtTime(0, 0));
     }
 
-    TEST_METHOD(QueueLightActionAndUpdate) {
+    TEST_METHOD(QueueTimelineAndUpdate) {
         auto device = make_shared<DeviceMock>();
         device->Reset();
         device->Enable();
-        LightAction lightAction = LightAction::NewInstant(1, LightColor(1, 2, 3, 4));
-        device->QueueLightAction(lightAction);
+        LightColorTimeline timeline = LightColorTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
+        device->QueueTimeline(LightColorsTimeline(1, timeline));
         device->Update();
 
         bool success = false;
         for (int i = 0; i < 500; ++i) {
-            if (device->GetActiveLightAction().GetStartColor().size() > 0 && lightAction.GetStartColor(0) == device->GetActiveLightAction().GetStartColor(0)) {
+            if (device->GetActiveTimeline().GetColorAtTime(0).size() > 0 && timeline.GetColorAtTime(0) == device->GetActiveTimeline().GetColorAtTime(0, 0)) {
                 success = true;
                 break;
             }
@@ -76,21 +76,21 @@ public:
         device->Disable();
     }
 
-    TEST_METHOD(QueueLightActionAndUpdateNoFlush) {
+    TEST_METHOD(QueueTimelineAndUpdateNoFlush) {
         auto device = make_shared<DeviceMock>();
         device->Reset();
         device->Enable();
-        LightAction lightAction1 = LightAction::NewMorph(1, LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
-        LightAction lightAction2 = LightAction::NewInstant(1, LightColor(3, 4, 5, 6));
-        device->QueueLightAction(lightAction1);
+        LightColorTimeline timeline1 = LightColorTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
+        LightColorTimeline timeline2 = LightColorTimeline::NewInstant(LightColor(3, 4, 5, 6));
+        device->QueueTimeline(LightColorsTimeline(1, timeline1));
         device->Update();
 
-        device->QueueLightAction(lightAction2);
+        device->QueueTimeline(LightColorsTimeline(1, timeline2));
         device->Update(false);
 
         bool success = false;
         for (int i = 0; i < 500; ++i) {
-            if (device->GetActiveLightAction().GetStartColor().size() > 0 && lightAction2.GetStartColor(0) != device->GetActiveLightAction().GetStartColor(0)) {
+            if (device->GetActiveTimeline().GetColorAtTime(0).size() > 0 && timeline2.GetColorAtTime(0) != device->GetActiveTimeline().GetColorAtTime(0, 0)) {
                 success = true;
                 break;
             }
@@ -102,31 +102,31 @@ public:
         device->Disable();
     }
 
-    TEST_METHOD(LastLightActionActive) {
+    TEST_METHOD(GetRecentTimelineActive) {
         auto device = make_shared<DeviceMock>();
         device->Reset();
         device->Enable();
-        LightAction lightAction = LightAction::NewMorph(1, LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
-        device->QueueLightAction(lightAction);
+        LightColorTimeline timeline = LightColorTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
+        device->QueueTimeline(LightColorsTimeline(1, timeline));
         device->Update();
 
-        Assert::IsTrue(lightAction.GetStartColor(0) == device->GetLastLightAction().GetStartColor(0));
+        Assert::IsTrue(timeline.GetColorAtTime(0) == device->GetRecentTimeline().GetColorAtTime(0, 0));
         device->Disable();
     }
 
-    TEST_METHOD(LastLightActionQueued) {
+    TEST_METHOD(GetRecentTimelineQueued) {
         auto device = make_shared<DeviceMock>();
         device->Reset();
         device->Enable();
-        LightAction lightAction1 = LightAction::NewMorph(1, LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
-        LightAction lightAction2 = LightAction::NewInstant(1, LightColor(3, 4, 5, 6));
-        device->QueueLightAction(lightAction1);
+        LightColorTimeline timeline1 = LightColorTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
+        LightColorTimeline timeline2 = LightColorTimeline::NewInstant(LightColor(1, 2, 3, 4));
+        device->QueueTimeline(LightColorsTimeline(1, timeline1));
         device->Update();
 
-        device->QueueLightAction(lightAction2);
+        device->QueueTimeline(LightColorsTimeline(1, timeline2));
         device->Update(false);
 
-        Assert::IsTrue(lightAction2.GetStartColor(0) == device->GetLastLightAction().GetStartColor(0));
+        Assert::IsTrue(timeline2.GetColorAtTime(0) == device->GetRecentTimeline().GetColorAtTime(0, 0));
         device->Disable();
     }
 

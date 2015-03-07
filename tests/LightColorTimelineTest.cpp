@@ -117,20 +117,20 @@ public:
 
         Assert::IsTrue(startColor == timeline.GetColorAtTime(0), L"Pulse 1, phase 1");
         Assert::IsTrue(startColor == timeline.GetColorAtTime(startColorHoldTime / 2), L"Pulse 1, phase 2");
-        Assert::IsTrue(endColor == timeline.GetColorAtTime(startColorHoldTime / 2 + pulseTime / 2), L"Pulse 1, phase 3");
-        Assert::IsTrue(endColor == timeline.GetColorAtTime(startColorHoldTime / 2 + pulseTime / 2 + endColorHoldTime), L"Pulse 1, phase 4");
-        Assert::IsTrue(startColor == timeline.GetColorAtTime(startColorHoldTime / 2 + pulseTime + endColorHoldTime), L"Pulse 1, phase 5");
-        Assert::IsTrue(startColor == timeline.GetColorAtTime(startColorHoldTime + pulseTime + endColorHoldTime), L"Pulse 1, phase 6");
+        Assert::IsTrue(endColor == timeline.GetColorAtTime(startColorHoldTime / 2 + pulseTime), L"Pulse 1, phase 3");
+        Assert::IsTrue(endColor == timeline.GetColorAtTime(startColorHoldTime / 2 + pulseTime + endColorHoldTime), L"Pulse 1, phase 4");
+        Assert::IsTrue(startColor == timeline.GetColorAtTime(startColorHoldTime / 2 + pulseTime * 2 + endColorHoldTime), L"Pulse 1, phase 5");
+        Assert::IsTrue(startColor == timeline.GetColorAtTime(startColorHoldTime + pulseTime * 2 + endColorHoldTime), L"Pulse 1, phase 6");
 
-        unsigned long startPulse2 = startColorHoldTime + pulseTime + endColorHoldTime;
+        unsigned long startPulse2 = startColorHoldTime + pulseTime * 2 + endColorHoldTime;
         Assert::IsTrue(startColor == timeline.GetColorAtTime(startPulse2), L"Pulse 2, phase 1");
         Assert::IsTrue(startColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime / 2), L"Pulse 2, phase 2");
-        Assert::IsTrue(endColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime / 2 + pulseTime / 2), L"Pulse 2, phase 3");
-        Assert::IsTrue(endColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime / 2 + pulseTime / 2 + endColorHoldTime), L"Pulse 2, phase 4");
-        Assert::IsTrue(startColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime / 2 + pulseTime + endColorHoldTime), L"Pulse 2, phase 5");
-        Assert::IsTrue(resetColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime + pulseTime + endColorHoldTime), L"Pulse 2, phase 6");
+        Assert::IsTrue(endColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime / 2 + pulseTime), L"Pulse 2, phase 3");
+        Assert::IsTrue(endColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime / 2 + pulseTime + endColorHoldTime), L"Pulse 2, phase 4");
+        Assert::IsTrue(startColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime / 2 + pulseTime * 2 + endColorHoldTime), L"Pulse 2, phase 5");
+        Assert::IsTrue(resetColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime + pulseTime * 2 + endColorHoldTime), L"Pulse 2, phase 6");
 
-        Assert::AreEqual<unsigned long>((pulseTime + startColorHoldTime + endColorHoldTime) * pulseAmount, timeline.GetTotalDuration(), L"TotalDuration");
+        Assert::AreEqual<unsigned long>((pulseTime * 2 + startColorHoldTime + endColorHoldTime) * pulseAmount, timeline.GetTotalDuration(), L"TotalDuration");
     }
 
     TEST_METHOD(NewPulseDelayed) {
@@ -146,20 +146,20 @@ public:
 
         Assert::IsTrue(startColor == timeline.GetColorAtTime(startDelay), L"Pulse 1, phase 1");
         Assert::IsTrue(startColor == timeline.GetColorAtTime(startDelay + startColorHoldTime / 2), L"Pulse 1, phase 2");
-        Assert::IsTrue(endColor == timeline.GetColorAtTime(startDelay + startColorHoldTime / 2 + pulseTime / 2), L"Pulse 1, phase 3");
-        Assert::IsTrue(endColor == timeline.GetColorAtTime(startDelay + startColorHoldTime / 2 + pulseTime / 2 + endColorHoldTime), L"Pulse 1, phase 4");
-        Assert::IsTrue(startColor == timeline.GetColorAtTime(startDelay + startColorHoldTime / 2 + pulseTime + endColorHoldTime), L"Pulse 1, phase 5");
-        Assert::IsTrue(startColor == timeline.GetColorAtTime(startDelay + startColorHoldTime + pulseTime + endColorHoldTime), L"Pulse 1, phase 6");
+        Assert::IsTrue(endColor == timeline.GetColorAtTime(startDelay + startColorHoldTime / 2 + pulseTime), L"Pulse 1, phase 3");
+        Assert::IsTrue(endColor == timeline.GetColorAtTime(startDelay + startColorHoldTime / 2 + pulseTime + endColorHoldTime), L"Pulse 1, phase 4");
+        Assert::IsTrue(startColor == timeline.GetColorAtTime(startDelay + startColorHoldTime / 2 + pulseTime * 2 + endColorHoldTime), L"Pulse 1, phase 5");
+        Assert::IsTrue(startColor == timeline.GetColorAtTime(startDelay + startColorHoldTime + pulseTime * 2 + endColorHoldTime), L"Pulse 1, phase 6");
 
-        unsigned long startPulse2 = startDelay + startColorHoldTime + pulseTime + endColorHoldTime;
+        unsigned long startPulse2 = startDelay + startColorHoldTime + pulseTime * 2 + endColorHoldTime;
         Assert::IsTrue(startColor == timeline.GetColorAtTime(startPulse2), L"Pulse 2, phase 1");
         Assert::IsTrue(startColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime / 2), L"Pulse 2, phase 2");
-        Assert::IsTrue(endColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime / 2 + pulseTime / 2), L"Pulse 2, phase 3");
-        Assert::IsTrue(endColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime / 2 + pulseTime / 2 + endColorHoldTime), L"Pulse 2, phase 4");
-        Assert::IsTrue(startColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime / 2 + pulseTime + endColorHoldTime), L"Pulse 2, phase 5");
-        Assert::IsTrue(resetColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime + pulseTime + endColorHoldTime), L"Pulse 2, phase 6");
+        Assert::IsTrue(endColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime / 2 + pulseTime), L"Pulse 2, phase 3");
+        Assert::IsTrue(endColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime / 2 + pulseTime + endColorHoldTime), L"Pulse 2, phase 4");
+        Assert::IsTrue(startColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime / 2 + pulseTime * 2 + endColorHoldTime), L"Pulse 2, phase 5");
+        Assert::IsTrue(resetColor == timeline.GetColorAtTime(startPulse2 + startColorHoldTime + pulseTime * 2 + endColorHoldTime), L"Pulse 2, phase 6");
 
-        Assert::AreEqual<unsigned long>((pulseTime + startColorHoldTime + endColorHoldTime) * pulseAmount + startDelay, timeline.GetTotalDuration(), L"TotalDuration");
+        Assert::AreEqual<unsigned long>((pulseTime * 2 + startColorHoldTime + endColorHoldTime) * pulseAmount + startDelay, timeline.GetTotalDuration(), L"TotalDuration");
     }
 
     };

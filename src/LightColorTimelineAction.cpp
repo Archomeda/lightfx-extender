@@ -33,4 +33,9 @@ namespace lightfx {
         this->startDelay = startDelay;
     }
 
+    LFXE_API wstring LightColorTimelineAction::ToString() {
+        return L"l" + to_wstring(this->duration) + L",d" + to_wstring(this->startDelay) + L",c("
+            + to_wstring(this->color.red) + L"," + to_wstring(this->color.green) + L"," + to_wstring(this->color.blue) + L"," + to_wstring(this->color.brightness) + L")";
+    }
+
 }

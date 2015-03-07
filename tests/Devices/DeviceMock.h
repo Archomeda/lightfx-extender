@@ -24,12 +24,10 @@ namespace lightfx_tests {
             using Device::Update;
             using Device::Reset;
 
-            using Device::GetActiveLightAction;
-            using Device::GetQueuedLightAction;
-            using Device::GetLastLightAction;
-            using Device::QueueLightAction;
-
-            virtual bool PushColorToDevice() override { return false; }
+            using Device::GetActiveTimeline;
+            using Device::GetQueuedTimeline;
+            using Device::GetRecentTimeline;
+            using Device::QueueTimeline;
 
             virtual const std::wstring GetDeviceName() override { return L"DeviceMock"; }
             virtual const lightfx::devices::DeviceType GetDeviceType() override { return lightfx::devices::DeviceType::DeviceOther; }
@@ -37,6 +35,9 @@ namespace lightfx_tests {
             using Device::GetNumberOfLights;
             using Device::GetLightData;
             using Device::SetLightData;
+
+        protected:
+            virtual bool PushColorToDevice(const std::vector<lightfx::LightColor>& colors) override { return false; }
 
         };
 
