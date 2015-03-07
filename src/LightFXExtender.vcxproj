@@ -156,6 +156,8 @@
     <ClInclude Include="Games\MumbleLink.h" />
     <ClInclude Include="LightAction.h" />
     <ClInclude Include="Games\Game.h" />
+    <ClInclude Include="LightColorTimeline.h" />
+    <ClInclude Include="LightColorTimelineAction.h" />
     <ClInclude Include="LightFXExtender.h" />
     <ClInclude Include="Managers\ChildOfManager.h" />
     <ClInclude Include="Managers\ConfigManager.h" />
@@ -187,6 +189,8 @@
     <ClCompile Include="Devices\DeviceLightpack.cpp" />
     <ClCompile Include="Devices\DeviceLogitech.cpp" />
     <ClCompile Include="Games\GameGw2.cpp" />
+    <ClCompile Include="LightColorTimeline.cpp" />
+    <ClCompile Include="LightColorTimelineAction.cpp" />
     <ClCompile Include="LightFXExports.cpp" />
     <ClCompile Include="LightAction.cpp" />
     <ClCompile Include="Games\Game.cpp" />

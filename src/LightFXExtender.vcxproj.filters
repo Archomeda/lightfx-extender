@@ -96,6 +96,12 @@
     <ClInclude Include="Games\GameGw2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LightColorTimeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LightColorTimelineAction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LightFXExtender.rc">
@@ -166,6 +172,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LightFXExports.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LightColorTimeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LightColorTimelineAction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
