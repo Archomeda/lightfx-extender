@@ -71,7 +71,7 @@ namespace lightfx {
                 wstring filePath = this->GetLogDirectory();
                 if (!DirExists(filePath)) {
                     if (CreateDirectoryW(filePath.c_str(), NULL) == FALSE) {
-                        // TODO: Log directory creation failure (tbh a bit useless since we just failed to create the directory where the log file should be...)
+                        // Can't log the failure, since we just failed to create the directory where the log file should be...
                         return;
                     }
                 }
@@ -82,7 +82,7 @@ namespace lightfx {
                 logStream << timePrefix << L" - " << logLevelPrefix << L" " << line << std::endl;
                 logStream.close();
             } catch (...) {
-                // TODO: Log error
+                // Can't log the exception, since we just failed to log something else...
             }
         }
 

@@ -13,6 +13,7 @@
 // Project includes
 #include "../LightFXExtender.h"
 #include "DeviceManager.h"
+#include "LogManager.h"
 #include "UpdateManager.h"
 #include "../Utils/Windows.h"
 #include "../Utils/FileIO.h"
@@ -25,6 +26,8 @@
 
 #define MENU_CONFFOLDER_NAME L"Open &configuration folder"
 #define MENU_UPDATE_NAME L"&Download new version"
+
+#define LOG(logLevel, line) if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"TrayManager - ") + line); }
 
 using namespace std;
 using namespace lightfx::devices;
@@ -73,6 +76,11 @@ namespace lightfx {
             }
 
             this->isTrayIconAdded = Shell_NotifyIconW(NIM_ADD, &this->trayIconData) == TRUE;
+            if (this->isTrayIconAdded) {
+                LOG(LogLevel::Debug, L"Tray icon added");
+            } else {
+                LOG(LogLevel::Debug, L"Failed to add tray icon");
+            }
         }
 
         LFXE_API void TrayManager::RemoveTrayIcon() {
@@ -87,6 +95,11 @@ namespace lightfx {
             this->hModuleInstance = NULL;
 
             this->isTrayIconAdded = !result;
+            if (!this->isTrayIconAdded) {
+                LOG(LogLevel::Debug, L"Tray icon removed");
+            } else {
+                LOG(LogLevel::Debug, L"Failed to remove tray icon");
+            }
         }
 
 

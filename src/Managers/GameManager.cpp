@@ -7,7 +7,7 @@
 // Project includes
 #include "../Games/GameGw2.h"
 #include "../LightFXExtender.h"
-#include "../Managers/LogManager.h"
+#include "LogManager.h"
 
 
 #define LOG(logLevel, line) if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"GameManager - ") + line); }

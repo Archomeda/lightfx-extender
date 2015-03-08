@@ -16,10 +16,16 @@
 #include <ShlObj.h>
 
 // Project includes
+#include "../LightFXExtender.h"
+#include "../Managers/LogManager.h"
 #include "../Utils/FileIO.h"
+#include "../Utils/String.h"
 
+
+#define LOG(logLevel, line) if (this->GetManager() != nullptr) { this->GetManager()->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"Config ") + this->GetCurrentFileName() + L" - " + line); }
 
 using namespace std;
+using namespace lightfx::managers;
 using namespace lightfx::utils;
 
 namespace lightfx {
@@ -53,9 +59,13 @@ namespace lightfx {
 
                     // Deserialize this stuff
                     this->Deserialize(data);
+
+                    LOG(LogLevel::Debug, L"Loaded configuration");
+                } else {
+                    LOG(LogLevel::Debug, L"No configuration found, using defaults");
                 }
-            } catch (...) {
-                // TODO: Log error
+            } catch (exception& e) {
+                LOG(LogLevel::Warning, L"Exception while loading configuration: " + string_to_wstring(e.what()));
             }
         }
 
@@ -82,8 +92,10 @@ namespace lightfx {
                 configStream.open(filePath, wios::out | wios::binary);
                 configStream << data;
                 configStream.close();
-            } catch (...) {
-                // TODO: Log error
+
+                LOG(LogLevel::Debug, L"Saved configuration");
+            } catch (exception& e) {
+                LOG(LogLevel::Warning, L"Exception while saving configuration: " + string_to_wstring(e.what()));
             }
         }
 
