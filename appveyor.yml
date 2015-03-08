@@ -19,7 +19,7 @@ build:
   verbosity: minimal
 
 test_script:
-  - vstest.console /Platform:$(platform) /logger:Appveyor bin\Release_Tests\$(arch)\UnitTests.dll
+  - vstest.console /Platform:%PLATFORM% /logger:Appveyor bin\Release_Tests\$(arch)\UnitTests.dll
 
 on_success:
   - ps: appveyor\PrepareNewBuildVersion.ps1
