@@ -17,7 +17,7 @@ public:
     TEST_METHOD(Constuctor) {
         LightColor color(1, 2, 3, 4);
         unsigned long duration = 2000;
-        unsigned long startDelay = 100;
+        long startDelay = 100;
         LightTimelineItem lightTimelineItem(color, duration, startDelay);
 
         Assert::IsTrue(color == lightTimelineItem.GetColor(), L"Color");
@@ -42,7 +42,7 @@ public:
     }
 
     TEST_METHOD(SetStartDelay) {
-        unsigned long startDelay = 100;
+        long startDelay = 100;
         LightTimelineItem lightTimelineItem;
         lightTimelineItem.SetStartDelay(startDelay);
 

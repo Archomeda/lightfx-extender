@@ -32,10 +32,10 @@ namespace lightfx {
             std::wstring ToString();
 
             static LightTimeline NewInstant(const LightColor& color);
-            static LightTimeline NewMorph(const LightColor& startColor, const LightColor& endColor, const unsigned long morphTime, const unsigned long startDelay = 0);
-            static LightTimeline NewPulse(const LightColor& startColor, const LightColor& endColor, const unsigned long pulseTime, const unsigned long pulseAmount, const unsigned long startDelay = 0);
-            static LightTimeline NewPulse(const LightColor& startColor, const LightColor& endColor, const unsigned long pulseTime, const unsigned long pulseAmount, const unsigned long startColorHoldTime, const unsigned long endColorHoldTime, const unsigned long startDelay = 0);
-            static LightTimeline NewPulse(const LightColor& startColor, const LightColor& endColor, const LightColor& resetColor, const unsigned long pulseTime, const unsigned long pulseAmount, const unsigned long startColorHoldTime, const unsigned long endColorHoldTime, const unsigned long startDelay = 0);
+            static LightTimeline NewMorph(const LightColor& startColor, const LightColor& endColor, const unsigned long morphTime, const long startDelay = 0);
+            static LightTimeline NewPulse(const LightColor& startColor, const LightColor& endColor, const unsigned long pulseTime, const unsigned long pulseAmount, const long startDelay = 0);
+            static LightTimeline NewPulse(const LightColor& startColor, const LightColor& endColor, const unsigned long pulseTime, const unsigned long pulseAmount, const unsigned long startColorHoldTime, const unsigned long endColorHoldTime, const long startDelay = 0);
+            static LightTimeline NewPulse(const LightColor& startColor, const LightColor& endColor, const LightColor& resetColor, const unsigned long pulseTime, const unsigned long pulseAmount, const unsigned long startColorHoldTime, const unsigned long endColorHoldTime, const long startDelay = 0);
 
         private:
             std::vector<LightTimelineItem> items = {};

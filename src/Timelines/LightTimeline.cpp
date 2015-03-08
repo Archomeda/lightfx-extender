@@ -87,22 +87,22 @@ namespace lightfx {
             return timeline;
         }
 
-        LFXE_API LightTimeline LightTimeline::NewMorph(const LightColor& startColor, const LightColor& endColor, const unsigned long morphTime, const unsigned long startDelay) {
+        LFXE_API LightTimeline LightTimeline::NewMorph(const LightColor& startColor, const LightColor& endColor, const unsigned long morphTime, const long startDelay) {
             LightTimeline timeline;
             timeline.AddItem(LightTimelineItem(startColor, 0, 0));
             timeline.AddItem(LightTimelineItem(endColor, morphTime, startDelay));
             return timeline;
         }
 
-        LFXE_API LightTimeline LightTimeline::NewPulse(const LightColor& startColor, const LightColor& endColor, const unsigned long pulseTime, const unsigned long pulseAmount, const unsigned long startDelay) {
+        LFXE_API LightTimeline LightTimeline::NewPulse(const LightColor& startColor, const LightColor& endColor, const unsigned long pulseTime, const unsigned long pulseAmount, const long startDelay) {
             return LightTimeline::NewPulse(startColor, endColor, pulseTime, pulseAmount, 0, 0, startDelay);
         }
 
-        LFXE_API LightTimeline LightTimeline::NewPulse(const LightColor& startColor, const LightColor& endColor, const unsigned long pulseTime, const unsigned long pulseAmount, const unsigned long startColorHoldTime, const unsigned long endColorHoldTime, const unsigned long startDelay) {
+        LFXE_API LightTimeline LightTimeline::NewPulse(const LightColor& startColor, const LightColor& endColor, const unsigned long pulseTime, const unsigned long pulseAmount, const unsigned long startColorHoldTime, const unsigned long endColorHoldTime, const long startDelay) {
             return LightTimeline::NewPulse(startColor, endColor, startColor, pulseTime, pulseAmount, 0, 0, startDelay);
         }
 
-        LFXE_API LightTimeline LightTimeline::NewPulse(const LightColor& startColor, const LightColor& endColor, const LightColor& resetColor, const unsigned long pulseTime, const unsigned long pulseAmount, const unsigned long startColorHoldTime, const unsigned long endColorHoldTime, const unsigned long startDelay) {
+        LFXE_API LightTimeline LightTimeline::NewPulse(const LightColor& startColor, const LightColor& endColor, const LightColor& resetColor, const unsigned long pulseTime, const unsigned long pulseAmount, const unsigned long startColorHoldTime, const unsigned long endColorHoldTime, const long startDelay) {
             LightTimelineItem actionStart(startColor, 0, 0);
 
             LightTimelineItem actionStartToEndColorFirst(endColor, pulseTime, startDelay + startColorHoldTime / 2);

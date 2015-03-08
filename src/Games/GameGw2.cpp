@@ -106,11 +106,19 @@ namespace lightfx {
                 for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
                     auto device = deviceManager->GetChildByIndex(i);
                     vector<LightColor> resetColor = device->GetRecentTimeline().GetColorAtTime(device->GetRecentTimeline().GetTotalDuration());
-                    vector<LightTimeline> timelines;
-                    for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
-                        timelines.push_back(LightTimeline::NewPulse(startColor, endColor, resetColor[j], 200, 5, 100, 400));
+
+                    Timeline timeline;
+                    auto config = this->GetManager()->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
+                    if (config->GuildWars2TeamColorAnimation == L"Pulse") {
+                        vector<LightTimeline> timelines;
+                        for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
+                            timelines.push_back(LightTimeline::NewPulse(startColor, endColor, resetColor[j], 200, 5, 100, 400));
+                        }
+                        timeline = Timeline(timelines);
+                    } else if (config->GuildWars2TeamColorAnimation == L"Walk") {
+                        timeline = Timeline::NewWalk(device->GetNumberOfLights(), startColor, endColor, resetColor, 1000, 4, 100);
                     }
-                    device->QueueTimeline(Timeline(timelines));
+                    device->QueueTimeline(timeline);
                     device->Update();
                 }
 

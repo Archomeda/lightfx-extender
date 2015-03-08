@@ -38,6 +38,8 @@ namespace lightfx {
 
             std::wstring ToString();
 
+            static Timeline NewWalk(const size_t numLights, const LightColor& baseColor, const LightColor& pulseColor, const std::vector<LightColor>& resetColor, const unsigned long walkTime, const unsigned long walkAmount, const long startDelay = 0);
+
         private:
             std::vector<LightTimeline> timeline = {};
 

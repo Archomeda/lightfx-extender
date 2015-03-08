@@ -69,5 +69,37 @@ namespace lightfx {
             return result;
         }
 
+        LFXE_API Timeline Timeline::NewWalk(const size_t numLights, const LightColor& baseColor, const LightColor& pulseColor, const vector<LightColor>& resetColor, const unsigned long walkTime, const unsigned long walkAmount, const long startDelay) {
+            if (numLights <= 4) {
+                vector<LightTimeline> lightTimeline(numLights);
+                for (size_t i = 0; i < numLights; ++i) {
+                    lightTimeline[i] = LightTimeline::NewPulse(baseColor, pulseColor, resetColor[i], walkTime, walkAmount, 0, 0, startDelay);
+                }
+                return Timeline(lightTimeline);
+            }
+            
+            unsigned int divider = numLights / 4;
+            unsigned long pulseTime = divider * walkTime / numLights;
+            unsigned long pulseColorHoldTime = pulseTime;
+            unsigned long stepTime = pulseTime / divider;
+            long transitionTime = long(pulseTime / 2) - pulseColorHoldTime;
+            if (transitionTime < 0) {
+                transitionTime = 0;
+            }
+
+            Timeline timeline;
+            unsigned long baseColorHoldTime = walkTime - pulseTime - (pulseColorHoldTime * 2);
+            long walkStartDelay = startDelay - baseColorHoldTime / 2;
+            long walkEndDelay = walkTime + 1; // Plus one to ensure we have no overlap in the last timeline items
+            for (size_t i = 0; i < numLights; ++i) {
+                LightTimeline lightTimeline = LightTimeline::NewPulse(baseColor, pulseColor, baseColor, pulseTime, walkAmount, baseColorHoldTime, pulseColorHoldTime, walkStartDelay);
+                lightTimeline.AddItem(LightTimelineItem(resetColor[i], 0, walkEndDelay));
+                timeline.SetTimeline(i, lightTimeline);
+
+                walkStartDelay += stepTime;
+                walkEndDelay -= stepTime;
+            }
+            return timeline;
+        }
     }
 }

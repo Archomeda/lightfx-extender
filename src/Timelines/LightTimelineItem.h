@@ -21,16 +21,16 @@ namespace lightfx {
 
         public:
             LightTimelineItem() {}
-            LightTimelineItem(const LightColor& color, const unsigned long duration = 1000, const unsigned long startDelay = 0)
+            LightTimelineItem(const LightColor& color, const unsigned long duration = 1000, const long startDelay = 0)
                 : color(color), duration(duration), startDelay(startDelay) {}
 
             LightColor GetColor();
             unsigned long GetDuration();
-            unsigned long GetStartDelay();
+            long GetStartDelay();
 
             void SetColor(const LightColor& color);
             void SetDuration(const unsigned long duration);
-            void SetStartDelay(const unsigned long startDelay);
+            void SetStartDelay(const long startDelay);
 
             std::wstring ToString();
 
@@ -42,7 +42,7 @@ namespace lightfx {
         private:
             LightColor color = {};
 
-            unsigned long startDelay = 0;
+            long startDelay = 0;
             unsigned long duration = 1000;
 
         };

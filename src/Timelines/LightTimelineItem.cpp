@@ -18,7 +18,7 @@ namespace lightfx {
             return this->duration;
         }
 
-        LFXE_API unsigned long LightTimelineItem::GetStartDelay() {
+        LFXE_API long LightTimelineItem::GetStartDelay() {
             return this->startDelay;
         }
 
@@ -30,7 +30,7 @@ namespace lightfx {
             this->duration = duration;
         }
 
-        LFXE_API void LightTimelineItem::SetStartDelay(const unsigned long startDelay) {
+        LFXE_API void LightTimelineItem::SetStartDelay(const long startDelay) {
             this->startDelay = startDelay;
         }
 
