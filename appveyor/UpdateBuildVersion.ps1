@@ -23,5 +23,5 @@ if ($version -ne $env:APPVEYOR_BUILD_VERSION) {
     Write-Host "  - Send to AppVeyor Build Worker API" -ForegroundColor "Yellow"
     Update-AppveyorBuild -Version $version
 } else {
-    Write-Host "  - AppVeyor build version is already up-to-date"
+    Write-Host "  - AppVeyor build version is already up-to-date" -ForegroundColor "Yellow"
 }
