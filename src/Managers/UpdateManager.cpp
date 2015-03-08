@@ -4,6 +4,9 @@
 
 #include "UpdateManager.h"
 
+// Standard includes
+#include <regex>
+
 // Windows includes
 #include "../Common/Windows.h"
 #include <Windows.h>
@@ -71,25 +74,29 @@ namespace lightfx {
                                 continue;
                             }
                         }
-                        string tagName = json[i]["tag_name"].GetString();
+                        string version;
                         string assetUrl;
                         if (json[i].HasMember("assets") && json[i]["assets"].IsArray()) {
                             auto& assets = json[i]["assets"];
                             for (SizeType j = 0; j < assets.Size(); ++j) {
                                 if (assets[j].HasMember("name") && assets[j]["name"].IsString()) {
                                     string assetName = assets[j]["name"].GetString();
-                                    string substring = string(PLATFORM) + ".zip";
-                                    if (assetName.compare(assetName.length() - substring.length(), substring.length(), substring) == 0) {
+
+                                    regex re(".*-v(\\d+\\.\\d+\\.\\d+\\.\\d+).*_" + string(PLATFORM) + "\\.zip");
+                                    smatch match;
+                                    if (regex_search(assetName, match, re) && match.size() > 1) {
+                                        version = match.str(1);
                                         if (assets[j].HasMember("browser_download_url") && assets[j]["browser_download_url"].IsString()) {
                                             assetUrl = assets[j]["browser_download_url"].GetString();
+                                            break;
                                         }
                                     }
                                 }
                             }
                         }
 
-                        if (assetUrl != "" && tagName.compare(0, 1, "v") == 0) {
-                            return{ Version::FromString(tagName.substr(1)), string_to_wstring(assetUrl) };
+                        if (version != "" && assetUrl != "") {
+                            return{ Version::FromString(version), string_to_wstring(assetUrl) };
                         }
                     }
                 }
