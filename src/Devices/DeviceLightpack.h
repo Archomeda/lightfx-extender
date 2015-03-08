@@ -23,7 +23,7 @@ namespace lightfx {
         };
 
         struct LightpackLed {
-            int index;
+            size_t index;
             int x;
             int y;
             int width;
@@ -31,7 +31,7 @@ namespace lightfx {
         };
 
         struct LightpackColor {
-            int index;
+            size_t index;
             int red;
             int green;
             int blue;
@@ -70,9 +70,9 @@ namespace lightfx {
             int GetCountLeds();
             std::vector<LightpackLed> GetLeds();
             LightpackScreen GetScreenSize();
-            LightpackStatus SetColor(const int index, const int red, const int green, const int blue);
+            LightpackStatus SetColor(const size_t index, const int red, const int green, const int blue);
             LightpackStatus SetColor(const LightpackColor& color);
-            LightpackStatus SetColors(const std::vector<int>& indices, const std::vector<int>& red, const std::vector<int>& green, const std::vector<int>& blue);
+            LightpackStatus SetColors(const std::vector<size_t>& indices, const std::vector<int>& red, const std::vector<int>& green, const std::vector<int>& blue);
             LightpackStatus SetColors(const std::vector<LightpackColor>& colors);
 
         private:

@@ -1,0 +1,13 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <ItemGroup>
+        <ProjectToBuild Include="../LightFXExtender.sln">
+            <Properties>Configuration=Release_Tests;Platform=x64</Properties>
+        </ProjectToBuild>
+        <ProjectToBuild Include="../LightFXExtender.sln">
+            <Properties>Configuration=Release;Platform=x64</Properties>
+        </ProjectToBuild>
+    </ItemGroup>
+    <Target Name="Build">
+        <MSBuild Projects="@(ProjectToBuild)" BuildInParallel="false" />
+    </Target>
+</Project>

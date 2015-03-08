@@ -1,8 +1,14 @@
 #ifndef LFXE_EXPORTS
 #define LFXE_EXPORTS
 #endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 
 #include "DeviceLightpack.h"
+
+// Standard includes
+#include <limits>
 
 // Windows includes
 #include <WS2tcpip.h>
@@ -171,7 +177,11 @@ namespace lightfx {
             LOG(LogLevel::Debug, L"SendAPI(\"" + cmd + L"\")");
 
             wstring s = cmd + L"\n";
-            int result = send(this->lightpackSocket, wstring_to_string(s).c_str(), s.length(), 0);
+            if (s.length() > (size_t)numeric_limits<int>::max()) {
+                return false;
+            }
+
+            int result = send(this->lightpackSocket, wstring_to_string(s).c_str(), static_cast<int>(s.length()), 0);
             if (result == SOCKET_ERROR) {
                 closesocket(this->lightpackSocket);
                 WSACleanup();
@@ -344,7 +354,7 @@ namespace lightfx {
             */
         }
 
-        LightpackStatus DeviceLightpack::SetColor(const int index, const int red, const int green, const int blue) {
+        LightpackStatus DeviceLightpack::SetColor(const size_t index, const int red, const int green, const int blue) {
             return this->SetColors({ index }, { red }, { green }, { blue });
         }
 
@@ -352,7 +362,7 @@ namespace lightfx {
             return this->SetColors({ color });
         }
 
-        LightpackStatus DeviceLightpack::SetColors(const vector<int>& indices, const vector<int>& red, const vector<int>& green, const vector<int>& blue) {
+        LightpackStatus DeviceLightpack::SetColors(const vector<size_t>& indices, const vector<int>& red, const vector<int>& green, const vector<int>& blue) {
             wstring cmd = L"setcolor:";
             for (size_t i = 0; i < indices.size(); ++i) {
                 cmd += to_wstring(indices[i]) + L"-" + to_wstring(red[i]) + L"," + to_wstring(green[i]) + L"," + to_wstring(blue[i]) + L";";

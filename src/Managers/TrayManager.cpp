@@ -140,17 +140,17 @@ namespace lightfx {
                 auto deviceManager = this->GetLightFXExtender()->GetDeviceManager();
                 for (index = 1; index <= deviceManager->GetChildrenCount(); ++index) {
                     auto device = deviceManager->GetChildByIndex(index - 1);
-                    InsertMenuW(hMenu, index, device->IsEnabled() ? MF_CHECKED : MF_UNCHECKED, index, device->GetDeviceName().c_str());
+                    InsertMenuW(hMenu, static_cast<UINT>(index), device->IsEnabled() ? MF_CHECKED : MF_UNCHECKED, static_cast<UINT>(index), device->GetDeviceName().c_str());
                 }
-                InsertMenuW(hMenu, index, MF_SEPARATOR, 0, NULL);
+                InsertMenuW(hMenu, static_cast<UINT>(index), MF_SEPARATOR, 0, NULL);
                 ++index;
                 UINT updateUrlIndex = 0;
                 if (this->updateVersionString != L"") {
-                    updateUrlIndex = index;
+                    updateUrlIndex = static_cast<UINT>(index);
                     InsertMenuW(hMenu, updateUrlIndex, 0, updateUrlIndex, wstring(wstring(MENU_UPDATE_NAME) + L" (v" + this->updateVersionString + L")...").c_str());
                     ++index;
                 }
-                const UINT confDirIndex = index;
+                const UINT confDirIndex = static_cast<UINT>(index);
                 InsertMenuW(hMenu, confDirIndex, 0, confDirIndex, MENU_CONFFOLDER_NAME);
 
                 POINT cursor;

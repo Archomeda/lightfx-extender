@@ -3,8 +3,9 @@
 #endif
 
 // Standard includes
-#include <string>
+#include <limits>
 #include <memory>
+#include <string>
 
 // 3rd party includes
 #include "LFX2.h"
@@ -137,12 +138,14 @@ extern "C" {
         }
 
         auto deviceManager = lightFXExtender->GetDeviceManager();
-        unsigned int numberOfDevices = deviceManager->GetChildrenCount();
+        size_t numberOfDevices = deviceManager->GetChildrenCount();
         if (numberOfDevices == 0) {
             return LFX_ERROR_NODEVS;
+        } else if (numberOfDevices > numeric_limits<unsigned int>::max()) {
+            return LFX_FAILURE;
         }
 
-        *numDevices = numberOfDevices;
+        *numDevices = static_cast<unsigned int>(numberOfDevices);
         return LFX_SUCCESS;
     }
 
@@ -152,9 +155,11 @@ extern "C" {
         }
 
         auto deviceManager = lightFXExtender->GetDeviceManager();
-        unsigned int numberOfDevices = deviceManager->GetChildrenCount();
+        size_t numberOfDevices = deviceManager->GetChildrenCount();
         if (devIndex >= numberOfDevices) {
             return LFX_ERROR_NODEVS;
+        } else if (numberOfDevices > numeric_limits<unsigned int>::max()) {
+            return LFX_FAILURE;
         }
 
         auto device = deviceManager->GetChildByIndex(devIndex);
@@ -184,7 +189,11 @@ extern "C" {
         }
 
         try {
-            *numLights = deviceManager->GetChildByIndex(devIndex)->GetNumberOfLights();
+            size_t numberOfLights = deviceManager->GetChildByIndex(devIndex)->GetNumberOfLights();
+            if (numberOfLights > numeric_limits<unsigned int>::max()) {
+                return LFX_FAILURE;
+            }
+            *numLights = static_cast<unsigned int>(numberOfLights);
         } catch (...) {
             return LFX_FAILURE;
         }
@@ -405,9 +414,17 @@ extern "C" {
         LFX_RESULT result;
         auto deviceManager = lightFXExtender->GetDeviceManager();
         for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
+            if (i > numeric_limits<unsigned int>::max()) {
+                return LFX_FAILURE;
+            }
+
             auto device = deviceManager->GetChildByIndex(i);
             for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
-                result = LFX_SetLightActionColor(i, j, actionType, &color);
+                if (j > numeric_limits<unsigned int>::max()) {
+                    return LFX_FAILURE;
+                }
+
+                result = LFX_SetLightActionColor(static_cast<unsigned int>(i), static_cast<unsigned int>(j), actionType, &color);
                 if (result != LFX_SUCCESS) {
                     return result;
                 }
@@ -424,9 +441,17 @@ extern "C" {
         LFX_RESULT result;
         auto deviceManager = lightFXExtender->GetDeviceManager();
         for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
+            if (i > numeric_limits<unsigned int>::max()) {
+                return LFX_FAILURE;
+            }
+ 
             auto device = deviceManager->GetChildByIndex(i);
             for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
-                result = LFX_SetLightActionColorEx(i, j, actionType, &color1, &color2);
+                if (j > numeric_limits<unsigned int>::max()) {
+                    return LFX_FAILURE;
+                }
+            
+                result = LFX_SetLightActionColorEx(static_cast<unsigned int>(i), static_cast<unsigned int>(j), actionType, &color1, &color2);
                 if (result != LFX_SUCCESS) {
                     return result;
                 }

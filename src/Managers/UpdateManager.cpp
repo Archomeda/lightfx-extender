@@ -4,6 +4,9 @@
 
 #include "UpdateManager.h"
 
+// Standard includes
+#include <regex>
+
 // Windows includes
 #include "../Common/Windows.h"
 #include <Windows.h>
@@ -28,6 +31,12 @@
 
 #define LOG(logLevel, line) if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"UpdateManager - ") + line); }
 #define LOGWINERROR() if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->LogLastWindowsError(); }
+
+#ifdef _WIN64
+#define PLATFORM "x64"
+#else
+#define PLATFORM "x86"
+#endif
 
 using namespace std;
 using namespace rapidjson;
@@ -65,24 +74,29 @@ namespace lightfx {
                                 continue;
                             }
                         }
-                        string tagName = json[i]["tag_name"].GetString();
+                        string version;
                         string assetUrl;
                         if (json[i].HasMember("assets") && json[i]["assets"].IsArray()) {
                             auto& assets = json[i]["assets"];
                             for (SizeType j = 0; j < assets.Size(); ++j) {
                                 if (assets[j].HasMember("name") && assets[j]["name"].IsString()) {
                                     string assetName = assets[j]["name"].GetString();
-                                    if (assetName.compare(assetName.length() - 4, 4, ".zip") == 0) {
+
+                                    regex re(".*-v(\\d+\\.\\d+\\.\\d+\\.\\d+).*_" + string(PLATFORM) + "\\.zip");
+                                    smatch match;
+                                    if (regex_search(assetName, match, re) && match.size() > 1) {
+                                        version = match.str(1);
                                         if (assets[j].HasMember("browser_download_url") && assets[j]["browser_download_url"].IsString()) {
                                             assetUrl = assets[j]["browser_download_url"].GetString();
+                                            break;
                                         }
                                     }
                                 }
                             }
                         }
 
-                        if (tagName.compare(0, 1, "v") == 0) {
-                            return{ Version::FromString(tagName.substr(1)), string_to_wstring(assetUrl) };
+                        if (version != "" && assetUrl != "") {
+                            return{ Version::FromString(version), string_to_wstring(assetUrl) };
                         }
                     }
                 }
