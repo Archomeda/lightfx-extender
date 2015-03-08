@@ -5,16 +5,11 @@ environment:
     secure: fHXemLwKHEg/6UXe2alr3/fUlPoZrNLmIsWgErk4u7vjCgMKGHYys+msNct3REOY
 
   matrix:
-    # Win32 build
-    - arch: x86
+    - platform: Win32
+      arch: x86
+    - platform: x64
+      arch: x64
 
-    # x64 build
-    - arch: x64
-
-
-platform:
-  - Win32
-  - x64
 
 before_build:
   - ps: appveyor\UpdateBuildVersion.ps1
