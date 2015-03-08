@@ -35,9 +35,18 @@ open `settings.json` within the configuration folder (see
 - Lightpack devices through a recent version of Prismatik (or similar hardware
 and software that support the same API, tested on version 5.11.1 only)
 
-### Extended game features
-- Guild Wars 2 through the officially supported Mumble Link API (pulse color
-based on your PvP/WvW team upon entering map or switching PvP teams)
+### Games
+Theoretically, every game that has support for LightFX, is supported by LightFX
+Extender. But it's possible that some games don't work nice with it, so if you
+found a game that's not working with LightFX Extender, submit an issue. The
+tested games are:
+- Dying Light (uses x64)
+- Guild Wars 2
+ - Extended feature: Change color based on your PvP/WvW team upon entering the
+   map or switching PvP teams
+
+*Unless otherwise specified, the games are x86 and therefore use the x86 build
+of LightFX Extender.*
 
 ## Contribute
 If you want to contribute to the project, make a fork, change stuff and do a
