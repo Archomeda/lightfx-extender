@@ -57,7 +57,7 @@ namespace lightfx {
             virtual const DeviceType GetDeviceType() override { return DeviceType::DeviceDisplay; }
 
         protected:
-            virtual bool PushColorToDevice(const std::vector<LightColor>& colors) override;
+            virtual bool PushColorToDevice(const std::vector<timelines::LightColor>& colors) override;
 
             bool ConnectAPI();
             bool DisconnectAPI();

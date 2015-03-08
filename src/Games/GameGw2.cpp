@@ -24,6 +24,7 @@ using namespace std;
 using namespace rapidjson;
 using namespace lightfx::devices;
 using namespace lightfx::managers;
+using namespace lightfx::timelines;
 
 namespace lightfx {
     namespace games {
@@ -105,11 +106,11 @@ namespace lightfx {
                 for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
                     auto device = deviceManager->GetChildByIndex(i);
                     vector<LightColor> resetColor = device->GetRecentTimeline().GetColorAtTime(device->GetRecentTimeline().GetTotalDuration());
-                    vector<LightColorTimeline> timelines;
+                    vector<LightTimeline> timelines;
                     for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
-                        timelines.push_back(LightColorTimeline::NewPulse(startColor, endColor, resetColor[j], 200, 5, 100, 400));
+                        timelines.push_back(LightTimeline::NewPulse(startColor, endColor, resetColor[j], 200, 5, 100, 400));
                     }
-                    device->QueueTimeline(LightColorsTimeline(timelines));
+                    device->QueueTimeline(Timeline(timelines));
                     device->Update();
                 }
 

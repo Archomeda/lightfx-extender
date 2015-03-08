@@ -97,9 +97,9 @@
     <ClCompile Include="Devices\DeviceTest.cpp" />
     <ClCompile Include="Devices\DeviceMock.h" />
     <ClCompile Include="Games\GameTest.cpp" />
-    <ClCompile Include="LightColorsTimelineTest.cpp" />
-    <ClCompile Include="LightColorTimelineActionTest.cpp" />
-    <ClCompile Include="LightColorTimelineTest.cpp" />
+    <ClCompile Include="Timelines\TimelineTest.cpp" />
+    <ClCompile Include="Timelines\LightTimelineItemTest.cpp" />
+    <ClCompile Include="Timelines\LightTimelineTest.cpp" />
     <ClCompile Include="Managers\ChildOfManagerTest.cpp" />
     <ClCompile Include="Managers\LogManagerTest.cpp" />
     <ClCompile Include="Managers\ManagerTest.cpp" />

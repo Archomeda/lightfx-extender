@@ -8,6 +8,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace std;
 using namespace lightfx;
 using namespace lightfx::devices;
+using namespace lightfx::timelines;
 
 namespace lightfx_tests {
     namespace devices {
@@ -49,8 +50,8 @@ public:
     TEST_METHOD(QueueTimeline) {
         auto device = make_shared<DeviceMock>();
         device->Reset();
-        LightColorTimeline timeline = LightColorTimeline::NewInstant(LightColor(1, 2, 3, 4));
-        device->QueueTimeline(LightColorsTimeline(1, timeline));
+        LightTimeline timeline = LightTimeline::NewInstant(LightColor(1, 2, 3, 4));
+        device->QueueTimeline(Timeline(1, timeline));
         Assert::IsTrue(timeline.GetColorAtTime(0) == device->GetQueuedTimeline().GetColorAtTime(0, 0));
     }
 
@@ -58,8 +59,8 @@ public:
         auto device = make_shared<DeviceMock>();
         device->Reset();
         device->Enable();
-        LightColorTimeline timeline = LightColorTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
-        device->QueueTimeline(LightColorsTimeline(1, timeline));
+        LightTimeline timeline = LightTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
+        device->QueueTimeline(Timeline(1, timeline));
         device->Update();
 
         bool success = false;
@@ -80,12 +81,12 @@ public:
         auto device = make_shared<DeviceMock>();
         device->Reset();
         device->Enable();
-        LightColorTimeline timeline1 = LightColorTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
-        LightColorTimeline timeline2 = LightColorTimeline::NewInstant(LightColor(3, 4, 5, 6));
-        device->QueueTimeline(LightColorsTimeline(1, timeline1));
+        LightTimeline timeline1 = LightTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
+        LightTimeline timeline2 = LightTimeline::NewInstant(LightColor(3, 4, 5, 6));
+        device->QueueTimeline(Timeline(1, timeline1));
         device->Update();
 
-        device->QueueTimeline(LightColorsTimeline(1, timeline2));
+        device->QueueTimeline(Timeline(1, timeline2));
         device->Update(false);
 
         bool success = false;
@@ -106,8 +107,8 @@ public:
         auto device = make_shared<DeviceMock>();
         device->Reset();
         device->Enable();
-        LightColorTimeline timeline = LightColorTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
-        device->QueueTimeline(LightColorsTimeline(1, timeline));
+        LightTimeline timeline = LightTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
+        device->QueueTimeline(Timeline(1, timeline));
         device->Update();
 
         Assert::IsTrue(timeline.GetColorAtTime(0) == device->GetRecentTimeline().GetColorAtTime(0, 0));
@@ -118,12 +119,12 @@ public:
         auto device = make_shared<DeviceMock>();
         device->Reset();
         device->Enable();
-        LightColorTimeline timeline1 = LightColorTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
-        LightColorTimeline timeline2 = LightColorTimeline::NewInstant(LightColor(1, 2, 3, 4));
-        device->QueueTimeline(LightColorsTimeline(1, timeline1));
+        LightTimeline timeline1 = LightTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
+        LightTimeline timeline2 = LightTimeline::NewInstant(LightColor(1, 2, 3, 4));
+        device->QueueTimeline(Timeline(1, timeline1));
         device->Update();
 
-        device->QueueTimeline(LightColorsTimeline(1, timeline2));
+        device->QueueTimeline(Timeline(1, timeline2));
         device->Update(false);
 
         Assert::IsTrue(timeline2.GetColorAtTime(0) == device->GetRecentTimeline().GetColorAtTime(0, 0));

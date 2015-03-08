@@ -37,7 +37,7 @@ namespace lightfx_tests {
             using Device::SetLightData;
 
         protected:
-            virtual bool PushColorToDevice(const std::vector<lightfx::LightColor>& colors) override { return false; }
+            virtual bool PushColorToDevice(const std::vector<lightfx::timelines::LightColor>& colors) override { return false; }
 
         };
 

@@ -16,6 +16,7 @@
 
 using namespace std;
 using namespace lightfx::managers;
+using namespace lightfx::timelines;
 
 namespace lightfx {
     namespace devices {
@@ -112,22 +113,22 @@ namespace lightfx {
         }
 
 
-        LFXE_API LightColorsTimeline Device::GetActiveTimeline() {
+        LFXE_API Timeline Device::GetActiveTimeline() {
             return this->ActiveTimeline;
         }
 
-        LFXE_API LightColorsTimeline Device::GetQueuedTimeline() {
+        LFXE_API Timeline Device::GetQueuedTimeline() {
             return this->QueuedTimeline;
         }
 
-        LFXE_API LightColorsTimeline Device::GetRecentTimeline() {
+        LFXE_API Timeline Device::GetRecentTimeline() {
             if (!this->TimelineQueue.empty()) {
                 return this->TimelineQueue.back();
             }
             return this->ActiveTimeline;
         }
 
-        LFXE_API void Device::QueueTimeline(const LightColorsTimeline& timeline) {
+        LFXE_API void Device::QueueTimeline(const Timeline& timeline) {
             this->QueuedTimeline = timeline;
         }
 

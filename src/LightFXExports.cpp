@@ -18,6 +18,7 @@
 using namespace std;
 using namespace lightfx;
 using namespace lightfx::devices;
+using namespace lightfx::timelines;
 using namespace lightfx::utils;
 
 
@@ -283,11 +284,11 @@ extern "C" {
             return LFX_ERROR_NOLIGHTS;
         }
 
-        LightColorsTimeline timeline = device->GetQueuedTimeline();
+        Timeline timeline = device->GetQueuedTimeline();
         LightColor color = LfxColorToLightColor(*lightCol);
 
         try {
-            timeline.SetTimeline(lightIndex, LightColorTimeline::NewInstant(color));
+            timeline.SetTimeline(lightIndex, LightTimeline::NewInstant(color));
             device->QueueTimeline(timeline);
         } catch (...) {
             return LFX_FAILURE;
@@ -308,7 +309,7 @@ extern "C" {
         try {
             for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
                 auto device = deviceManager->GetChildByIndex(i);
-                device->QueueTimeline(LightColorsTimeline(device->GetNumberOfLights(), LightColorTimeline::NewInstant(color)));
+                device->QueueTimeline(Timeline(device->GetNumberOfLights(), LightTimeline::NewInstant(color)));
             }
         } catch (...) {
             return LFX_FAILURE;
@@ -332,21 +333,21 @@ extern "C" {
             return LFX_ERROR_NOLIGHTS;
         }
 
-        LightColorsTimeline timeline = device->GetQueuedTimeline();
+        Timeline timeline = device->GetQueuedTimeline();
         LightColor startColor = device->GetLightColor(lightIndex);
         LightColor endColor = LfxColorToLightColor(*primaryCol);
         try {
             switch (actionType) {
             case LFX_ACTION_MORPH:
-                timeline.SetTimeline(lightIndex, LightColorTimeline::NewMorph(startColor, endColor, timing));
+                timeline.SetTimeline(lightIndex, LightTimeline::NewMorph(startColor, endColor, timing));
                 break;
 
             case LFX_ACTION_PULSE:
-                timeline.SetTimeline(lightIndex, LightColorTimeline::NewPulse(startColor, endColor, timing, 1));
+                timeline.SetTimeline(lightIndex, LightTimeline::NewPulse(startColor, endColor, timing, 1));
                 break;
 
             default:
-                timeline.SetTimeline(lightIndex, LightColorTimeline::NewInstant(endColor));
+                timeline.SetTimeline(lightIndex, LightTimeline::NewInstant(endColor));
                 break;
             }
             deviceManager->GetChildByIndex(devIndex)->QueueTimeline(timeline);
@@ -372,21 +373,21 @@ extern "C" {
             return LFX_ERROR_NOLIGHTS;
         }
 
-        LightColorsTimeline timeline = device->GetQueuedTimeline();
+        Timeline timeline = device->GetQueuedTimeline();
         LightColor startColor = LfxColorToLightColor(*primaryCol);
         LightColor endColor = LfxColorToLightColor(*secondaryCol);
         try {
             switch (actionType) {
             case LFX_ACTION_MORPH:
-                timeline.SetTimeline(lightIndex, LightColorTimeline::NewMorph(startColor, endColor, timing));
+                timeline.SetTimeline(lightIndex, LightTimeline::NewMorph(startColor, endColor, timing));
                 break;
 
             case LFX_ACTION_PULSE:
-                timeline.SetTimeline(lightIndex, LightColorTimeline::NewPulse(startColor, endColor, timing, 1));
+                timeline.SetTimeline(lightIndex, LightTimeline::NewPulse(startColor, endColor, timing, 1));
                 break;
 
             default:
-                timeline.SetTimeline(lightIndex, LightColorTimeline::NewInstant(endColor));
+                timeline.SetTimeline(lightIndex, LightTimeline::NewInstant(endColor));
                 break;
             }
             deviceManager->GetChildByIndex(devIndex)->QueueTimeline(timeline);

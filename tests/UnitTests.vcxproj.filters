@@ -51,13 +51,13 @@
     <ClCompile Include="Games\GameTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LightColorTimelineActionTest.cpp">
+    <ClCompile Include="Timelines\TimelineTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LightColorTimelineTest.cpp">
+    <ClCompile Include="Timelines\LightTimelineItemTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LightColorsTimelineTest.cpp">
+    <ClCompile Include="Timelines\LightTimelineTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

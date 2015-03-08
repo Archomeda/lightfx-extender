@@ -23,7 +23,7 @@ namespace lightfx {
             virtual const DeviceType GetDeviceType() override { return DeviceType::DeviceKeyboard; }
 
         protected:
-            virtual bool PushColorToDevice(const std::vector<LightColor>& colors) override;
+            virtual bool PushColorToDevice(const std::vector<timelines::LightColor>& colors) override;
 
         private:
             int rangeOutMin = 0;

@@ -146,6 +146,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Timelines\LightColor.h" />
+    <ClInclude Include="Timelines\LightTimeline.h" />
+    <ClInclude Include="Timelines\LightTimelineItem.h" />
+    <ClInclude Include="Timelines\Timeline.h" />
     <ClInclude Include="Common\ApiExports.h" />
     <ClInclude Include="Config\ConfigFile.h" />
     <ClInclude Include="Config\MainConfigFile.h" />
@@ -154,10 +158,7 @@
     <ClInclude Include="Devices\DeviceLogitech.h" />
     <ClInclude Include="Games\GameGw2.h" />
     <ClInclude Include="Games\MumbleLink.h" />
-    <ClInclude Include="LightColorsTimeline.h" />
     <ClInclude Include="Games\Game.h" />
-    <ClInclude Include="LightColorTimeline.h" />
-    <ClInclude Include="LightColorTimelineAction.h" />
     <ClInclude Include="LightFXExtender.h" />
     <ClInclude Include="Managers\ChildOfManager.h" />
     <ClInclude Include="Managers\ConfigManager.h" />
@@ -183,16 +184,16 @@
     <Image Include="tray.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Timelines\LightTimeline.cpp" />
+    <ClCompile Include="Timelines\LightTimelineItem.cpp" />
+    <ClCompile Include="Timelines\Timeline.cpp" />
     <ClCompile Include="Config\ConfigFile.cpp" />
     <ClCompile Include="Config\MainConfigFile.cpp" />
     <ClCompile Include="Devices\Device.cpp" />
     <ClCompile Include="Devices\DeviceLightpack.cpp" />
     <ClCompile Include="Devices\DeviceLogitech.cpp" />
     <ClCompile Include="Games\GameGw2.cpp" />
-    <ClCompile Include="LightColorTimeline.cpp" />
-    <ClCompile Include="LightColorTimelineAction.cpp" />
     <ClCompile Include="LightFXExports.cpp" />
-    <ClCompile Include="LightColorsTimeline.cpp" />
     <ClCompile Include="Games\Game.cpp" />
     <ClCompile Include="LightFXExtender.cpp" />
     <ClCompile Include="Managers\ConfigManager.cpp" />

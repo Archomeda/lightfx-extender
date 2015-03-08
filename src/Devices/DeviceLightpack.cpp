@@ -18,6 +18,7 @@
 
 using namespace std;
 using namespace lightfx::managers;
+using namespace lightfx::timelines;
 using namespace lightfx::utils;
 
 #define API_BUFFLEN 8192
