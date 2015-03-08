@@ -27,6 +27,7 @@
 
 #define CONF_GUILDWARS2 L"GuildWars2"
 #define CONF_GUILDWARS2_TEAMCOLORENABLED L"TeamColorEnabled"
+#define CONF_GUILDWARS2_TEAMCOLORANIMATION L"TeamColorAnimation"
 #pragma endregion
 
 using namespace std;
@@ -53,6 +54,7 @@ namespace lightfx {
             this->LightpackKey = L"";
 
             this->GuildWars2TeamColorEnabled = true;
+            this->GuildWars2TeamColorAnimation = L"Pulse";
         }
 
         LFXE_API wstring MainConfigFile::Serialize() {
@@ -108,6 +110,7 @@ namespace lightfx {
             // Guild Wars 2
             WValue gw2(kObjectType);
             gw2.AddMember(CONF_GUILDWARS2_TEAMCOLORENABLED, this->GuildWars2TeamColorEnabled, allocator);
+            gw2.AddMember(CONF_GUILDWARS2_TEAMCOLORANIMATION, this->MakeJsonWString(this->GuildWars2TeamColorAnimation, allocator), allocator);
             this->doc.AddMember(CONF_GUILDWARS2, gw2, allocator);
 
             WStringBuffer buffer;
@@ -190,6 +193,9 @@ namespace lightfx {
                 const WValue& gw2 = this->doc[CONF_GUILDWARS2];
                 if (gw2.HasMember(CONF_GUILDWARS2_TEAMCOLORENABLED) && gw2[CONF_GUILDWARS2_TEAMCOLORENABLED].IsBool()) {
                     this->GuildWars2TeamColorEnabled = gw2[CONF_GUILDWARS2_TEAMCOLORENABLED].GetBool();
+                }
+                if (gw2.HasMember(CONF_GUILDWARS2_TEAMCOLORANIMATION) && gw2[CONF_GUILDWARS2_TEAMCOLORANIMATION].IsString()) {
+                    this->GuildWars2TeamColorAnimation = gw2[CONF_GUILDWARS2_TEAMCOLORANIMATION].GetString();
                 }
             }
         }

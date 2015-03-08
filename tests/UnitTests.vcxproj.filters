@@ -48,10 +48,16 @@
     <ClCompile Include="Devices\DeviceTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LightActionTest.cpp">
+    <ClCompile Include="Games\GameTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Games\GameTest.cpp">
+    <ClCompile Include="Timelines\TimelineTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Timelines\LightTimelineItemTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Timelines\LightTimelineTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

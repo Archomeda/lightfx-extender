@@ -81,9 +81,6 @@
     <ClInclude Include="Utils\Windows.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LightAction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Devices\DeviceLogitech.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -94,6 +91,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Games\GameGw2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Timelines\LightColor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Timelines\LightTimeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Timelines\LightTimelineItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Timelines\Timeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -153,9 +162,6 @@
     <ClCompile Include="Utils\Windows.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LightAction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Devices\DeviceLogitech.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -166,6 +172,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LightFXExports.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Timelines\LightTimeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Timelines\LightTimelineItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Timelines\Timeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

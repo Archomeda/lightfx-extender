@@ -18,6 +18,7 @@
 
 using namespace std;
 using namespace lightfx::managers;
+using namespace lightfx::timelines;
 using namespace lightfx::utils;
 
 #define API_BUFFLEN 8192
@@ -83,14 +84,13 @@ namespace lightfx {
             return false;
         }
 
-        bool DeviceLightpack::PushColorToDevice() {
+        bool DeviceLightpack::PushColorToDevice(const vector<LightColor>& colors) {
             vector<LightpackColor> newLights = {};
-            for (size_t i = 0; i < this->GetNumberOfLights(); ++i) {
-                LightColor color = this->GetActiveLightAction().GetCurrentColor(i);
-                double brightness = color.brightness / 255.0;
-                int red = int(color.red * brightness);
-                int green = int(color.green * brightness);
-                int blue = int(color.blue * brightness);
+            for (size_t i = 0; i < colors.size(); ++i) {
+                double brightness = colors[i].brightness / 255.0;
+                int red = int(colors[i].red * brightness);
+                int green = int(colors[i].green * brightness);
+                int blue = int(colors[i].blue * brightness);
                 newLights.push_back({ i + 1, red, green, blue });
             }
             this->SetColors(newLights);

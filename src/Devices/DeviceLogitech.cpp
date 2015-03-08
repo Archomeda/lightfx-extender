@@ -20,6 +20,7 @@
 
 using namespace std;
 using namespace lightfx::managers;
+using namespace lightfx::timelines;
 
 namespace lightfx {
     namespace devices {
@@ -68,13 +69,12 @@ namespace lightfx {
             return false;
         }
 
-        LFXE_API bool DeviceLogitech::PushColorToDevice() {
-            LightColor color = this->GetActiveLightAction().GetCurrentColor(0);
+        LFXE_API bool DeviceLogitech::PushColorToDevice(const vector<LightColor>& colors) {
             double divider = (this->rangeOutMax - this->rangeOutMin) / ((this->rangeInMax - this->rangeInMin) / 100.0) / 100.0;
-            double brightness = color.brightness / 255.0;
-            double red = (color.red - this->rangeOutMin) / divider * brightness + this->rangeInMin;
-            double green = (color.green - this->rangeOutMin) / divider * brightness + this->rangeInMin;
-            double blue = (color.blue - this->rangeOutMin) / divider * brightness + this->rangeInMin;
+            double brightness = colors[0].brightness / 255.0;
+            double red = (colors[0].red - this->rangeOutMin) / divider * brightness + this->rangeInMin;
+            double green = (colors[0].green - this->rangeOutMin) / divider * brightness + this->rangeInMin;
+            double blue = (colors[0].blue - this->rangeOutMin) / divider * brightness + this->rangeInMin;
 
             LOG(LogLevel::Debug, L"Update color to (" + to_wstring(red) + L"," + to_wstring(green) + L"," + to_wstring(blue) + L")");
 

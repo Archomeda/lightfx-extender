@@ -10,7 +10,8 @@
 // Project includes
 #include "../Managers/DeviceManager.h"
 #include "../Managers/ChildOfManager.h"
-#include "../LightAction.h"
+#include "../Timelines/LightColor.h"
+#include "../Timelines/Timeline.h"
 
 // API exports
 #include "../Common/ApiExports.h"
@@ -61,42 +62,44 @@ namespace lightfx {
             virtual bool Update(bool flushQueue = true);
             virtual bool Reset();
 
-            LightAction GetActiveLightAction();
-            LightAction GetQueuedLightAction();
-            LightAction GetLastLightAction();
-            void QueueLightAction(const LightAction& lightAction);
+            timelines::Timeline GetActiveTimeline();
+            timelines::Timeline GetQueuedTimeline();
+            timelines::Timeline GetRecentTimeline();
+            void QueueTimeline(const timelines::Timeline& timeline);
 
             virtual const std::wstring GetDeviceName() = 0;
             virtual const DeviceType GetDeviceType() = 0;
 
             const size_t GetNumberOfLights();
+            timelines::LightColor GetLightColor(const size_t lightIndex);
             LightData GetLightData(const size_t lightIndex);
             void SetLightData(const size_t lightIndex, const LightData& lightData);
 
         protected:
             void SetNumberOfLights(const size_t numberOfLights);
 
-            LightAction ActiveLightAction = {};
-            LightAction QueuedLightAction;
-            std::queue<LightAction> LightActionQueue;
-            std::mutex LightActionQueueMutex;
-            bool LightActionQueueFlush = false;
+            timelines::Timeline ActiveTimeline;
+            timelines::Timeline QueuedTimeline;
+            std::queue<timelines::Timeline> TimelineQueue;
+            std::mutex TimelineQueueMutex;
+            bool TimelineQueueFlush = false;
 
-            void StartUpdateCurrentColorWorker();
-            void StopUpdateCurrentColorWorker();
-            void UpdateCurrentColorWorkerThread();
-            virtual bool PushColorToDevice() = 0;
+            void StartLightColorUpdateWorker();
+            void StopLightColorUpdateWorker();
+            void LightColorUpdateWorkerThread();
+            virtual bool PushColorToDevice(const std::vector<timelines::LightColor>& colors) = 0;
 
         private:
             bool isEnabled = false;
             bool isInitialized = false;
             size_t numberOfLights = 0;
+            std::vector<timelines::LightColor> lightColor = {};
             std::vector<LightData> lightData = {};
 
-            std::thread lightActionUpdateThread;
-            bool lightActionUpdateThreadRunning = false;
-            std::mutex lightActionUpdateThreadMutex;
-            std::condition_variable lightActionUpdateThreadConditionVariable;
+            std::thread lightColorUpdateThread;
+            bool lightColorUpdateThreadRunning = false;
+            std::mutex lightColorUpdateThreadMutex;
+            std::condition_variable lightColorUpdateThreadConditionVariable;
 
         };
 

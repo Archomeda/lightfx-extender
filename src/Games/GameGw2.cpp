@@ -24,6 +24,7 @@ using namespace std;
 using namespace rapidjson;
 using namespace lightfx::devices;
 using namespace lightfx::managers;
+using namespace lightfx::timelines;
 
 namespace lightfx {
     namespace games {
@@ -85,14 +86,17 @@ namespace lightfx {
                 LightColor endColor(0, 0, 0, 255);
                 switch (teamColorId) {
                 case 9: // Blue
+                    startColor.blue = 255;
                     endColor.blue = 255;
                     LOG(LogLevel::Debug, L"Mumble Link - Detected PvP/WvW blue team");
                     break;
                 case 55: // Green
+                    startColor.green = 255;
                     endColor.green = 255;
                     LOG(LogLevel::Debug, L"Mumble Link - Detected PvP/WvW green team");
                     break;
                 case 376: // Red
+                    startColor.red = 255;
                     endColor.red = 255;
                     LOG(LogLevel::Debug, L"Mumble Link - Detected PvP/WvW red team");
                     break;
@@ -101,9 +105,20 @@ namespace lightfx {
                 auto deviceManager = this->GetManager()->GetLightFXExtender()->GetDeviceManager();
                 for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
                     auto device = deviceManager->GetChildByIndex(i);
-                    LightAction lightAction = LightAction::NewPulse(device->GetNumberOfLights(), startColor, endColor, 200, 100, 400, 5);
-                    lightAction.SetResetColor(device->GetLastLightAction().GetResetColor());
-                    device->QueueLightAction(lightAction);
+                    vector<LightColor> resetColor = device->GetRecentTimeline().GetColorAtTime(device->GetRecentTimeline().GetTotalDuration());
+
+                    Timeline timeline;
+                    auto config = this->GetManager()->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
+                    if (config->GuildWars2TeamColorAnimation == L"Pulse") {
+                        vector<LightTimeline> timelines;
+                        for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
+                            timelines.push_back(LightTimeline::NewPulse(startColor, endColor, resetColor[j], 200, 5, 100, 400));
+                        }
+                        timeline = Timeline(timelines);
+                    } else if (config->GuildWars2TeamColorAnimation == L"Walk") {
+                        timeline = Timeline::NewWalk(device->GetNumberOfLights(), startColor, endColor, resetColor, 1000, 4, 100);
+                    }
+                    device->QueueTimeline(timeline);
                     device->Update();
                 }
 

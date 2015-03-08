@@ -39,6 +39,7 @@ namespace lightfx {
             std::wstring LightpackKey = L"";
 
             bool GuildWars2TeamColorEnabled = true;
+            std::wstring GuildWars2TeamColorAnimation = L"Pulse";
 
             void Load();
             using ConfigFile::Load;

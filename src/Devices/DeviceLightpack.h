@@ -53,12 +53,12 @@ namespace lightfx {
             virtual bool Enable() override;
             virtual bool Disable() override;
 
-            virtual bool PushColorToDevice() override;
-
             virtual const std::wstring GetDeviceName() override { return L"Lightpack"; }
             virtual const DeviceType GetDeviceType() override { return DeviceType::DeviceDisplay; }
 
         protected:
+            virtual bool PushColorToDevice(const std::vector<timelines::LightColor>& colors) override;
+
             bool ConnectAPI();
             bool DisconnectAPI();
             bool SendAPI(const std::wstring& cmd);
