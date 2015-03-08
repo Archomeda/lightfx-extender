@@ -177,7 +177,7 @@ namespace lightfx {
             LOG(LogLevel::Debug, L"SendAPI(\"" + cmd + L"\")");
 
             wstring s = cmd + L"\n";
-            if (s.length() > numeric_limits<int>::max()) {
+            if (s.length() > (size_t)numeric_limits<int>::max()) {
                 return false;
             }
 
