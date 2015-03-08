@@ -29,6 +29,12 @@
 #define LOG(logLevel, line) if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"UpdateManager - ") + line); }
 #define LOGWINERROR() if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->LogLastWindowsError(); }
 
+#ifdef _WIN64
+#define PLATFORM "x64"
+#else
+#define PLATFORM "x86"
+#endif
+
 using namespace std;
 using namespace rapidjson;
 using namespace lightfx::utils;
@@ -72,7 +78,8 @@ namespace lightfx {
                             for (SizeType j = 0; j < assets.Size(); ++j) {
                                 if (assets[j].HasMember("name") && assets[j]["name"].IsString()) {
                                     string assetName = assets[j]["name"].GetString();
-                                    if (assetName.compare(assetName.length() - 4, 4, ".zip") == 0) {
+                                    string substring = string(PLATFORM) + ".zip";
+                                    if (assetName.compare(assetName.length() - substring.length(), substring.length(), substring) == 0) {
                                         if (assets[j].HasMember("browser_download_url") && assets[j]["browser_download_url"].IsString()) {
                                             assetUrl = assets[j]["browser_download_url"].GetString();
                                         }
@@ -81,7 +88,7 @@ namespace lightfx {
                             }
                         }
 
-                        if (tagName.compare(0, 1, "v") == 0) {
+                        if (assetUrl != "" && tagName.compare(0, 1, "v") == 0) {
                             return{ Version::FromString(tagName.substr(1)), string_to_wstring(assetUrl) };
                         }
                     }
