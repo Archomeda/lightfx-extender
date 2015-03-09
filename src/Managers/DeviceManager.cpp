@@ -46,27 +46,34 @@ namespace lightfx {
             // Load native LightFX devices
             if (InitializeLightFX()) {
                 LOG(LogLevel::Debug, L"Alienware LightFX.dll loaded");
+                LFX_RESULT result;
 
-                unsigned int numDevices = 0;
-                if (LightFX_GetNumDevices(&numDevices) == LFX_SUCCESS) {
-                    LOG(LogLevel::Debug, to_wstring(numDevices) + L" LightFX devices found");
+                result = LightFX_Initialize();
+                if (result == LFX_SUCCESS) {
+                    unsigned int numDevices = 0;
+                    result = LightFX_GetNumDevices(&numDevices);
+                    if (result == LFX_SUCCESS) {
+                        LOG(LogLevel::Debug, to_wstring(numDevices) + L" LightFX devices found");
 
-                    for (unsigned int j = 0; j < numDevices; ++j) {
-                        auto lightFX = make_shared<DeviceLightFX>();
-                        bool initialized = lightFX->Initialize(); // We have to initialize it first in order to get the name
-                        wstring deviceName = lightFX->GetDeviceName();
-                        if (deviceName == L"") {
-                            deviceName = L"LightFX " + to_wstring(j);
+                        for (unsigned int j = 0; j < numDevices; ++j) {
+                            auto lightFX = make_shared<DeviceLightFX>();
+                            bool initialized = lightFX->Initialize(); // We have to initialize it first in order to get the name
+                            wstring deviceName = lightFX->GetDeviceName();
+                            if (deviceName == L"") {
+                                deviceName = L"LightFX " + to_wstring(j);
+                            }
+                            this->AddChild(lightFX->GetDeviceName(), lightFX);
+                            if (initialized) {
+                                ++i;
+                            }
                         }
-                        this->AddChild(lightFX->GetDeviceName(), lightFX);
-                        if (initialized) {
-                            ++i;
-                        }
+
+                        // TODO: Periodically check for changes (e.g. when a device gets connected or disconnected)
+                    } else {
+                        LOG(LogLevel::Error, L"Failed to check the number of LightFX devices: " + to_wstring(result));
                     }
-
-                    // TODO: Periodically check for changes (e.g. when a device gets connected or disconnected)
                 } else {
-                    LOG(LogLevel::Debug, L"Failed to check the number of LightFX devices");
+                    LOG(LogLevel::Error, L"Failed to initialize LightFX: " + to_wstring(result));
                 }
             } else {
                 LOG(LogLevel::Debug, L"Alienware LightFX.dll not found");
@@ -105,10 +112,15 @@ namespace lightfx {
 
             // Unload native LightFX devices if needed
             if (IsLightFXInitialized()) {
-                if (ReleaseLightFX()) {
-                    LOG(LogLevel::Debug, L"Alienware LightFX.dll unloaded");
+                LFX_RESULT result = LightFX_Release();
+                if (result == LFX_SUCCESS) {
+                    if (ReleaseLightFX()) {
+                        LOG(LogLevel::Debug, L"Alienware LightFX.dll unloaded");
+                    } else {
+                        LOG(LogLevel::Error, L"Alienware LightFX.dll not unloaded");
+                    }
                 } else {
-                    LOG(LogLevel::Error, L"Alienware LightFX.dll not unloaded");
+                    LOG(LogLevel::Error, L"Failed to release LightFX: " + to_wstring(result));
                 }
             }
 
