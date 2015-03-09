@@ -78,9 +78,15 @@ namespace lightfx {
             for (pair<wstring, bool> device : config->EnabledDevices) {
                 if (device.second) {
                     auto dev = this->GetChild(device.first);
-                    if (dev->IsInitialized()) {
-                        dev->Enable();
+                    if (dev == nullptr) {
+                        LOG(LogLevel::Warning, L"Device " + device.first + L" is configured in settings, but was not found in the system");
+                        continue;
                     }
+                    if (!dev->IsInitialized()) {
+                        LOG(LogLevel::Warning, L"Device " + device.first + L" cannot be enabled, because was not initialized");
+                        continue;
+                    }
+                    dev->Enable();
                 }
             }
 

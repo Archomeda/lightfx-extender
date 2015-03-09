@@ -85,10 +85,14 @@ namespace lightfx {
 
             // Enabled devices
             WValue enabledDevices(kObjectType);
+            map<wstring, bool> devices = map<wstring, bool>(this->EnabledDevices);
             auto deviceManager = this->GetManager()->GetLightFXExtender()->GetDeviceManager();
             for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
                 auto device = deviceManager->GetChildByIndex(i);
-                enabledDevices.AddMember(WValue(device->GetDeviceName().c_str(), allocator).Move(), WValue(device->IsEnabled()), allocator);
+                devices[device->GetDeviceName()] = device->IsEnabled();
+            }
+            for (auto device : devices) {
+                enabledDevices.AddMember(WValue(device.first.c_str(), allocator).Move(), WValue(device.second), allocator);
             }
             this->doc.AddMember(CONF_ENABLEDDEVICES, enabledDevices, allocator);
 
