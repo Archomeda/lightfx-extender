@@ -12,6 +12,11 @@
 #pragma region Configuration keys
 #define CONF_AUTOUPDATESENABLED L"AutoUpdatesEnabled"
 #define CONF_MINIMUMLOGLEVEL L"MinimumLogLevel"
+
+#define CONF_TRAYICON L"TrayIcon"
+#define CONF_TRAYICON_ENABLED L"Enabled"
+#define CONF_TRAYICON_USEGAMEICON L"UseGameIcon"
+
 #define CONF_ENABLEDDEVICES L"EnabledDevices"
 
 #define CONF_LOGITECHCOLORRANGE L"LogitechColorRange"
@@ -43,6 +48,9 @@ namespace lightfx {
 
         LFXE_API void MainConfigFile::LoadDefaults() {
             this->MinimumLogLevel = LogLevel::Info;
+
+            this->TrayIconEnabled = true;
+            this->TrayIconUseGameIcon = false;
 
             this->LogitechColorRangeOutMin = 0;
             this->LogitechColorRangeOutMax = 255;
@@ -82,6 +90,12 @@ namespace lightfx {
                 break;
             }
             this->doc.AddMember(CONF_MINIMUMLOGLEVEL, minimumLogLevel, allocator);
+
+            // Tray icon
+            WValue trayIcon(kObjectType);
+            trayIcon.AddMember(CONF_TRAYICON_ENABLED, this->TrayIconEnabled, allocator);
+            trayIcon.AddMember(CONF_TRAYICON_USEGAMEICON, this->TrayIconUseGameIcon, allocator);
+            this->doc.AddMember(CONF_TRAYICON, trayIcon, allocator);
 
             // Enabled devices
             WValue enabledDevices(kObjectType);
@@ -142,6 +156,17 @@ namespace lightfx {
                     this->MinimumLogLevel = LogLevel::Warning;
                 } else if (minimumLogLevel == L"Error") {
                     this->MinimumLogLevel = LogLevel::Error;
+                }
+            }
+
+            // Tray icon
+            if (this->doc.HasMember(CONF_TRAYICON) && this->doc[CONF_TRAYICON].IsObject()) {
+                const WValue& trayIcon = this->doc[CONF_TRAYICON];
+                if (trayIcon.HasMember(CONF_TRAYICON_ENABLED) && trayIcon[CONF_TRAYICON_ENABLED].IsBool()) {
+                    this->TrayIconEnabled = trayIcon[CONF_TRAYICON_ENABLED].GetBool();
+                }
+                if (trayIcon.HasMember(CONF_TRAYICON_USEGAMEICON) && trayIcon[CONF_TRAYICON_USEGAMEICON].IsBool()) {
+                    this->TrayIconUseGameIcon = trayIcon[CONF_TRAYICON_USEGAMEICON].GetBool();
                 }
             }
 

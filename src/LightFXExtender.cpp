@@ -63,11 +63,17 @@ namespace lightfx {
         this->updateManager->CheckAsync();
         this->deviceManager->InitializeDevices();
         this->gameManager->InitializeGame(processFileName);
-        this->trayManager->AddTrayIcon();
+
+        if (this->configManager->GetMainConfig()->TrayIconEnabled) {
+            this->trayManager->AddTrayIcon();
+        }
     }
 
     LFXE_API void LightFXExtender::Stop() {
-        this->trayManager->RemoveTrayIcon();
+        if (this->configManager->GetMainConfig()->TrayIconEnabled) {
+            this->trayManager->RemoveTrayIcon();
+        }
+
         this->configManager->GetMainConfig()->Save();
         this->deviceManager->UninitializeDevices();
         this->gameManager->UninitializeGames();

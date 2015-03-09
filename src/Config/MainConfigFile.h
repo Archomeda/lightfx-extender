@@ -29,6 +29,9 @@ namespace lightfx {
 
             std::map<std::wstring, bool> EnabledDevices = {};
 
+            bool TrayIconEnabled = true;
+            bool TrayIconUseGameIcon = false;
+
             int LogitechColorRangeOutMin = 0;
             int LogitechColorRangeOutMax = 255;
             int LogitechColorRangeInMin = 0;

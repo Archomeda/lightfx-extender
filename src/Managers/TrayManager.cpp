@@ -12,9 +12,11 @@
 
 // Project includes
 #include "../LightFXExtender.h"
+#include "ConfigManager.h"
 #include "DeviceManager.h"
 #include "LogManager.h"
 #include "UpdateManager.h"
+#include "../Config/MainConfigFile.h"
 #include "../Utils/Windows.h"
 #include "../Utils/FileIO.h"
 #include "../resource.h"
@@ -30,6 +32,7 @@
 #define LOG(logLevel, line) if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"TrayManager - ") + line); }
 
 using namespace std;
+using namespace lightfx::config;
 using namespace lightfx::devices;
 using namespace lightfx::utils;
 
@@ -68,10 +71,12 @@ namespace lightfx {
 
             // Not sure if taking the icon from an EXE file is desired by some companies,
             // as it can cause confusion to users who might think it's officially supported by those companies.
-            // Therefore, it's disabled for now.
-            //this->trayIconData.hIcon = ExtractIconW(GetModuleHandle(NULL), filename.c_str(), 0);
+            // Therefore, it is an advanced option which is disabled by default
+            if (this->GetLightFXExtender()->GetConfigManager()->GetMainConfig()->TrayIconUseGameIcon) {
+                this->trayIconData.hIcon = ExtractIconW(GetModuleHandle(NULL), filename.c_str(), 0);
+            }
             if (this->trayIconData.hIcon == NULL) {
-                // Fall back to our default (somewhat crappy) icon if the executable icon cannot be found
+                // Fall back to our default (somewhat crappy) icon if the executable icon cannot be found or is not configured to be used
                 this->trayIconData.hIcon = (HICON)LoadImageW(this->hModuleInstance, MAKEINTRESOURCEW(IDI_TRAYICON), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0);
             }
 

@@ -6,8 +6,8 @@
 
 // Project includes
 #include "../LightFXExtender.h"
-#include "../Managers/ConfigManager.h"
-#include "../Managers/LogManager.h"
+#include "ConfigManager.h"
+#include "LogManager.h"
 #include "../Config/MainConfigFile.h"
 #include "../Devices/DeviceLightpack.h"
 #include "../Devices/DeviceLogitech.h"
