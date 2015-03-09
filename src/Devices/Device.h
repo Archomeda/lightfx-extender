@@ -78,6 +78,9 @@ namespace lightfx {
         protected:
             void SetNumberOfLights(const size_t numberOfLights);
 
+            void SetEnabled(const bool enabled);
+            void SetInitialized(const bool initialized);
+
             timelines::Timeline ActiveTimeline;
             timelines::Timeline QueuedTimeline;
             std::queue<timelines::Timeline> TimelineQueue;

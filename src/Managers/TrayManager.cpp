@@ -145,7 +145,9 @@ namespace lightfx {
                 auto deviceManager = this->GetLightFXExtender()->GetDeviceManager();
                 for (index = 1; index <= deviceManager->GetChildrenCount(); ++index) {
                     auto device = deviceManager->GetChildByIndex(index - 1);
-                    InsertMenuW(hMenu, static_cast<UINT>(index), device->IsEnabled() ? MF_CHECKED : MF_UNCHECKED, static_cast<UINT>(index), device->GetDeviceName().c_str());
+                    if (device->IsInitialized()) {
+                        InsertMenuW(hMenu, static_cast<UINT>(index), device->IsEnabled() ? MF_CHECKED : MF_UNCHECKED, static_cast<UINT>(index), device->GetDeviceName().c_str());
+                    }
                 }
                 InsertMenuW(hMenu, static_cast<UINT>(index), MF_SEPARATOR, 0, NULL);
                 ++index;

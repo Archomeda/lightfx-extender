@@ -65,6 +65,7 @@ namespace lightfx {
                     }
                 }
             }
+            this->SetInitialized(false);
             return false;
         }
 
@@ -77,6 +78,7 @@ namespace lightfx {
                     }
                 }
             }
+            this->SetEnabled(false);
             return false;
         }
 
@@ -87,6 +89,7 @@ namespace lightfx {
                     return true;
                 }
             }
+            this->SetEnabled(true);
             return false;
         }
 

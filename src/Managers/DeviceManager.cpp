@@ -58,7 +58,8 @@ namespace lightfx {
             size_t i = 0;
 
             for (size_t j = 0; j < this->GetChildrenCount(); ++j) {
-                if (this->GetChildByIndex(j)->Release()) {
+                auto device = this->GetChildByIndex(j);
+                if (device->IsEnabled() && device->Release()) {
                     ++i;
                 }
             }

@@ -158,6 +158,15 @@ namespace lightfx {
         }
 
 
+        LFXE_API void Device::SetEnabled(const bool enabled) {
+            this->isEnabled = enabled;
+        }
+
+        LFXE_API void Device::SetInitialized(const bool initialized) {
+            this->isInitialized = initialized;
+        }
+
+
         LFXE_API void Device::StartLightColorUpdateWorker() {
             if (!this->lightColorUpdateThreadRunning) {
                 // Start the update thread
