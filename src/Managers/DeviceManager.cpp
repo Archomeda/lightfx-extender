@@ -54,6 +54,10 @@ namespace lightfx {
                     for (unsigned int j = 0; j < numDevices; ++j) {
                         auto lightFX = make_shared<DeviceLightFX>();
                         bool initialized = lightFX->Initialize(); // We have to initialize it first in order to get the name
+                        wstring deviceName = lightFX->GetDeviceName();
+                        if (deviceName == L"") {
+                            deviceName = L"LightFX " + to_wstring(j);
+                        }
                         this->AddChild(lightFX->GetDeviceName(), lightFX);
                         if (initialized) {
                             ++i;
