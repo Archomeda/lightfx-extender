@@ -107,6 +107,29 @@ namespace lightfx {
             return Log(LogLevel::Error, L"Windows error: " + message);
         }
 
+
+        LFXE_API void LogManager::RotateLog() {
+            wstring filePath = this->GetLogDirectory();
+            if (DirExists(filePath)) {
+                filePath += L"/" + this->logFileName;
+                if (FileExists(filePath)) {
+                    for (int i = 3; i >= 0; --i) {
+                        wstring filePathOld = filePath + L"." + to_wstring(i);
+                        wstring filePathNew = filePath + L"." + to_wstring(i + 1);
+                        if (FileExists(filePathOld)) {
+                            if (i == 3) {
+                                DeleteFileW(filePathOld.c_str());
+                            } else {
+                                MoveFileW(filePathOld.c_str(), filePathNew.c_str());
+                            }
+                        }
+                    }
+                    MoveFileW(filePath.c_str(), (filePath + L".0").c_str());
+                }
+            }
+        }
+
+
         LFXE_API const wstring LogManager::GetLogFileName() {
             return this->logFileName;
         }

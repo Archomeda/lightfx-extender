@@ -50,6 +50,7 @@ namespace lightfx {
     }
 
     LFXE_API void LightFXExtender::Start() {
+        this->logManager->RotateLog();
         this->logManager->Log(LogLevel::Info, L"LightFX Extender v" + this->updateManager->GetCurrentVersion().ToString());
 
         wstring processFileName;

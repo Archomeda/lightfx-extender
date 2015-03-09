@@ -33,6 +33,8 @@ namespace lightfx {
             void Log(const LogLevel logLevel, const std::wstring& line);
             void LogLastWindowsError();
 
+            void RotateLog();
+
             virtual const std::wstring GetLogFileName();
             virtual const std::wstring GetLogDirectory();
             virtual void SetLogDirectory(const std::wstring& directory);
