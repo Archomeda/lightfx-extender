@@ -27,20 +27,6 @@ using namespace lightfx::utils;
 
 #pragma region Converters
 
-unsigned char DeviceTypeToLfxDeviceType(const DeviceType deviceType) {
-    switch (deviceType) {
-    case DeviceType::DeviceDisplay:
-        return LFX_DEVTYPE_DISPLAY;
-    case DeviceType::DeviceKeyboard:
-        return LFX_DEVTYPE_KEYBOARD;
-    case DeviceType::DeviceOther:
-        return LFX_DEVTYPE_OTHER;
-    case DeviceType::DeviceUnknown:
-    default:
-        return LFX_DEVTYPE_UNKNOWN;
-    }
-}
-
 LFX_POSITION DeviceLightPositionToLfxPosition(const DeviceLightPosition position) {
     return LFX_POSITION{ position.x, position.y, position.z };
 }
@@ -172,7 +158,7 @@ extern "C" {
 
         try {
             sprintf_s(devDesc, devDescSize, deviceName.c_str());
-            *devType = DeviceTypeToLfxDeviceType(device->GetDeviceType());
+            *devType = device->GetDeviceType();
         } catch (...) {
             return LFX_FAILURE;
         }
