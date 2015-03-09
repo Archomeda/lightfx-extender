@@ -2,5 +2,5 @@
 // CURRENT_VERSION is managed by AppVeyor builds
 
 #ifndef CURRENT_VERSION
-#define CURRENT_VERSION "0.3.0-dev"
+#define CURRENT_VERSION "0.3.1-dev"
 #endif
