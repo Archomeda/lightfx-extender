@@ -1,9 +1,6 @@
 #ifndef LFXE_EXPORTS
 #define LFXE_EXPORTS
 #endif
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
 
 #include "DeviceLightpack.h"
 

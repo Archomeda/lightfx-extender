@@ -13,12 +13,14 @@
 // Project includes
 #include "lightFXExtender.h"
 #include "Managers/DeviceManager.h"
+#include "Managers/UpdateManager.h"
 #include "Utils/String.h"
 
 
 using namespace std;
 using namespace lightfx;
 using namespace lightfx::devices;
+using namespace lightfx::managers;
 using namespace lightfx::timelines;
 using namespace lightfx::utils;
 
@@ -467,6 +469,18 @@ extern "C" {
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetVersion(char* const version, const unsigned int versionSize) {
         sprintf_s(version, versionSize, "2.2.0.0");
+        return LFX_SUCCESS;
+    }
+
+    // Custom export to help check if we are loading ourselves
+    FN_DECLSPEC LFX_RESULT STDCALL LFXE_GetVersion(char* const version, const unsigned int versionSize) {
+        Version ver = lightFXExtender->GetUpdateManager()->GetCurrentVersion();
+        string verString = wstring_to_string(ver.ToString());
+        if (verString.length() > versionSize) {
+            return LFX_ERROR_BUFFSIZE;
+        }
+
+        sprintf_s(version, versionSize, verString.c_str());
         return LFX_SUCCESS;
     }
 

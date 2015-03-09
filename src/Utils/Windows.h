@@ -13,6 +13,7 @@ namespace lightfx {
 
         extern "C" IMAGE_DOS_HEADER __ImageBase;
         HMODULE GetCurrentModule();
+        std::wstring GetModuleName(HINSTANCE hInstance, std::wstring* drive, std::wstring* dir, std::wstring* fname, std::wstring* ext);
         std::wstring GetProcessName();
         std::wstring GetProcessName(std::wstring* drive, std::wstring* dir, std::wstring* fname, std::wstring* ext);
         std::wstring GetDllName();

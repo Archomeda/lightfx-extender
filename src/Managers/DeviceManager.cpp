@@ -11,6 +11,8 @@
 #include "../Config/MainConfigFile.h"
 #include "../Devices/DeviceLightpack.h"
 #include "../Devices/DeviceLogitech.h"
+#include "../Devices/LightFX2.h"
+#include "../Utils/FileIO.h"
 
 
 #define LOG(logLevel, line) if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"DeviceManager - ") + line); }
@@ -18,11 +20,12 @@
 using namespace std;
 using namespace lightfx::config;
 using namespace lightfx::devices;
+using namespace lightfx::utils;
 
 namespace lightfx {
     namespace managers {
 
-        size_t DeviceManager::InitializeDevices() {
+        LFXE_API size_t DeviceManager::InitializeDevices() {
             LOG(LogLevel::Debug, L"Initializing devices");
             size_t i = 0;
 
@@ -39,6 +42,13 @@ namespace lightfx {
                 ++i;
             }
 
+            // Load native LightFX devices
+            if (InitializeLightFX()) {
+                LOG(LogLevel::Debug, L"Alienware LightFX.dll loaded");
+            } else {
+                LOG(LogLevel::Debug, L"Alienware LightFX.dll not found");
+            }
+
             LOG(LogLevel::Info, L"Successfully initialized " + to_wstring(i) + L" devices");
 
             // Enable devices where needed
@@ -53,13 +63,22 @@ namespace lightfx {
             return i;
         }
 
-        size_t DeviceManager::UninitializeDevices() {
+        LFXE_API size_t DeviceManager::UninitializeDevices() {
             LOG(LogLevel::Debug, L"Uninitializing devices");
             size_t i = 0;
 
             for (size_t j = 0; j < this->GetChildrenCount(); ++j) {
                 if (this->GetChildByIndex(j)->Release()) {
                     ++i;
+                }
+            }
+
+            // Unload native LightFX devices if needed
+            if (IsLightFXInitialized()) {
+                if (ReleaseLightFX()) {
+                    LOG(LogLevel::Debug, L"Alienware LightFX.dll unloaded");
+                } else {
+                    LOG(LogLevel::Error, L"Alienware LightFX.dll not unloaded");
                 }
             }
 

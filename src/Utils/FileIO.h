@@ -14,6 +14,7 @@ namespace lightfx {
         LFXE_API bool DirExists(const std::wstring& path);
         LFXE_API bool FileExists(const std::wstring& path);
         LFXE_API std::wstring GetDataStorageFolder();
+        LFXE_API std::wstring GetSystemFolder();
 
     }
 }

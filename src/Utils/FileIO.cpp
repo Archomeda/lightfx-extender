@@ -32,19 +32,28 @@ namespace lightfx {
             return fileType != INVALID_FILE_ATTRIBUTES;
         }
 
-        LFXE_API wstring GetDataStorageFolder() {
+        wstring GetKnownFolder(const GUID folderId) {
             wstring path = L"";
             wchar_t* appData = nullptr;
-            if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &appData))) {
+            if (SUCCEEDED(SHGetKnownFolderPath(folderId, 0, NULL, &appData))) {
                 path = wstring(appData);
             }
             CoTaskMemFree(appData);
 
+            return path;
+        }
+
+        LFXE_API wstring GetDataStorageFolder() {
+            wstring path = GetKnownFolder(FOLDERID_RoamingAppData);
             if (!path.empty()) {
                 return path + L"/" + STORAGEFOLDER;
             } else {
                 return L"";
             }
+        }
+
+        LFXE_API wstring GetSystemFolder() {
+            return GetKnownFolder(FOLDERID_System);
         }
 
     }

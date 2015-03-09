@@ -105,6 +105,9 @@
     <ClInclude Include="Timelines\Timeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Devices\LightFX2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LightFXExtender.rc">
@@ -181,6 +184,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Timelines\Timeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Devices\LightFX2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -288,6 +288,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Devices\LightFX2.h" />
     <ClInclude Include="Timelines\LightColor.h" />
     <ClInclude Include="Timelines\LightTimeline.h" />
     <ClInclude Include="Timelines\LightTimelineItem.h" />
@@ -326,6 +327,7 @@
     <Image Include="tray.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Devices\LightFX2.cpp" />
     <ClCompile Include="Timelines\LightTimeline.cpp" />
     <ClCompile Include="Timelines\LightTimelineItem.cpp" />
     <ClCompile Include="Timelines\Timeline.cpp" />
