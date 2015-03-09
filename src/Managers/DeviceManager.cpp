@@ -9,6 +9,7 @@
 #include "../Managers/ConfigManager.h"
 #include "../Managers/LogManager.h"
 #include "../Config/MainConfigFile.h"
+#include "../Devices/DeviceLightFX.h"
 #include "../Devices/DeviceLightpack.h"
 #include "../Devices/DeviceLogitech.h"
 #include "../Devices/LightFX2.h"
@@ -45,6 +46,24 @@ namespace lightfx {
             // Load native LightFX devices
             if (InitializeLightFX()) {
                 LOG(LogLevel::Debug, L"Alienware LightFX.dll loaded");
+
+                unsigned int numDevices = 0;
+                if (LightFX_GetNumDevices(&numDevices) == LFX_SUCCESS) {
+                    LOG(LogLevel::Debug, to_wstring(numDevices) + L" LightFX devices found");
+
+                    for (unsigned int j = 0; j < numDevices; ++j) {
+                        auto lightFX = make_shared<DeviceLightFX>();
+                        bool initialized = lightFX->Initialize(); // We have to initialize it first in order to get the name
+                        this->AddChild(lightFX->GetDeviceName(), lightFX);
+                        if (initialized) {
+                            ++i;
+                        }
+                    }
+
+                    // TODO: Periodically check for changes (e.g. when a device gets connected or disconnected)
+                } else {
+                    LOG(LogLevel::Debug, L"Failed to check the number of LightFX devices");
+                }
             } else {
                 LOG(LogLevel::Debug, L"Alienware LightFX.dll not found");
             }
@@ -53,10 +72,11 @@ namespace lightfx {
 
             // Enable devices where needed
             for (pair<wstring, bool> device : config->EnabledDevices) {
-                if (device.first == L"Lightpack" && device.second) {
-                    lightpack->Enable();
-                } else if (device.first == L"Logitech" && device.second) {
-                    logitech->Enable();
+                if (device.second) {
+                    auto dev = this->GetChild(device.first);
+                    if (dev->IsInitialized()) {
+                        dev->Enable();
+                    }
                 }
             }
 
