@@ -343,28 +343,8 @@ extern "C" {
         }
 
         Timeline timeline = device->GetQueuedTimeline();
-        LightColor startColor = device->GetLightColor(lightIndex);
-        LightColor endColor = LfxColorToLightColor(*primaryCol);
-        try {
-            switch (actionType) {
-            case LFX_ACTION_MORPH:
-                timeline.SetTimeline(lightIndex, LightTimeline::NewMorph(startColor, endColor, timing));
-                break;
-
-            case LFX_ACTION_PULSE:
-                timeline.SetTimeline(lightIndex, LightTimeline::NewPulse(startColor, endColor, timing, 1));
-                break;
-
-            default:
-                timeline.SetTimeline(lightIndex, LightTimeline::NewInstant(endColor));
-                break;
-            }
-            deviceManager->GetChildByIndex(devIndex)->QueueTimeline(timeline);
-        } catch (...) {
-            return LFX_FAILURE;
-        }
-
-        return LFX_SUCCESS;
+        LFX_COLOR startColor = LightColorToLfxColor(device->GetLightColor(lightIndex));
+        return LFX_SetLightActionColorEx(devIndex, lightIndex, actionType, &startColor, primaryCol);
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_SetLightActionColorEx(const unsigned int devIndex, const unsigned int lightIndex, const unsigned int actionType, const PLFX_COLOR primaryCol, const PLFX_COLOR secondaryCol) {
@@ -392,7 +372,7 @@ extern "C" {
                 break;
 
             case LFX_ACTION_PULSE:
-                timeline.SetTimeline(lightIndex, LightTimeline::NewPulse(startColor, endColor, timing, 1));
+                timeline.SetTimeline(lightIndex, LightTimeline::NewPulse(startColor, endColor, timing, 100)); // TODO: Make this infinite instead of a hardcoded amount
                 break;
 
             default:
