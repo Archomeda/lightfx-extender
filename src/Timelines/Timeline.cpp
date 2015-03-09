@@ -78,8 +78,15 @@ namespace lightfx {
                 return Timeline(lightTimeline);
             }
             
-            unsigned int divider = numLights / 4;
-            unsigned long pulseTime = divider * walkTime / numLights;
+            unsigned int numLights2;
+            if (numLights > numeric_limits<unsigned int>::max()) {
+                numLights2 = numeric_limits<unsigned int>::max();
+            } else {
+                numLights2 = static_cast<unsigned int>(numLights);
+            }
+
+            unsigned int divider = numLights2 / 4;
+            unsigned long pulseTime = divider * walkTime / numLights2;
             unsigned long pulseColorHoldTime = pulseTime;
             unsigned long stepTime = pulseTime / divider;
             long transitionTime = long(pulseTime / 2) - pulseColorHoldTime;
