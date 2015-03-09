@@ -49,10 +49,10 @@ LFX_COLOR LightColorToLfxColor(const LightColor color) {
 
 LFX_COLOR IntToLfxColor(const unsigned int color) {
     LFX_COLOR c;
-    c.blue = (color >> 24) & 0xFF;
-    c.green = (color >> 16) & 0xFF;
-    c.red = (color >> 8) & 0xFF;
-    c.brightness = color & 0xFF;
+    c.brightness = (color >> 24) & 0xFF;
+    c.red = (color >> 16) & 0xFF;
+    c.green = (color >> 8) & 0xFF;
+    c.blue = color & 0xFF;
     return c;
 }
 
