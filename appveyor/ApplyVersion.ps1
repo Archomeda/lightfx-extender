@@ -1,5 +1,5 @@
 Function ApplyVersion($file, $regex, $replace, $encoding = "UTF8") {
-    (gc $file) -replace $regex,$replace | Set-Content $file -encoding $encoding
+    (Get-Content $file -encoding $encoding) -replace $regex,$replace | Set-Content $file -encoding $encoding
 }
 
 Function ApplyVersionToVersionInfoH($version) {
