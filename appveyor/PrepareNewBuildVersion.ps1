@@ -1,7 +1,7 @@
 . .\appveyor\ApplyVersion.ps1
 
 if ($env:APPVEYOR_REPO_TAG -eq "true") {
-    $match = select-string -Path $fileAppveyor -Pattern $regexFileAppveyor
+    $match = Select-String -Path "appveyor.yml" -Pattern "version: (\d+)\.(\d+)\.(\d+)\.\{build\}"
 
     $newVersion = $match.Matches[0].Groups[1].Value + "." + $match.Matches[0].Groups[2].Value + "." + ([convert]::ToInt32($match.Matches[0].Groups[3].Value, 10) + 1)
     Write-Host "Prepare for next version automatically: $newVersion" -ForegroundColor "Yellow"
