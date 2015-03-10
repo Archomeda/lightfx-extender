@@ -20,6 +20,10 @@
 #define CONF_DEVICES L"Devices"
 #define CONF_DEVICES_ENABLED L"EnabledDevices"
 
+#define CONF_DEVICES_LIGHTFX L"LightFX"
+#define CONF_DEVICES_LIGHTFX_ALIENWAREDLL L"AlienwareDllName"
+#define CONF_DEVICES_LIGHTFX_ALIENWAREBACKUPDLL L"AlienwareBackupDllName"
+
 #define CONF_DEVICES_LOGITECH L"Logitech"
 #define CONF_DEVICES_LOGITECH_COLORRANGE L"ColorRange"
 #define CONF_DEVICES_LOGITECH_COLORRANGE_OUTMIN L"LightFXMin"
@@ -51,19 +55,23 @@ namespace lightfx {
         }
 
         LFXE_API void MainConfigFile::LoadDefaults() {
+            this->AutoUpdatesEnabled = true;
             this->MinimumLogLevel = LogLevel::Info;
 
             this->TrayIconEnabled = true;
             this->TrayIconUseGameIcon = false;
 
-            this->LogitechColorRangeOutMin = 0;
-            this->LogitechColorRangeOutMax = 255;
-            this->LogitechColorRangeInMin = 0;
-            this->LogitechColorRangeInMax = 100;
+            this->AlienwareDllName = L"LightFX.dll";
+            this->AlienwareBackupDllName = L"LightFX_.dll";
 
             this->LightpackHost = L"127.0.0.1";
             this->LightpackPort = L"3636";
             this->LightpackKey = L"";
+
+            this->LogitechColorRangeOutMin = 0;
+            this->LogitechColorRangeOutMax = 255;
+            this->LogitechColorRangeInMin = 0;
+            this->LogitechColorRangeInMax = 100;
 
             this->GuildWars2TeamColorEnabled = true;
             this->GuildWars2TeamColorAnimation = L"Pulse";
@@ -128,18 +136,13 @@ namespace lightfx {
             }
             obj.AddMember(CONF_DEVICES_ENABLED, objEnabledDevices, allocator);
 
-            // Logitech
-            WValue objLogitech(kObjectType);
+            // LightFX
+            WValue objLightfx(kObjectType);
 
-            // Logitech color range
-            WValue objLogitechColorRange(kObjectType);
-            objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_OUTMIN, this->LogitechColorRangeOutMin, allocator);
-            objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX, this->LogitechColorRangeOutMax, allocator);
-            objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMIN, this->LogitechColorRangeInMin, allocator);
-            objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMAX, this->LogitechColorRangeInMax, allocator);
-            objLogitech.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE, objLogitechColorRange, allocator);
-
-            obj.AddMember(CONF_DEVICES_LOGITECH, objLogitech, allocator);
+            // LightFX Alienware DLL name
+            objLightfx.AddMember(CONF_DEVICES_LIGHTFX_ALIENWAREDLL, this->MakeJsonWString(this->AlienwareDllName, allocator), allocator);
+            objLightfx.AddMember(CONF_DEVICES_LIGHTFX_ALIENWAREBACKUPDLL, this->MakeJsonWString(this->AlienwareBackupDllName, allocator), allocator);
+            obj.AddMember(CONF_DEVICES_LIGHTFX, objLightfx, allocator);
 
             // Lightpack
             WValue objLightpack(kObjectType);
@@ -152,6 +155,19 @@ namespace lightfx {
             objLightpack.AddMember(CONF_DEVICES_LIGHTPACK_API, objLightpackApi, allocator);
 
             obj.AddMember(CONF_DEVICES_LIGHTPACK, objLightpack, allocator);
+
+            // Logitech
+            WValue objLogitech(kObjectType);
+
+            // Logitech color range
+            WValue objLogitechColorRange(kObjectType);
+            objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_OUTMIN, this->LogitechColorRangeOutMin, allocator);
+            objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX, this->LogitechColorRangeOutMax, allocator);
+            objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMIN, this->LogitechColorRangeInMin, allocator);
+            objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMAX, this->LogitechColorRangeInMax, allocator);
+            objLogitech.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE, objLogitechColorRange, allocator);
+
+            obj.AddMember(CONF_DEVICES_LOGITECH, objLogitech, allocator);
 
             return obj;
         }
@@ -228,24 +244,14 @@ namespace lightfx {
                     }
                 }
 
-                // Logitech
-                if (objDevices.HasMember(CONF_DEVICES_LOGITECH) && objDevices[CONF_DEVICES_LOGITECH].IsObject()) {
-                    const WValue& objLogitech = objDevices[CONF_DEVICES_LOGITECH];
-                    // Logitech color range
-                    if (objLogitech.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE) && objLogitech[CONF_DEVICES_LOGITECH_COLORRANGE].IsObject()) {
-                        const WValue& colorRange = objLogitech[CONF_DEVICES_LOGITECH_COLORRANGE];
-                        if (colorRange.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE_OUTMIN) && colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_OUTMIN].IsInt()) {
-                            this->LogitechColorRangeOutMin = colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_OUTMIN].GetInt();
-                        }
-                        if (colorRange.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX) && colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX].IsInt()) {
-                            this->LogitechColorRangeOutMax = colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX].GetInt();
-                        }
-                        if (colorRange.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMIN) && colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_INMIN].IsInt()) {
-                            this->LogitechColorRangeInMin = colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_INMIN].GetInt();
-                        }
-                        if (colorRange.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMAX) && colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_INMAX].IsInt()) {
-                            this->LogitechColorRangeInMax = colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_INMAX].GetInt();
-                        }
+                // LightFX
+                if (objDevices.HasMember(CONF_DEVICES_LIGHTFX) && objDevices[CONF_DEVICES_LIGHTFX].IsObject()) {
+                    const WValue& objLightfx = objDevices[CONF_DEVICES_LIGHTFX];
+                    if (objLightfx.HasMember(CONF_DEVICES_LIGHTFX_ALIENWAREDLL) && objLightfx[CONF_DEVICES_LIGHTFX_ALIENWAREDLL].IsString()) {
+                        this->AlienwareDllName = objLightfx[CONF_DEVICES_LIGHTFX_ALIENWAREDLL].GetString();
+                    }
+                    if (objLightfx.HasMember(CONF_DEVICES_LIGHTFX_ALIENWAREBACKUPDLL) && objLightfx[CONF_DEVICES_LIGHTFX_ALIENWAREBACKUPDLL].IsString()) {
+                        this->AlienwareBackupDllName = objLightfx[CONF_DEVICES_LIGHTFX_ALIENWAREBACKUPDLL].GetString();
                     }
                 }
 
@@ -263,6 +269,27 @@ namespace lightfx {
                         }
                         if (lightpackApi.HasMember(CONF_DEVICES_LIGHTPACK_API_KEY) && lightpackApi[CONF_DEVICES_LIGHTPACK_API_KEY].IsString()) {
                             this->LightpackKey = lightpackApi[CONF_DEVICES_LIGHTPACK_API_KEY].GetString();
+                        }
+                    }
+                }
+
+                // Logitech
+                if (objDevices.HasMember(CONF_DEVICES_LOGITECH) && objDevices[CONF_DEVICES_LOGITECH].IsObject()) {
+                    const WValue& objLogitech = objDevices[CONF_DEVICES_LOGITECH];
+                    // Logitech color range
+                    if (objLogitech.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE) && objLogitech[CONF_DEVICES_LOGITECH_COLORRANGE].IsObject()) {
+                        const WValue& colorRange = objLogitech[CONF_DEVICES_LOGITECH_COLORRANGE];
+                        if (colorRange.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE_OUTMIN) && colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_OUTMIN].IsInt()) {
+                            this->LogitechColorRangeOutMin = colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_OUTMIN].GetInt();
+                        }
+                        if (colorRange.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX) && colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX].IsInt()) {
+                            this->LogitechColorRangeOutMax = colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX].GetInt();
+                        }
+                        if (colorRange.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMIN) && colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_INMIN].IsInt()) {
+                            this->LogitechColorRangeInMin = colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_INMIN].GetInt();
+                        }
+                        if (colorRange.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMAX) && colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_INMAX].IsInt()) {
+                            this->LogitechColorRangeInMax = colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_INMAX].GetInt();
                         }
                     }
                 }

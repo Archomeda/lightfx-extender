@@ -38,14 +38,14 @@ LFX2GETVERSION LightFX_GetVersion;
 
 HINSTANCE hInstanceLightFX = NULL;
 
-LFXE_API bool InitializeLightFX() {
+LFXE_API bool InitializeLightFX(std::wstring name, std::wstring backupName) {
     if (hInstanceLightFX) {
         return true;
     }
 
-    // Check if there's a local LightFX_.dll
-    if (FileExists(L"LightFX_.dll")) {
-        hInstanceLightFX = LoadLibraryW(L"LightFX_.dll");
+    // Check if there's a local dll
+    if (FileExists(backupName)) {
+        hInstanceLightFX = LoadLibraryW(backupName.c_str());
 
         // Check if we are accidentally loading ourselves
         if (GetProcAddress(hInstanceLightFX, "LFXE_GetVersion")) {
@@ -56,7 +56,7 @@ LFXE_API bool InitializeLightFX() {
     
     // Try to load the global one
     if (!hInstanceLightFX) {
-        hInstanceLightFX = LoadLibraryW((GetSystemFolder() + L"/LightFX.dll").c_str());
+        hInstanceLightFX = LoadLibraryW((GetSystemFolder() + name).c_str());
 
         // Check if we are accidentally loading ourselves
         if (GetProcAddress(hInstanceLightFX, "LFXE_GetVersion")) {

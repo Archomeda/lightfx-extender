@@ -27,19 +27,22 @@ namespace lightfx {
             bool AutoUpdatesEnabled = true;
             managers::LogLevel MinimumLogLevel = managers::LogLevel::Info;
 
-            std::map<std::wstring, bool> EnabledDevices = {};
-
             bool TrayIconEnabled = true;
             bool TrayIconUseGameIcon = false;
+
+            std::map<std::wstring, bool> EnabledDevices = {};
+
+            std::wstring AlienwareDllName = L"LightFX.dll";
+            std::wstring AlienwareBackupDllName = L"LightFX_.dll";
+
+            std::wstring LightpackHost = L"127.0.0.1";
+            std::wstring LightpackPort = L"3636";
+            std::wstring LightpackKey = L"";
 
             int LogitechColorRangeOutMin = 0;
             int LogitechColorRangeOutMax = 255;
             int LogitechColorRangeInMin = 0;
             int LogitechColorRangeInMax = 100;
-
-            std::wstring LightpackHost = L"127.0.0.1";
-            std::wstring LightpackPort = L"3636";
-            std::wstring LightpackKey = L"";
 
             bool GuildWars2TeamColorEnabled = true;
             std::wstring GuildWars2TeamColorAnimation = L"Pulse";

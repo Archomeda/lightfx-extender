@@ -44,7 +44,7 @@ namespace lightfx {
             }
 
             // Load native LightFX devices
-            if (InitializeLightFX()) {
+            if (InitializeLightFX(config->AlienwareDllName, config->AlienwareBackupDllName)) {
                 LOG(LogLevel::Debug, L"Alienware LightFX.dll loaded");
                 LFX_RESULT result;
 

@@ -1,5 +1,8 @@
 #pragma once
 
+// Standard includes
+#include <string>
+
 // 3rd party includes
 #include "LFX2.h"
 
@@ -27,6 +30,11 @@ extern LFX2ACTIONCOLOREX LightFX_ActionColorEx;
 extern LFX2SETTIMING LightFX_SetTiming;
 extern LFX2GETVERSION LightFX_GetVersion;
 
-LFXE_API bool InitializeLightFX();
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
+LFXE_API bool InitializeLightFX(std::wstring name, std::wstring backupName);
 LFXE_API bool IsLightFXInitialized();
 LFXE_API bool ReleaseLightFX();
+
+#pragma warning(pop)
