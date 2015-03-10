@@ -1,4 +1,4 @@
-Function ApplyVersion($file, $regex, $replace, $encoding = "UTF8") {
+Function ApplyVersion($file, $regex, $replace, $encoding = "ASCII") {
     (Get-Content $file -encoding $encoding) -replace $regex,$replace | Set-Content $file -encoding $encoding
 }
 
