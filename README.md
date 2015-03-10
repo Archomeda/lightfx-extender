@@ -48,6 +48,12 @@ tested games are:
 *Unless otherwise specified, the games are x86 and therefore use the x86 build
 of LightFX Extender.*
 
+There is an [external community maintained list](http://alienfxdb.tk/) available
+that aims to provide detailed information about games that support LightFX and
+LightFX Extender. Please note that, although I was indirectly involved in its
+creation, it's not made by me and therefore not supported by me. Please do not
+report any issues regarding that list here, but go to the website instead.
+
 ## Contribute
 If you want to contribute to the project, make a fork, change stuff and do a
 pull request. Submitting issues is also welcome.
