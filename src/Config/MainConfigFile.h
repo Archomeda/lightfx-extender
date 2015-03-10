@@ -61,6 +61,14 @@ namespace lightfx {
 
             WValue MakeJsonWString(const std::wstring& str, WDocument::AllocatorType& allocator);
 
+            WValue SerializeTrayIcon(WDocument::AllocatorType& allocator);
+            WValue SerializeDevices(WDocument::AllocatorType& allocator);
+            WValue SerializeGames(WDocument::AllocatorType& allocator);
+
+            void DeserializeTrayIcon(WDocument& doc);
+            void DeserializeDevices(WDocument& doc);
+            void DeserializeGames(WDocument& doc);
+
         };
 
     }

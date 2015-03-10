@@ -17,22 +17,26 @@
 #define CONF_TRAYICON_ENABLED L"Enabled"
 #define CONF_TRAYICON_USEGAMEICON L"UseGameIcon"
 
-#define CONF_ENABLEDDEVICES L"EnabledDevices"
+#define CONF_DEVICES L"Devices"
+#define CONF_DEVICES_ENABLED L"EnabledDevices"
 
-#define CONF_LOGITECHCOLORRANGE L"LogitechColorRange"
-#define CONF_LOGITECHCOLORRANGE_OUTMIN L"AlienFXMin"
-#define CONF_LOGITECHCOLORRANGE_OUTMAX L"AlienFXMax"
-#define CONF_LOGITECHCOLORRANGE_INMIN L"LogitechMin"
-#define CONF_LOGITECHCOLORRANGE_INMAX L"LogitechMax"
+#define CONF_DEVICES_LOGITECH L"Logitech"
+#define CONF_DEVICES_LOGITECH_COLORRANGE L"ColorRange"
+#define CONF_DEVICES_LOGITECH_COLORRANGE_OUTMIN L"LightFXMin"
+#define CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX L"LightFXMax"
+#define CONF_DEVICES_LOGITECH_COLORRANGE_INMIN L"LogitechMin"
+#define CONF_DEVICES_LOGITECH_COLORRANGE_INMAX L"LogitechMax"
 
-#define CONF_LIGHTPACKAPI L"LightpackAPI"
-#define CONF_LIGHTPACKHOST L"Hostname"
-#define CONF_LIGHTPACKPORT L"PortNumber"
-#define CONF_LIGHTPACKKEY L"Key"
+#define CONF_DEVICES_LIGHTPACK L"Lightpack"
+#define CONF_DEVICES_LIGHTPACK_API L"SocketApi"
+#define CONF_DEVICES_LIGHTPACK_API_HOST L"Hostname"
+#define CONF_DEVICES_LIGHTPACK_API_PORT L"PortNumber"
+#define CONF_DEVICES_LIGHTPACK_API_KEY L"Key"
 
-#define CONF_GUILDWARS2 L"GuildWars2"
-#define CONF_GUILDWARS2_TEAMCOLORENABLED L"TeamColorEnabled"
-#define CONF_GUILDWARS2_TEAMCOLORANIMATION L"TeamColorAnimation"
+#define CONF_GAMES L"Games"
+#define CONF_GAMES_GUILDWARS2 L"GuildWars2"
+#define CONF_GAMES_GUILDWARS2_TEAMCOLORENABLED L"TeamColorEnabled"
+#define CONF_GAMES_GUILDWARS2_TEAMCOLORANIMATION L"TeamColorAnimation"
 #pragma endregion
 
 using namespace std;
@@ -73,32 +77,46 @@ namespace lightfx {
             this->doc.AddMember(CONF_AUTOUPDATESENABLED, this->AutoUpdatesEnabled, allocator);
 
             // Minimum log level
-            WValue minimumLogLevel;
+            WValue objMinimumLogLevel;
             switch (this->MinimumLogLevel) {
             case LogLevel::Debug:
-                minimumLogLevel = this->MakeJsonWString(L"Debug", allocator);
+                objMinimumLogLevel = this->MakeJsonWString(L"Debug", allocator);
                 break;
             case LogLevel::Warning:
-                minimumLogLevel = this->MakeJsonWString(L"Warning", allocator);
+                objMinimumLogLevel = this->MakeJsonWString(L"Warning", allocator);
                 break;
             case LogLevel::Error:
-                minimumLogLevel = this->MakeJsonWString(L"Error", allocator);
+                objMinimumLogLevel = this->MakeJsonWString(L"Error", allocator);
                 break;
             case LogLevel::Info:
             default:
-                minimumLogLevel = this->MakeJsonWString(L"Info", allocator);
+                objMinimumLogLevel = this->MakeJsonWString(L"Info", allocator);
                 break;
             }
-            this->doc.AddMember(CONF_MINIMUMLOGLEVEL, minimumLogLevel, allocator);
+            this->doc.AddMember(CONF_MINIMUMLOGLEVEL, objMinimumLogLevel, allocator);
 
-            // Tray icon
-            WValue trayIcon(kObjectType);
-            trayIcon.AddMember(CONF_TRAYICON_ENABLED, this->TrayIconEnabled, allocator);
-            trayIcon.AddMember(CONF_TRAYICON_USEGAMEICON, this->TrayIconUseGameIcon, allocator);
-            this->doc.AddMember(CONF_TRAYICON, trayIcon, allocator);
+            this->doc.AddMember(CONF_TRAYICON, this->SerializeTrayIcon(allocator), allocator);
+            this->doc.AddMember(CONF_DEVICES, this->SerializeDevices(allocator), allocator);
+            this->doc.AddMember(CONF_GAMES, this->SerializeGames(allocator), allocator);
+
+            WStringBuffer buffer;
+            WPrettyWriter writer(buffer);
+            this->doc.Accept(writer);
+            return buffer.GetString();
+        }
+
+        LFXE_API MainConfigFile::WValue MainConfigFile::SerializeTrayIcon(WDocument::AllocatorType& allocator) {
+            WValue obj(kObjectType);
+            obj.AddMember(CONF_TRAYICON_ENABLED, this->TrayIconEnabled, allocator);
+            obj.AddMember(CONF_TRAYICON_USEGAMEICON, this->TrayIconUseGameIcon, allocator);
+            return obj;
+        }
+
+        LFXE_API MainConfigFile::WValue MainConfigFile::SerializeDevices(WDocument::AllocatorType& allocator) {
+            WValue obj(kObjectType);
 
             // Enabled devices
-            WValue enabledDevices(kObjectType);
+            WValue objEnabledDevices(kObjectType);
             map<wstring, bool> devices = map<wstring, bool>(this->EnabledDevices);
             auto deviceManager = this->GetManager()->GetLightFXExtender()->GetDeviceManager();
             for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
@@ -106,35 +124,48 @@ namespace lightfx {
                 devices[device->GetDeviceName()] = device->IsEnabled();
             }
             for (auto device : devices) {
-                enabledDevices.AddMember(WValue(device.first.c_str(), allocator).Move(), WValue(device.second), allocator);
+                objEnabledDevices.AddMember(WValue(device.first.c_str(), allocator).Move(), WValue(device.second), allocator);
             }
-            this->doc.AddMember(CONF_ENABLEDDEVICES, enabledDevices, allocator);
+            obj.AddMember(CONF_DEVICES_ENABLED, objEnabledDevices, allocator);
+
+            // Logitech
+            WValue objLogitech(kObjectType);
 
             // Logitech color range
-            WValue logitechColorRange(kObjectType);
-            logitechColorRange.AddMember(CONF_LOGITECHCOLORRANGE_OUTMIN, this->LogitechColorRangeOutMin, allocator);
-            logitechColorRange.AddMember(CONF_LOGITECHCOLORRANGE_OUTMAX, this->LogitechColorRangeOutMax, allocator);
-            logitechColorRange.AddMember(CONF_LOGITECHCOLORRANGE_INMIN, this->LogitechColorRangeInMin, allocator);
-            logitechColorRange.AddMember(CONF_LOGITECHCOLORRANGE_INMAX, this->LogitechColorRangeInMax, allocator);
-            this->doc.AddMember(CONF_LOGITECHCOLORRANGE, logitechColorRange, allocator);
+            WValue objLogitechColorRange(kObjectType);
+            objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_OUTMIN, this->LogitechColorRangeOutMin, allocator);
+            objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX, this->LogitechColorRangeOutMax, allocator);
+            objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMIN, this->LogitechColorRangeInMin, allocator);
+            objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMAX, this->LogitechColorRangeInMax, allocator);
+            objLogitech.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE, objLogitechColorRange, allocator);
+
+            obj.AddMember(CONF_DEVICES_LOGITECH, objLogitech, allocator);
+
+            // Lightpack
+            WValue objLightpack(kObjectType);
 
             // Lightpack API
-            WValue lightpackApi(kObjectType);
-            lightpackApi.AddMember(CONF_LIGHTPACKHOST, this->MakeJsonWString(this->LightpackHost, allocator), allocator);
-            lightpackApi.AddMember(CONF_LIGHTPACKPORT, this->MakeJsonWString(this->LightpackPort, allocator), allocator);
-            lightpackApi.AddMember(CONF_LIGHTPACKKEY, this->MakeJsonWString(this->LightpackKey, allocator), allocator);
-            this->doc.AddMember(CONF_LIGHTPACKAPI, lightpackApi, allocator);
+            WValue objLightpackApi(kObjectType);
+            objLightpackApi.AddMember(CONF_DEVICES_LIGHTPACK_API_HOST, this->MakeJsonWString(this->LightpackHost, allocator), allocator);
+            objLightpackApi.AddMember(CONF_DEVICES_LIGHTPACK_API_PORT, this->MakeJsonWString(this->LightpackPort, allocator), allocator);
+            objLightpackApi.AddMember(CONF_DEVICES_LIGHTPACK_API_KEY, this->MakeJsonWString(this->LightpackKey, allocator), allocator);
+            objLightpack.AddMember(CONF_DEVICES_LIGHTPACK_API, objLightpackApi, allocator);
+
+            obj.AddMember(CONF_DEVICES_LIGHTPACK, objLightpack, allocator);
+
+            return obj;
+        }
+
+        LFXE_API MainConfigFile::WValue MainConfigFile::SerializeGames(WDocument::AllocatorType& allocator) {
+            WValue obj(kObjectType);
 
             // Guild Wars 2
-            WValue gw2(kObjectType);
-            gw2.AddMember(CONF_GUILDWARS2_TEAMCOLORENABLED, this->GuildWars2TeamColorEnabled, allocator);
-            gw2.AddMember(CONF_GUILDWARS2_TEAMCOLORANIMATION, this->MakeJsonWString(this->GuildWars2TeamColorAnimation, allocator), allocator);
-            this->doc.AddMember(CONF_GUILDWARS2, gw2, allocator);
+            WValue objGuildwars2(kObjectType);
+            objGuildwars2.AddMember(CONF_GAMES_GUILDWARS2_TEAMCOLORENABLED, this->GuildWars2TeamColorEnabled, allocator);
+            objGuildwars2.AddMember(CONF_GAMES_GUILDWARS2_TEAMCOLORANIMATION, this->MakeJsonWString(this->GuildWars2TeamColorAnimation, allocator), allocator);
+            obj.AddMember(CONF_GAMES_GUILDWARS2, objGuildwars2, allocator);
 
-            WStringBuffer buffer;
-            WPrettyWriter writer(buffer);
-            this->doc.Accept(writer);
-            return buffer.GetString();
+            return obj;
         }
 
         LFXE_API void MainConfigFile::Deserialize(const wstring& data) {
@@ -163,68 +194,94 @@ namespace lightfx {
                 }
             }
 
+            this->DeserializeTrayIcon(this->doc);
+            this->DeserializeDevices(this->doc);
+            this->DeserializeGames(this->doc);
+        }
+
+        LFXE_API void MainConfigFile::DeserializeTrayIcon(MainConfigFile::WDocument& doc) {
             // Tray icon
-            if (this->doc.HasMember(CONF_TRAYICON) && this->doc[CONF_TRAYICON].IsObject()) {
-                const WValue& trayIcon = this->doc[CONF_TRAYICON];
-                if (trayIcon.HasMember(CONF_TRAYICON_ENABLED) && trayIcon[CONF_TRAYICON_ENABLED].IsBool()) {
-                    this->TrayIconEnabled = trayIcon[CONF_TRAYICON_ENABLED].GetBool();
+            if (doc.HasMember(CONF_TRAYICON) && doc[CONF_TRAYICON].IsObject()) {
+                const WValue& objTrayIcon = doc[CONF_TRAYICON];
+                if (objTrayIcon.HasMember(CONF_TRAYICON_ENABLED) && objTrayIcon[CONF_TRAYICON_ENABLED].IsBool()) {
+                    this->TrayIconEnabled = objTrayIcon[CONF_TRAYICON_ENABLED].GetBool();
                 }
-                if (trayIcon.HasMember(CONF_TRAYICON_USEGAMEICON) && trayIcon[CONF_TRAYICON_USEGAMEICON].IsBool()) {
-                    this->TrayIconUseGameIcon = trayIcon[CONF_TRAYICON_USEGAMEICON].GetBool();
+                if (objTrayIcon.HasMember(CONF_TRAYICON_USEGAMEICON) && objTrayIcon[CONF_TRAYICON_USEGAMEICON].IsBool()) {
+                    this->TrayIconUseGameIcon = objTrayIcon[CONF_TRAYICON_USEGAMEICON].GetBool();
                 }
             }
+        }
 
-            // Enabled devices
-            if (this->doc.HasMember(CONF_ENABLEDDEVICES) && this->doc[CONF_ENABLEDDEVICES].IsObject()) {
-                const WValue& enabledDevices = this->doc[CONF_ENABLEDDEVICES];
-                for (auto itr = enabledDevices.MemberBegin(); itr != enabledDevices.MemberEnd(); ++itr) {
-                    if (itr->value.IsBool()) {
-                        wstring deviceName = itr->name.GetString();
-                        bool deviceEnabled = itr->value.GetBool();
-                        this->EnabledDevices[deviceName] = deviceEnabled;
+        LFXE_API void MainConfigFile::DeserializeDevices(MainConfigFile::WDocument& doc) {
+            if (doc.HasMember(CONF_DEVICES) && doc[CONF_DEVICES].IsObject()) {
+                const WValue& objDevices = doc[CONF_DEVICES];
+
+                // Enabled devices
+                if (objDevices.HasMember(CONF_DEVICES_ENABLED) && objDevices[CONF_DEVICES_ENABLED].IsObject()) {
+                    const WValue& objDevicesEnabled = objDevices[CONF_DEVICES_ENABLED];
+                    for (auto itr = objDevicesEnabled.MemberBegin(); itr != objDevicesEnabled.MemberEnd(); ++itr) {
+                        if (itr->value.IsBool()) {
+                            wstring deviceName = itr->name.GetString();
+                            bool deviceEnabled = itr->value.GetBool();
+                            this->EnabledDevices[deviceName] = deviceEnabled;
+                        }
+                    }
+                }
+
+                // Logitech
+                if (objDevices.HasMember(CONF_DEVICES_LOGITECH) && objDevices[CONF_DEVICES_LOGITECH].IsObject()) {
+                    const WValue& objLogitech = objDevices[CONF_DEVICES_LOGITECH];
+                    // Logitech color range
+                    if (objLogitech.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE) && objLogitech[CONF_DEVICES_LOGITECH_COLORRANGE].IsObject()) {
+                        const WValue& colorRange = objLogitech[CONF_DEVICES_LOGITECH_COLORRANGE];
+                        if (colorRange.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE_OUTMIN) && colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_OUTMIN].IsInt()) {
+                            this->LogitechColorRangeOutMin = colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_OUTMIN].GetInt();
+                        }
+                        if (colorRange.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX) && colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX].IsInt()) {
+                            this->LogitechColorRangeOutMax = colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX].GetInt();
+                        }
+                        if (colorRange.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMIN) && colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_INMIN].IsInt()) {
+                            this->LogitechColorRangeInMin = colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_INMIN].GetInt();
+                        }
+                        if (colorRange.HasMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMAX) && colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_INMAX].IsInt()) {
+                            this->LogitechColorRangeInMax = colorRange[CONF_DEVICES_LOGITECH_COLORRANGE_INMAX].GetInt();
+                        }
+                    }
+                }
+
+                // Lightpack
+                if (objDevices.HasMember(CONF_DEVICES_LIGHTPACK) && objDevices[CONF_DEVICES_LOGITECH].IsObject()) {
+                    const WValue& objLightpack = objDevices[CONF_DEVICES_LIGHTPACK];
+                    // Lightpack API
+                    if (objLightpack.HasMember(CONF_DEVICES_LIGHTPACK_API) && objLightpack[CONF_DEVICES_LIGHTPACK_API].IsObject()) {
+                        const WValue& lightpackApi = objLightpack[CONF_DEVICES_LIGHTPACK_API];
+                        if (lightpackApi.HasMember(CONF_DEVICES_LIGHTPACK_API_HOST) && lightpackApi[CONF_DEVICES_LIGHTPACK_API_HOST].IsString()) {
+                            this->LightpackHost = lightpackApi[CONF_DEVICES_LIGHTPACK_API_HOST].GetString();
+                        }
+                        if (lightpackApi.HasMember(CONF_DEVICES_LIGHTPACK_API_PORT) && lightpackApi[CONF_DEVICES_LIGHTPACK_API_PORT].IsString()) {
+                            this->LightpackPort = lightpackApi[CONF_DEVICES_LIGHTPACK_API_PORT].GetString();
+                        }
+                        if (lightpackApi.HasMember(CONF_DEVICES_LIGHTPACK_API_KEY) && lightpackApi[CONF_DEVICES_LIGHTPACK_API_KEY].IsString()) {
+                            this->LightpackKey = lightpackApi[CONF_DEVICES_LIGHTPACK_API_KEY].GetString();
+                        }
                     }
                 }
             }
+        }
 
-            // Logitech color range
-            if (this->doc.HasMember(CONF_LOGITECHCOLORRANGE) && this->doc[CONF_LOGITECHCOLORRANGE].IsObject()) {
-                const WValue& colorRange = this->doc[CONF_LOGITECHCOLORRANGE];
-                if (colorRange.HasMember(CONF_LOGITECHCOLORRANGE_OUTMIN) && colorRange[CONF_LOGITECHCOLORRANGE_OUTMIN].IsInt()) {
-                    this->LogitechColorRangeOutMin = colorRange[CONF_LOGITECHCOLORRANGE_OUTMIN].GetInt();
-                }
-                if (colorRange.HasMember(CONF_LOGITECHCOLORRANGE_OUTMAX) && colorRange[CONF_LOGITECHCOLORRANGE_OUTMAX].IsInt()) {
-                    this->LogitechColorRangeOutMax = colorRange[CONF_LOGITECHCOLORRANGE_OUTMAX].GetInt();
-                }
-                if (colorRange.HasMember(CONF_LOGITECHCOLORRANGE_INMIN) && colorRange[CONF_LOGITECHCOLORRANGE_INMIN].IsInt()) {
-                    this->LogitechColorRangeInMin = colorRange[CONF_LOGITECHCOLORRANGE_INMIN].GetInt();
-                }
-                if (colorRange.HasMember(CONF_LOGITECHCOLORRANGE_INMAX) && colorRange[CONF_LOGITECHCOLORRANGE_INMAX].IsInt()) {
-                    this->LogitechColorRangeInMax = colorRange[CONF_LOGITECHCOLORRANGE_INMAX].GetInt();
-                }
-            }
+        LFXE_API void MainConfigFile::DeserializeGames(MainConfigFile::WDocument& doc) {
+            if (doc.HasMember(CONF_GAMES) && doc[CONF_GAMES].IsObject()) {
+                const WValue& objGames = doc[CONF_GAMES];
 
-            // Lightpack API
-            if (this->doc.HasMember(CONF_LIGHTPACKAPI) && this->doc[CONF_LIGHTPACKAPI].IsObject()) {
-                const WValue& api = this->doc[CONF_LIGHTPACKAPI];
-                if (api.HasMember(CONF_LIGHTPACKHOST) && api[CONF_LIGHTPACKHOST].IsString()) {
-                    this->LightpackHost = api[CONF_LIGHTPACKHOST].GetString();
-                }
-                if (api.HasMember(CONF_LIGHTPACKPORT) && api[CONF_LIGHTPACKPORT].IsString()) {
-                    this->LightpackPort = api[CONF_LIGHTPACKPORT].GetString();
-                }
-                if (api.HasMember(CONF_LIGHTPACKKEY) && api[CONF_LIGHTPACKKEY].IsString()) {
-                    this->LightpackKey = api[CONF_LIGHTPACKKEY].GetString();
-                }
-            }
-
-            // Guild Wars 2
-            if (this->doc.HasMember(CONF_GUILDWARS2) && this->doc[CONF_GUILDWARS2].IsObject()) {
-                const WValue& gw2 = this->doc[CONF_GUILDWARS2];
-                if (gw2.HasMember(CONF_GUILDWARS2_TEAMCOLORENABLED) && gw2[CONF_GUILDWARS2_TEAMCOLORENABLED].IsBool()) {
-                    this->GuildWars2TeamColorEnabled = gw2[CONF_GUILDWARS2_TEAMCOLORENABLED].GetBool();
-                }
-                if (gw2.HasMember(CONF_GUILDWARS2_TEAMCOLORANIMATION) && gw2[CONF_GUILDWARS2_TEAMCOLORANIMATION].IsString()) {
-                    this->GuildWars2TeamColorAnimation = gw2[CONF_GUILDWARS2_TEAMCOLORANIMATION].GetString();
+                // Guild Wars 2
+                if (objGames.HasMember(CONF_GAMES_GUILDWARS2) && objGames[CONF_GAMES_GUILDWARS2].IsObject()) {
+                    const WValue& gw2 = objGames[CONF_GAMES_GUILDWARS2];
+                    if (gw2.HasMember(CONF_GAMES_GUILDWARS2_TEAMCOLORENABLED) && gw2[CONF_GAMES_GUILDWARS2_TEAMCOLORENABLED].IsBool()) {
+                        this->GuildWars2TeamColorEnabled = gw2[CONF_GAMES_GUILDWARS2_TEAMCOLORENABLED].GetBool();
+                    }
+                    if (gw2.HasMember(CONF_GAMES_GUILDWARS2_TEAMCOLORANIMATION) && gw2[CONF_GAMES_GUILDWARS2_TEAMCOLORANIMATION].IsString()) {
+                        this->GuildWars2TeamColorAnimation = gw2[CONF_GAMES_GUILDWARS2_TEAMCOLORANIMATION].GetString();
+                    }
                 }
             }
         }
