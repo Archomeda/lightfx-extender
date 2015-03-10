@@ -7,3 +7,8 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
+
+// Disable the min and max macros since they are conflicting with C++11 functions
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif

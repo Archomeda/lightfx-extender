@@ -10,13 +10,9 @@ namespace lightfx {
             return reinterpret_cast<HMODULE>(&__ImageBase);
         }
 
-        wstring GetProcessName() {
-            return GetProcessName(nullptr, nullptr, nullptr, nullptr);
-        }
-
-        wstring GetProcessName(wstring* drive, wstring* dir, wstring* fname, wstring* ext) {
+        wstring GetModuleName(HINSTANCE hInstance, wstring* drive, wstring* dir, wstring* fname, wstring* ext) {
             wchar_t szFileName[MAX_PATH];
-            GetModuleFileNameW(NULL, szFileName, _countof(szFileName));
+            GetModuleFileNameW(hInstance, szFileName, _countof(szFileName));
             wchar_t cdrive[_MAX_DRIVE];
             wchar_t cdir[_MAX_DIR];
             wchar_t cfname[_MAX_FNAME];
@@ -37,6 +33,14 @@ namespace lightfx {
             }
 
             return wstring(szFileName);
+        }
+
+        wstring GetProcessName() {
+            return GetProcessName(nullptr, nullptr, nullptr, nullptr);
+        }
+
+        wstring GetProcessName(wstring* drive, wstring* dir, wstring* fname, wstring* ext) {
+            return GetModuleName(NULL, drive, dir, fname, ext);
         }
 
         wstring GetDllName() {
@@ -44,28 +48,7 @@ namespace lightfx {
         }
 
         wstring GetDllName(wstring* drive, wstring* dir, wstring* fname, wstring* ext) {
-            wchar_t szFileName[MAX_PATH];
-            GetModuleFileNameW((HINSTANCE)&__ImageBase, szFileName, _countof(szFileName));
-            wchar_t cdrive[_MAX_DRIVE];
-            wchar_t cdir[_MAX_DIR];
-            wchar_t cfname[_MAX_FNAME];
-            wchar_t cext[_MAX_EXT];
-            _wsplitpath_s(szFileName, cdrive, _countof(cdrive), cdir, _countof(cdir), cfname, _countof(cfname), cext, _countof(cext));
-
-            if (drive != nullptr) {
-                *drive = wstring(cdrive);
-            }
-            if (dir != nullptr) {
-                *dir = wstring(cdir);
-            }
-            if (fname != nullptr) {
-                *fname = wstring(cfname);
-            }
-            if (ext != nullptr) {
-                *ext = wstring(cext);
-            }
-
-            return wstring(szFileName);
+            return GetModuleName(GetCurrentModule(), drive, dir, fname, ext);
         }
 
     }

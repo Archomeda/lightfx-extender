@@ -13,31 +13,19 @@
 // Project includes
 #include "lightFXExtender.h"
 #include "Managers/DeviceManager.h"
+#include "Managers/UpdateManager.h"
 #include "Utils/String.h"
 
 
 using namespace std;
 using namespace lightfx;
 using namespace lightfx::devices;
+using namespace lightfx::managers;
 using namespace lightfx::timelines;
 using namespace lightfx::utils;
 
 
 #pragma region Converters
-
-unsigned char DeviceTypeToLfxDeviceType(const DeviceType deviceType) {
-    switch (deviceType) {
-    case DeviceType::DeviceDisplay:
-        return LFX_DEVTYPE_DISPLAY;
-    case DeviceType::DeviceKeyboard:
-        return LFX_DEVTYPE_KEYBOARD;
-    case DeviceType::DeviceOther:
-        return LFX_DEVTYPE_OTHER;
-    case DeviceType::DeviceUnknown:
-    default:
-        return LFX_DEVTYPE_UNKNOWN;
-    }
-}
 
 LFX_POSITION DeviceLightPositionToLfxPosition(const DeviceLightPosition position) {
     return LFX_POSITION{ position.x, position.y, position.z };
@@ -170,7 +158,7 @@ extern "C" {
 
         try {
             sprintf_s(devDesc, devDescSize, deviceName.c_str());
-            *devType = DeviceTypeToLfxDeviceType(device->GetDeviceType());
+            *devType = device->GetDeviceType();
         } catch (...) {
             return LFX_FAILURE;
         }
@@ -447,6 +435,18 @@ extern "C" {
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetVersion(char* const version, const unsigned int versionSize) {
         sprintf_s(version, versionSize, "2.2.0.0");
+        return LFX_SUCCESS;
+    }
+
+    // Custom export to help check if we are loading ourselves
+    FN_DECLSPEC LFX_RESULT STDCALL LFXE_GetVersion(char* const version, const unsigned int versionSize) {
+        Version ver = lightFXExtender->GetUpdateManager()->GetCurrentVersion();
+        string verString = wstring_to_string(ver.ToString());
+        if (verString.length() > versionSize) {
+            return LFX_ERROR_BUFFSIZE;
+        }
+
+        sprintf_s(version, versionSize, verString.c_str());
         return LFX_SUCCESS;
     }
 
