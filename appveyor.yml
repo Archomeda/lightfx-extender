@@ -1,4 +1,4 @@
-version: .{build}
+version: 0.4.1.{build}
 
 environment:
   access_token:
