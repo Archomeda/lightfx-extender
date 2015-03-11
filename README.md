@@ -18,7 +18,8 @@ configuration folder (`%APPDATA%\LightFX Extender`) or right-click on the icon
 in your taskbar and choose *Open configuration folder*. This file will be
 created after you launched and closed the game after installing LightFX Extender
 for the first time. Deleting this file will cause the settings to be reset to
-default.
+default. More information about the advanced configuration can be found on
+[the wiki](https://github.com/Archomeda/lightfx-extender/wiki/Configuration).
 
 ### Updating
 LightFX Extender has support for automatic updates. However, there is always a
