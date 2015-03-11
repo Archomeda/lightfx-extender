@@ -46,7 +46,7 @@ namespace lightfx {
         LFXE_API wstring GetDataStorageFolder() {
             wstring path = GetKnownFolder(FOLDERID_RoamingAppData);
             if (!path.empty()) {
-                return path + L"/" + STORAGEFOLDER;
+                return path + L"\\" + STORAGEFOLDER;
             } else {
                 return L"";
             }
