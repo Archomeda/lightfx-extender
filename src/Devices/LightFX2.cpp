@@ -56,7 +56,7 @@ LFXE_API bool InitializeLightFX(std::wstring name, std::wstring backupName) {
     
     // Try to load the global one
     if (!hInstanceLightFX) {
-        hInstanceLightFX = LoadLibraryW((GetSystemFolder() + name).c_str());
+		hInstanceLightFX = LoadLibraryW((GetSystemFolder() + L"\\" + name).c_str());
 
         // Check if we are accidentally loading ourselves
         if (GetProcAddress(hInstanceLightFX, "LFXE_GetVersion")) {
