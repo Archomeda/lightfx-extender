@@ -173,9 +173,13 @@ namespace lightfx {
                 } else if (result > 0 && result <= deviceManager->GetChildrenCount()) {
                     auto device = deviceManager->GetChildByIndex(result - 1);
                     if (device->IsEnabled()) {
-                        device->Disable();
+                        if (!device->Disable()) {
+                            MessageBoxW(NULL, wstring(L"Failed to disable " + device->GetDeviceName() + L".\r\nCheck the log to see if there are more details.").c_str(), L"LightFX Extender", MB_OK | MB_ICONERROR);
+                        }
                     } else {
-                        device->Enable();
+                        if (!device->Enable()) {
+                            MessageBoxW(NULL, wstring(L"Failed to enable " + device->GetDeviceName() + L".\r\nCheck the log to see if there are more details.").c_str(), L"LightFX Extender", MB_OK | MB_ICONERROR);
+                        }
                     }
                 }
             }
