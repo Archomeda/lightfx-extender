@@ -140,7 +140,7 @@ namespace lightfx {
 
         LFXE_API void DeviceManager::StartUpdateTimer() {
             if (this->DeviceUpdateTimer == nullptr || !this->DeviceUpdateTimer->IsActive()) {
-                this->DeviceUpdateTimer = make_unique<Timer>(5, &DeviceManager::DeviceUpdateTask, this);
+                this->DeviceUpdateTimer = make_unique<Timer>(10, &DeviceManager::DeviceUpdateTask, this);
             }
         }
 
