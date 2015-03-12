@@ -1,9 +1,10 @@
 #pragma once
 
 // Standard includes
-#include <string>
-#include <mutex>
+#include <atomic>
 #include <condition_variable>
+#include <mutex>
+#include <string>
 #include <thread>
 #include <queue>
 
@@ -72,6 +73,7 @@ namespace lightfx {
             timelines::Timeline GetQueuedTimeline();
             timelines::Timeline GetRecentTimeline();
             void QueueTimeline(const timelines::Timeline& timeline);
+            void NotifyUpdate();
 
             virtual const std::wstring GetDeviceName() = 0;
             virtual const DeviceType GetDeviceType() = 0;
@@ -91,11 +93,11 @@ namespace lightfx {
             timelines::Timeline QueuedTimeline;
             std::queue<timelines::Timeline> TimelineQueue;
             std::mutex TimelineQueueMutex;
-            bool TimelineQueueFlush = false;
+            std::atomic<bool> TimelineQueueFlush = false;
 
-            void StartLightColorUpdateWorker();
-            void StopLightColorUpdateWorker();
-            void LightColorUpdateWorkerThread();
+            void StartUpdateWorker();
+            void StopUpdateWorker();
+            void UpdateWorker();
             virtual bool PushColorToDevice(const std::vector<timelines::LightColor>& colors) = 0;
 
         private:
@@ -105,10 +107,12 @@ namespace lightfx {
             std::vector<timelines::LightColor> lightColor = {};
             std::vector<LightData> lightData = {};
 
-            std::thread lightColorUpdateThread;
-            bool lightColorUpdateThreadRunning = false;
-            std::mutex lightColorUpdateThreadMutex;
-            std::condition_variable lightColorUpdateThreadConditionVariable;
+            bool updateWorkerActive = false;
+            std::atomic<bool> notifyUpdateWorker = false;
+            std::atomic<bool> stopUpdateWorker = false;
+            std::thread updateWorkerThread;
+            std::condition_variable updateWorkerCv;
+            std::mutex updateWorkerCvMutex;
 
         };
 

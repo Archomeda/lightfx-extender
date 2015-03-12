@@ -28,6 +28,7 @@ namespace lightfx_tests {
             using Device::GetQueuedTimeline;
             using Device::GetRecentTimeline;
             using Device::QueueTimeline;
+            using Device::NotifyUpdate;
 
             virtual const std::wstring GetDeviceName() override { return L"DeviceMock"; }
             virtual const lightfx::devices::DeviceType GetDeviceType() override { return lightfx::devices::DeviceType::DeviceOther; }
