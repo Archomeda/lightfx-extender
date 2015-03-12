@@ -33,12 +33,9 @@ namespace lightfx {
 
 
         LFXE_API void LogManager::Log(const LogLevel logLevel, const std::wstring& line) {
-            // Check if the log level is equal or higher than the minimum log level set in the config
-            if (this->GetLightFXExtender() != nullptr) {
-                auto config = this->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
-                if (config != nullptr && logLevel < config->MinimumLogLevel) {
-                    return;
-                }
+            // Check if the log level is equal or higher than the minimum log level that's currently set
+            if (this->minimumLogLevel > logLevel) {
+                return;
             }
 
             // Get a nice date/time prefix first
@@ -142,5 +139,13 @@ namespace lightfx {
             this->logDirectory = directory;
         }
 
+
+        LFXE_API LogLevel LogManager::GetMinimumLogLevel() {
+            return this->minimumLogLevel;
+        }
+
+        LFXE_API void LogManager::SetMinimumLogLevel(const LogLevel logLevel) {
+            this->minimumLogLevel = logLevel;
+        }
     }
 }

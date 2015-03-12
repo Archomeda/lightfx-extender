@@ -29,7 +29,7 @@
 #include "../Utils/Windows.h"
 
 
-#define LOG(logLevel, line) if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"UpdateManager - ") + line); }
+#define LOG(logLevel, message) if (this->GetLightFXExtender() != nullptr) { LOG_(this->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"UpdateManager - ") + message) }
 #define LOGWINERROR() if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->LogLastWindowsError(); }
 
 #ifdef _WIN64

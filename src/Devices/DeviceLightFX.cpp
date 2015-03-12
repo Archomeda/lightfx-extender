@@ -14,7 +14,7 @@
 #include "../Utils/String.h"
 
 
-#define LOG(logLevel, line) if (this->GetManager() != nullptr) { this->GetManager()->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"LightFX Device ") + this->GetDeviceName() + L" - " + line); }
+#define LOG(logLevel, message) if (this->GetManager() != nullptr) { LOG_(this->GetManager()->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"LightFX Device ") + this->GetDeviceName() + L" - " + message) }
 
 using namespace std;
 using namespace lightfx::managers;

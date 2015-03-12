@@ -22,7 +22,7 @@
 #include "../Utils/String.h"
 
 
-#define LOG(logLevel, line) if (this->GetManager() != nullptr) { this->GetManager()->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"Config ") + this->GetCurrentFileName() + L" - " + line); }
+#define LOG(logLevel, message) if (this->GetManager() != nullptr) { LOG_(this->GetManager()->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"Config ") + this->GetCurrentFileName() + L" - " + message) }
 
 using namespace std;
 using namespace lightfx::managers;
@@ -60,9 +60,9 @@ namespace lightfx {
                     // Deserialize this stuff
                     this->Deserialize(data);
 
-                    LOG(LogLevel::Debug, L"Loaded configuration");
+                    LOG(LogLevel::Info, L"Loaded configuration");
                 } else {
-                    LOG(LogLevel::Debug, L"No configuration found, using defaults");
+                    LOG(LogLevel::Info, L"No configuration found, using defaults");
                 }
             } catch (exception& e) {
                 LOG(LogLevel::Warning, L"Exception while loading configuration: " + string_to_wstring(e.what()));

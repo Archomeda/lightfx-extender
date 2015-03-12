@@ -10,7 +10,7 @@
 #include "LogManager.h"
 
 
-#define LOG(logLevel, line) if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"ConfigManager - ") + line); }
+#define LOG(logLevel, message) if (this->GetLightFXExtender() != nullptr) { LOG_(this->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"ConfigManager - ") + message) }
 
 using namespace std;
 using namespace lightfx::config;
@@ -19,11 +19,11 @@ namespace lightfx {
     namespace managers {
 
         LFXE_API bool ConfigManager::InitializeConfigs() {
-            LOG(LogLevel::Debug, L"Loading config files");
-
             auto configFile = make_shared<MainConfigFile>();
             this->AddChild(L"MainConfig", configFile);
             configFile->Load();
+
+            LOG(LogLevel::Info, L"Config files loaded");
 
             return true;
         }

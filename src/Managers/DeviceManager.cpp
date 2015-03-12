@@ -16,7 +16,7 @@
 #include "../Utils/FileIO.h"
 
 
-#define LOG(logLevel, line) if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"DeviceManager - ") + line); }
+#define LOG(logLevel, message) if (this->GetLightFXExtender() != nullptr) { LOG_(this->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"DeviceManager - ") + message) }
 
 using namespace std;
 using namespace lightfx::config;

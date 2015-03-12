@@ -10,6 +10,10 @@
 #include "../Common/ApiExports.h"
 
 
+#define LOG_(obj, logLevel, message) {              \
+    if (obj->GetMinimumLogLevel() <= logLevel) {    \
+        obj->Log(logLevel, message); } }
+
 #pragma warning(push)
 #pragma warning(disable : 4251)
 
@@ -39,9 +43,13 @@ namespace lightfx {
             virtual const std::wstring GetLogDirectory();
             virtual void SetLogDirectory(const std::wstring& directory);
 
+            virtual LogLevel GetMinimumLogLevel();
+            virtual void SetMinimumLogLevel(const LogLevel logLevel);
+
         private:
             std::wstring logFileName = L"LightFXExtender.log";
             std::wstring logDirectory;
+            LogLevel minimumLogLevel = LogLevel::Info;
 
         };
 

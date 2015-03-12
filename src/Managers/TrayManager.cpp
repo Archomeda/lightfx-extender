@@ -29,7 +29,7 @@
 #define MENU_CONFFOLDER_NAME L"Open &configuration folder"
 #define MENU_UPDATE_NAME L"&Download new version"
 
-#define LOG(logLevel, line) if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"TrayManager - ") + line); }
+#define LOG(logLevel, message) if (this->GetLightFXExtender() != nullptr) { LOG_(this->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"TrayManager - ") + message) }
 
 using namespace std;
 using namespace lightfx::config;

@@ -9,7 +9,7 @@
 #include "../Managers/LogManager.h"
 
 
-#define LOG(logLevel, line) if (this->GetManager() != nullptr) { this->GetManager()->GetLightFXExtender()->GetLogManager()->Log(logLevel, wstring(L"Game ") + this->GetGameName() + L" - " + line); }
+#define LOG(logLevel, message) if (this->GetManager() != nullptr) { LOG_(this->GetManager()->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"Game ") + this->GetGameName() + L" - " + message) }
 
 using namespace std;
 using namespace lightfx::managers;

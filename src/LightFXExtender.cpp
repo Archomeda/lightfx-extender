@@ -15,6 +15,8 @@
 #include "Utils/Windows.h"
 
 
+#define LOG(logLevel, message) LOG_(this->logManager, logLevel, message)
+
 using namespace std;
 using namespace lightfx::config;
 using namespace lightfx::managers;
@@ -51,16 +53,17 @@ namespace lightfx {
 
     LFXE_API void LightFXExtender::Start() {
         this->logManager->RotateLog();
-        this->logManager->Log(LogLevel::Info, L"LightFX Extender v" + this->updateManager->GetCurrentVersion().ToString());
+        LOG(LogLevel::Info, L"LightFX Extender v" + this->updateManager->GetCurrentVersion().ToString());
 
         wstring processFileName;
         wstring ext;
         wstring processPath = GetProcessName(nullptr, nullptr, &processFileName, &ext);
         processFileName = processFileName + ext;
 
-        this->logManager->Log(LogLevel::Info, L"Connected to " + processPath);
+        LOG(LogLevel::Info, L"Connected to " + processPath);
 
         this->configManager->InitializeConfigs();
+        this->logManager->SetMinimumLogLevel(this->configManager->GetMainConfig()->MinimumLogLevel);
         this->updateManager->CheckAsync();
         this->deviceManager->InitializeDevices();
         this->gameManager->InitializeGame(processFileName);
