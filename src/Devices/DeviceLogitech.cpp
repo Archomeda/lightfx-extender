@@ -32,6 +32,11 @@ namespace lightfx {
             this->rangeInMax = inMax;
         }
 
+        LFXE_API void DeviceLogitech::SetG110FixEnabled(const bool enabled) {
+            this->g110FixEnabled = enabled;
+        }
+
+
         LFXE_API bool DeviceLogitech::Initialize() {
             if (!this->IsInitialized()) {
                 if (Device::Initialize()) {
@@ -75,11 +80,23 @@ namespace lightfx {
         }
 
         LFXE_API bool DeviceLogitech::PushColorToDevice(const vector<LightColor>& colors) {
+            double red = colors[0].red;
+            double green = colors[0].green;
+            double blue = colors[0].blue;
+
+            if (this->g110FixEnabled) {
+                double total = red + blue;
+                if (total > 255) {
+                    red = red * 255 / total;
+                    blue = blue * 255 / total;
+                }
+            }
+
             double divider = (this->rangeOutMax - this->rangeOutMin) / ((this->rangeInMax - this->rangeInMin) / 100.0) / 100.0;
             double brightness = colors[0].brightness / 255.0;
-            double red = (colors[0].red - this->rangeOutMin) / divider * brightness + this->rangeInMin;
-            double green = (colors[0].green - this->rangeOutMin) / divider * brightness + this->rangeInMin;
-            double blue = (colors[0].blue - this->rangeOutMin) / divider * brightness + this->rangeInMin;
+            red = (red - this->rangeOutMin) / divider * brightness + this->rangeInMin;
+            green = (green - this->rangeOutMin) / divider * brightness + this->rangeInMin;
+            blue = (blue - this->rangeOutMin) / divider * brightness + this->rangeInMin;
 
             LOG(LogLevel::Debug, L"Update color to (" + to_wstring(red) + L"," + to_wstring(green) + L"," + to_wstring(blue) + L")");
 
