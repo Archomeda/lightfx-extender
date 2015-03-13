@@ -39,6 +39,7 @@ namespace lightfx {
 
             auto logitech = make_shared<DeviceLogitech>();
             this->AddChild(L"Logitech", logitech);
+            logitech->SetG110WorkaroundEnabled(config->LogitechG110WorkaroundEnabled);
             if (logitech->Initialize()) {
                 ++i;
             }

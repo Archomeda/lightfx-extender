@@ -32,8 +32,8 @@ namespace lightfx {
             this->rangeInMax = inMax;
         }
 
-        LFXE_API void DeviceLogitech::SetG110FixEnabled(const bool enabled) {
-            this->g110FixEnabled = enabled;
+        LFXE_API void DeviceLogitech::SetG110WorkaroundEnabled(const bool enabled) {
+            this->g110WorkaroundEnabled = enabled;
         }
 
 
@@ -84,7 +84,7 @@ namespace lightfx {
             double green = colors[0].green;
             double blue = colors[0].blue;
 
-            if (this->g110FixEnabled) {
+            if (this->g110WorkaroundEnabled) {
                 double total = red + blue;
                 if (total > 255) {
                     red = red * 255 / total;
