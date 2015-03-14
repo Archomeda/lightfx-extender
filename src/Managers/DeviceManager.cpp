@@ -38,6 +38,7 @@ namespace lightfx {
             }
 
             auto logitech = make_shared<DeviceLogitech>();
+            logitech->SetRange(config->LogitechColorRangeOutMin, config->LogitechColorRangeOutMax, config->LogitechColorRangeInMin, config->LogitechColorRangeInMax);
             this->AddChild(L"Logitech", logitech);
             logitech->SetG110WorkaroundEnabled(config->LogitechG110WorkaroundEnabled);
             if (logitech->Initialize()) {
@@ -98,6 +99,9 @@ namespace lightfx {
                 }
             }
 
+            // Start update timer
+            this->StartUpdateTimer();
+
             return i;
         }
 
@@ -105,6 +109,10 @@ namespace lightfx {
             LOG(LogLevel::Debug, L"Uninitializing devices");
             size_t i = 0;
 
+            // Stop update timer
+            this->StopUpdateTimer();
+
+            // Unload devices
             for (size_t j = 0; j < this->GetChildrenCount(); ++j) {
                 auto device = this->GetChildByIndex(j);
                 if (device->IsEnabled() && device->Release()) {
@@ -128,6 +136,28 @@ namespace lightfx {
 
             LOG(LogLevel::Info, L"Successfully uninitialized " + to_wstring(i) + L" devices");
             return i;
+        }
+
+
+        LFXE_API void DeviceManager::StartUpdateTimer() {
+            if (this->DeviceUpdateTimer == nullptr || !this->DeviceUpdateTimer->IsActive()) {
+                this->DeviceUpdateTimer = make_unique<Timer>(10, &DeviceManager::DeviceUpdateTask, this);
+            }
+        }
+
+        LFXE_API void DeviceManager::StopUpdateTimer() {
+            if (this->DeviceUpdateTimer != nullptr && this->DeviceUpdateTimer->IsActive()) {
+                this->DeviceUpdateTimer->Stop();
+            }
+        }
+
+        LFXE_API void DeviceManager::DeviceUpdateTask() {
+            for (size_t i = 0; i < this->GetChildrenCount(); ++i) {
+                auto device = this->GetChildByIndex(i);
+                if (device->IsEnabled()) {
+                    device->NotifyUpdate();
+                }
+            }
         }
 
     }

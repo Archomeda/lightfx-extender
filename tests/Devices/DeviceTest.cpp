@@ -62,9 +62,11 @@ public:
         LightTimeline timeline = LightTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
         device->QueueTimeline(Timeline(1, timeline));
         device->Update();
+        device->NotifyUpdate();
 
         bool success = false;
         for (int i = 0; i < 500; ++i) {
+            device->NotifyUpdate();
             if (device->GetActiveTimeline().GetColorAtTime(0).size() > 0 && timeline.GetColorAtTime(0) == device->GetActiveTimeline().GetColorAtTime(0, 0)) {
                 success = true;
                 break;
@@ -85,12 +87,15 @@ public:
         LightTimeline timeline2 = LightTimeline::NewInstant(LightColor(3, 4, 5, 6));
         device->QueueTimeline(Timeline(1, timeline1));
         device->Update();
+        device->NotifyUpdate();
 
         device->QueueTimeline(Timeline(1, timeline2));
         device->Update(false);
+        device->NotifyUpdate();
 
         bool success = false;
         for (int i = 0; i < 500; ++i) {
+            device->NotifyUpdate();
             if (device->GetActiveTimeline().GetColorAtTime(0).size() > 0 && timeline2.GetColorAtTime(0) != device->GetActiveTimeline().GetColorAtTime(0, 0)) {
                 success = true;
                 break;
@@ -110,6 +115,7 @@ public:
         LightTimeline timeline = LightTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
         device->QueueTimeline(Timeline(1, timeline));
         device->Update();
+        device->NotifyUpdate();
 
         Assert::IsTrue(timeline.GetColorAtTime(0) == device->GetRecentTimeline().GetColorAtTime(0, 0));
         device->Disable();
@@ -123,9 +129,11 @@ public:
         LightTimeline timeline2 = LightTimeline::NewInstant(LightColor(1, 2, 3, 4));
         device->QueueTimeline(Timeline(1, timeline1));
         device->Update();
+        device->NotifyUpdate();
 
         device->QueueTimeline(Timeline(1, timeline2));
         device->Update(false);
+        device->NotifyUpdate();
 
         Assert::IsTrue(timeline2.GetColorAtTime(0) == device->GetRecentTimeline().GetColorAtTime(0, 0));
         device->Disable();

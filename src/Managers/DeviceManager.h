@@ -1,8 +1,12 @@
 #pragma once
 
+// Standard includes
+#include <memory>
+
 // Project includes
 #include "ManagerWithChildren.h"
 #include "../Devices/Device.h"
+#include "../Utils/Timer.h"
 
 // API exports
 #include "../Common/ApiExports.h"
@@ -25,6 +29,15 @@ namespace lightfx {
 
             size_t InitializeDevices();
             size_t UninitializeDevices();
+
+            void StartUpdateTimer();
+            void StopUpdateTimer();
+
+        protected:
+            void DeviceUpdateTask();
+
+        private:
+            std::unique_ptr<utils::Timer> DeviceUpdateTimer;
 
         };
 
