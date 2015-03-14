@@ -40,6 +40,7 @@ open `settings.json` within the configuration folder (see
 for a bug that will be fixed in an upcoming version
 - Lightpack devices through a recent version of Prismatik (or similar hardware
 and software that support the same API, tested on version 5.11.1 only)
+- Alienware devices that originally support LightFX
 
 ### Games
 Theoretically, every game that has support for LightFX, is supported by LightFX
