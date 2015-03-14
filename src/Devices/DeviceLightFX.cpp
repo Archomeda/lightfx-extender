@@ -61,6 +61,7 @@ namespace lightfx {
                             return false;
                         }
                         lightData.Name = string_to_wstring(lightDesc);
+                        LFX_SAFE_DELETE_ARRAY(lightDesc);
 
                         LFX_POSITION lightLoc;
                         result = LightFX_GetLightLocation(this->GetDeviceIndex(), i, &lightLoc);
