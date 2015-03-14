@@ -14,6 +14,7 @@ namespace lightfx {
 
         public: 
             void SetRange(const int outMin, const int outMax, const int inMin, const int inMax);
+            void SetG110WorkaroundEnabled(const bool enabled);
 
             virtual bool Initialize() override;
             virtual bool Enable() override;
@@ -30,6 +31,8 @@ namespace lightfx {
             int rangeOutMax = 255;
             int rangeInMin = 0;
             int rangeInMax = 100;
+
+            bool g110WorkaroundEnabled = false;
 
         };
 

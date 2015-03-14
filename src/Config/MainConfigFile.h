@@ -43,6 +43,7 @@ namespace lightfx {
             int LogitechColorRangeOutMax = 255;
             int LogitechColorRangeInMin = 0;
             int LogitechColorRangeInMax = 100;
+            bool LogitechG110WorkaroundEnabled = false;
 
             bool GuildWars2TeamColorEnabled = true;
             std::wstring GuildWars2TeamColorAnimation = L"Pulse";

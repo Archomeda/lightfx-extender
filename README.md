@@ -32,8 +32,12 @@ open `settings.json` within the configuration folder (see
 ## Support
 ### Hardware
 - Logitech keyboards and mice with LEDs through Logitech Gaming Software
-8.58.177 or higher (8.57.145 is supported as well, but requires
-[additional configuration](https://github.com/Archomeda/lightfx-extender/wiki/Logitech-Color-Range))
+8.58.177 or higher
+  - Version 8.57.145 is supported as well, but requires
+[additional configuration](https://github.com/Archomeda/lightfx-extender/wiki/Logitech-Color-Range)
+  - For version 8.58.177 and lower, G110 users have to enable
+[a workaround](https://github.com/Archomeda/lightfx-extender/wiki/Logitech-G110-Workaround)
+for a bug that will be fixed in an upcoming version
 - Lightpack devices through a recent version of Prismatik (or similar hardware
 and software that support the same API, tested on version 5.11.1 only)
 
