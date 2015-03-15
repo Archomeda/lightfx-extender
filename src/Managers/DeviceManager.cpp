@@ -14,6 +14,7 @@
 #include "../Devices/DeviceLogitech.h"
 #include "../Devices/LightFX2.h"
 #include "../Utils/FileIO.h"
+#include "../Utils/String.h"
 
 
 #define LOG(logLevel, message) if (this->GetLightFXExtender() != nullptr) { LOG_(this->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"DeviceManager - ") + message) }
@@ -60,16 +61,24 @@ namespace lightfx {
                         for (unsigned int j = 0; j < numDevices; ++j) {
                             auto lightFX = make_shared<DeviceLightFX>();
                             lightFX->SetDeviceIndex(j);
-                            bool initialized = lightFX->Initialize(); // We have to initialize it first in order to get the name
-                            wstring deviceName = lightFX->GetDeviceName();
-                            if (deviceName == L"") {
-                                deviceName = L"LightFX " + to_wstring(j);
+
+                            // Get device name first so we can properly add it to the list of devices
+                            char* devDesc = new char[LFX_MAX_STRING_SIZE];
+                            unsigned char devType = 0;
+                            if (LightFX_GetDeviceDescription(j, devDesc, LFX_MAX_STRING_SIZE, &devType) == LFX_SUCCESS) {
+                                wstring deviceName = string_to_wstring(devDesc);
+                                if (deviceName == L"") {
+                                    deviceName = L"LightFX " + to_wstring(j);
+                                }
+                                this->AddChild(deviceName, lightFX);                                
+                                if (lightFX->Initialize()) {
+                                    ++i;
+                                }
                                 lightFX->SetDeviceName(deviceName);
+                            } else {
+                                LOG(LogLevel::Error, L"Failed to get the device name of LightFX device " + to_wstring(j));
                             }
-                            this->AddChild(deviceName, lightFX);
-                            if (initialized) {
-                                ++i;
-                            }
+                            LFX_SAFE_DELETE_ARRAY(devDesc);
                         }
 
                         // TODO: Periodically check for changes (e.g. when a device gets connected or disconnected)
