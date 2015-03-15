@@ -147,7 +147,7 @@ namespace lightfx {
             if (this->lightColor.size() > lightIndex) {
                 return this->lightColor[lightIndex];
             }
-            return LightColor();
+            return LightColor(0, 0, 0, 0);
         }
 
         LFXE_API LightData Device::GetLightData(const size_t lightIndex) {
