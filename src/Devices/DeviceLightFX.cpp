@@ -78,6 +78,7 @@ namespace lightfx {
                             lightData.Position = { lightLoc.x, lightLoc.y, lightLoc.z };
                         } else {
                             LOG(LogLevel::Error, L"Couldn't get light location " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + to_wstring(result));
+                            lightData.Position = { 0, 0, 0 };
                         }
                         LOG(LogLevel::Debug, L"Light " + to_wstring(i) + L" pos: (" + to_wstring(lightLoc.x) + L", " + to_wstring(lightLoc.y) + L", " + to_wstring(lightLoc.z) + L")");
 
