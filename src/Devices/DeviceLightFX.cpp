@@ -35,8 +35,8 @@ namespace lightfx {
                     unsigned char devType = 0;
                     result = LightFX_GetDeviceDescription(this->GetDeviceIndex(), devDesc, LFX_MAX_STRING_SIZE, &devType);
                     if (result != LFX_SUCCESS) {
+                        LOG(LogLevel::Error, L"Couldn't get device description from " + to_wstring(this->GetDeviceIndex()) + L": " + to_wstring(result));
                         LFX_SAFE_DELETE_ARRAY(devDesc);
-                        LOG(LogLevel::Error, L"Couldn't get device description from " + to_wstring(this->GetDeviceIndex()));
                         return false;
                     }
                     this->SetDeviceName(string_to_wstring(devDesc));
@@ -47,8 +47,8 @@ namespace lightfx {
                     unsigned int numLights = 0;
                     result = LightFX_GetNumLights(this->GetDeviceIndex(), &numLights);
                     if (result != LFX_SUCCESS) {
+                        LOG(LogLevel::Error, L"Couldn't get the number of lights from " + to_wstring(this->GetDeviceIndex()) + L": " + to_wstring(result));
                         return false;
-                        LOG(LogLevel::Error, L"Couldn't get the number of lights from " + to_wstring(this->GetDeviceIndex()));
                     }
                     this->SetNumberOfLights(numLights);
                     LOG(LogLevel::Debug, to_wstring(numLights) + L" lights available");
@@ -57,27 +57,28 @@ namespace lightfx {
                     for (unsigned int i = 0; i < numLights; ++i) {
                         LightData lightData;
 
+                        // Description
                         char* lightDesc = new char[LFX_MAX_STRING_SIZE];
                         result = LightFX_GetLightDescription(this->GetDeviceIndex(), i, lightDesc, LFX_MAX_STRING_SIZE);
-                        if (result != LFX_SUCCESS) {
-                            LFX_SAFE_DELETE_ARRAY(lightDesc);
-                            LOG(LogLevel::Error, L"Couldn't get light description " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()));
-                            return false;
+                        if (result == LFX_SUCCESS) {
+                            lightData.Name = string_to_wstring(lightDesc);
+                        } else {
+                            LOG(LogLevel::Error, L"Couldn't get light description " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + to_wstring(result));
                         }
-                        lightData.Name = string_to_wstring(lightDesc);
                         LFX_SAFE_DELETE_ARRAY(lightDesc);
                         if (lightData.Name == L"") {
                             lightData.Name = to_wstring(i);
                         }
                         LOG(LogLevel::Debug, L"Light " + to_wstring(i) + L" name: " + lightData.Name);
 
+                        // Location
                         LFX_POSITION lightLoc;
                         result = LightFX_GetLightLocation(this->GetDeviceIndex(), i, &lightLoc);
-                        if (result != LFX_SUCCESS) {
-                            LOG(LogLevel::Error, L"Couldn't get light location " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()));
-                            return false;
+                        if (result == LFX_SUCCESS) {
+                            lightData.Position = { lightLoc.x, lightLoc.y, lightLoc.z };
+                        } else {
+                            LOG(LogLevel::Error, L"Couldn't get light location " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + to_wstring(result));
                         }
-                        lightData.Position = { lightLoc.x, lightLoc.y, lightLoc.z };
                         LOG(LogLevel::Debug, L"Light " + to_wstring(i) + L" pos: (" + to_wstring(lightLoc.x) + L", " + to_wstring(lightLoc.y) + L", " + to_wstring(lightLoc.z) + L")");
 
                         this->SetLightData(i, lightData);
