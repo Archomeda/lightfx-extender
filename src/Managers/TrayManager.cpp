@@ -29,6 +29,9 @@
 #define MENU_CONFFOLDER_NAME L"Open &configuration folder"
 #define MENU_UPDATE_NAME L"&Download new version"
 
+#define TRAY_BALLOON_TITLE L"LightFX Extender"
+#define TRAY_BALLOON_UPDATE_TEXT L" is available.\nClick here to download it."
+
 #define LOG(logLevel, message) if (this->GetLightFXExtender() != nullptr) { LOG_(this->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"TrayManager - ") + message) }
 
 using namespace std;
@@ -64,7 +67,7 @@ namespace lightfx {
             this->trayIconData.cbSize = sizeof(NOTIFYICONDATAW);
             this->trayIconData.hWnd = this->hTrayIconWindow;
             this->trayIconData.uID = TRAYID;
-            this->trayIconData.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+            this->trayIconData.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP | NIF_INFO;
             StringCchCopyW(this->trayIconData.szTip, ARRAYSIZE(this->trayIconData.szTip), (L"LightFX for " + fname + ext + L" (v" + currentVersion + L")").c_str());
             this->trayIconData.uVersion = NOTIFYICON_VERSION_4;
             this->trayIconData.uCallbackMessage = WM_TRAYICON;
@@ -115,6 +118,11 @@ namespace lightfx {
         LFXE_API void TrayManager::SetUpdateNotification(const wstring& versionString, const wstring& downloadUrl) {
             this->updateVersionString = versionString;
             this->updateVersionUrl = downloadUrl;
+
+            this->trayIconData.dwInfoFlags = NIIF_INFO | 0x80;
+            StringCchCopyW(this->trayIconData.szInfoTitle, ARRAYSIZE(this->trayIconData.szInfoTitle), TRAY_BALLOON_TITLE);
+            StringCchCopyW(this->trayIconData.szInfo, ARRAYSIZE(this->trayIconData.szInfo), (L"Version " + versionString + TRAY_BALLOON_UPDATE_TEXT).c_str());
+            Shell_NotifyIconW(NIM_MODIFY, &this->trayIconData);
         }
 
 
@@ -138,48 +146,54 @@ namespace lightfx {
         };
 
         void TrayManager::TrayIconCallback(WPARAM wParam, LPARAM lParam) {
-            if (wParam == TRAYID && lParam == WM_RBUTTONUP) {
-                HMENU hMenu = CreatePopupMenu();
+            if (wParam == TRAYID) {
+                if (lParam == WM_RBUTTONUP) {
+                    HMENU hMenu = CreatePopupMenu();
 
-                size_t index;
-                auto deviceManager = this->GetLightFXExtender()->GetDeviceManager();
-                for (index = 1; index <= deviceManager->GetChildrenCount(); ++index) {
-                    auto device = deviceManager->GetChildByIndex(index - 1);
-                    if (device->IsInitialized()) {
-                        InsertMenuW(hMenu, static_cast<UINT>(index), device->IsEnabled() ? MF_CHECKED : MF_UNCHECKED, static_cast<UINT>(index), device->GetDeviceName().c_str());
+                    size_t index;
+                    auto deviceManager = this->GetLightFXExtender()->GetDeviceManager();
+                    for (index = 1; index <= deviceManager->GetChildrenCount(); ++index) {
+                        auto device = deviceManager->GetChildByIndex(index - 1);
+                        if (device->IsInitialized()) {
+                            InsertMenuW(hMenu, static_cast<UINT>(index), device->IsEnabled() ? MF_CHECKED : MF_UNCHECKED, static_cast<UINT>(index), device->GetDeviceName().c_str());
+                        }
                     }
-                }
-                InsertMenuW(hMenu, static_cast<UINT>(index), MF_SEPARATOR, 0, NULL);
-                ++index;
-                UINT updateUrlIndex = 0;
-                if (this->updateVersionString != L"") {
-                    updateUrlIndex = static_cast<UINT>(index);
-                    InsertMenuW(hMenu, updateUrlIndex, 0, updateUrlIndex, wstring(wstring(MENU_UPDATE_NAME) + L" (v" + this->updateVersionString + L")...").c_str());
+                    InsertMenuW(hMenu, static_cast<UINT>(index), MF_SEPARATOR, 0, NULL);
                     ++index;
-                }
-                const UINT confDirIndex = static_cast<UINT>(index);
-                InsertMenuW(hMenu, confDirIndex, 0, confDirIndex, MENU_CONFFOLDER_NAME);
+                    UINT updateUrlIndex = 0;
+                    if (this->updateVersionString != L"") {
+                        updateUrlIndex = static_cast<UINT>(index);
+                        InsertMenuW(hMenu, updateUrlIndex, 0, updateUrlIndex, wstring(wstring(MENU_UPDATE_NAME) + L" (v" + this->updateVersionString + L")...").c_str());
+                        ++index;
+                    }
+                    const UINT confDirIndex = static_cast<UINT>(index);
+                    InsertMenuW(hMenu, confDirIndex, 0, confDirIndex, MENU_CONFFOLDER_NAME);
 
-                POINT cursor;
-                GetCursorPos(&cursor);
-                SetForegroundWindow(this->hTrayIconWindow);
-                UINT result = TrackPopupMenu(hMenu, TPM_RETURNCMD, cursor.x, cursor.y, 0, this->hTrayIconWindow, NULL);
-                DestroyMenu(hMenu);
+                    POINT cursor;
+                    GetCursorPos(&cursor);
+                    SetForegroundWindow(this->hTrayIconWindow);
+                    UINT result = TrackPopupMenu(hMenu, TPM_RETURNCMD, cursor.x, cursor.y, 0, this->hTrayIconWindow, NULL);
+                    DestroyMenu(hMenu);
 
-                if (result == confDirIndex) {
-                    ShellExecuteW(NULL, L"explore", GetDataStorageFolder().c_str(), NULL, NULL, SW_SHOWNORMAL);
-                } else if (updateUrlIndex > 0 && result == updateUrlIndex) {
-                    ShellExecuteW(NULL, L"open", this->updateVersionUrl.c_str(), NULL, NULL, SW_SHOWDEFAULT);
-                } else if (result > 0 && result <= deviceManager->GetChildrenCount()) {
-                    auto device = deviceManager->GetChildByIndex(result - 1);
-                    if (device->IsEnabled()) {
-                        if (!device->Disable()) {
-                            MessageBoxW(NULL, wstring(L"Failed to disable " + device->GetDeviceName() + L".\r\nCheck the log to see if there are more details.").c_str(), L"LightFX Extender", MB_OK | MB_ICONERROR);
+                    if (result == confDirIndex) {
+                        ShellExecuteW(NULL, L"explore", GetDataStorageFolder().c_str(), NULL, NULL, SW_SHOWNORMAL);
+                    } else if (updateUrlIndex > 0 && result == updateUrlIndex) {
+                        ShellExecuteW(NULL, L"open", this->updateVersionUrl.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+                    } else if (result > 0 && result <= deviceManager->GetChildrenCount()) {
+                        auto device = deviceManager->GetChildByIndex(result - 1);
+                        if (device->IsEnabled()) {
+                            if (!device->Disable()) {
+                                MessageBoxW(NULL, wstring(L"Failed to disable " + device->GetDeviceName() + L".\r\nCheck the log to see if there are more details.").c_str(), L"LightFX Extender", MB_OK | MB_ICONERROR);
+                            }
+                        } else {
+                            if (!device->Enable()) {
+                                MessageBoxW(NULL, wstring(L"Failed to enable " + device->GetDeviceName() + L".\r\nCheck the log to see if there are more details.").c_str(), L"LightFX Extender", MB_OK | MB_ICONERROR);
+                            }
                         }
-                    } else {
-                        if (!device->Enable()) {
-                            MessageBoxW(NULL, wstring(L"Failed to enable " + device->GetDeviceName() + L".\r\nCheck the log to see if there are more details.").c_str(), L"LightFX Extender", MB_OK | MB_ICONERROR);
-                        }
+                    }
+                } else if (lParam == NIN_BALLOONUSERCLICK) {
+                    if (this->updateVersionUrl != L"") {
+                        ShellExecuteW(NULL, L"open", this->updateVersionUrl.c_str(), NULL, NULL, SW_SHOWDEFAULT);
                     }
                 }
             }
