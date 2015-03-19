@@ -13,6 +13,7 @@
 // Project includes
 #include "lightFXExtender.h"
 #include "Managers/DeviceManager.h"
+#include "Managers/LogManager.h"
 #include "Managers/UpdateManager.h"
 #include "Utils/String.h"
 
@@ -63,56 +64,76 @@ extern "C" {
 #endif
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_Initialize() {
-        lightFXExtender->Initialize();
-        lightFXExtender->Start();
-        return lightFXExtender->GetDeviceManager()->GetChildrenCount() > 0 ? LFX_SUCCESS : LFX_ERROR_NODEVS;
+        try {
+
+            lightFXExtender->Initialize();
+            lightFXExtender->Start();
+            return lightFXExtender->GetDeviceManager()->GetChildrenCount() > 0 ? LFX_SUCCESS : LFX_ERROR_NODEVS;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_Initialize: " + string_to_wstring(ex.what()));
+            return LFX_FAILURE;
+        }
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_Release() {
-        lightFXExtender->Stop();
-        return LFX_SUCCESS;
+        try {
+
+            lightFXExtender->Stop();
+            return LFX_SUCCESS;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_Release: " + string_to_wstring(ex.what()));
+            return LFX_FAILURE;
+        }
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_Reset() {
-        if (!lightFXExtender->IsInitialized()) {
-            return LFX_ERROR_NOINIT;
-        }
-
-        auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (deviceManager->GetChildrenCount() == 0) {
-            return LFX_ERROR_NODEVS;
-        }
-
         try {
+
+            if (!lightFXExtender->IsInitialized()) {
+                return LFX_ERROR_NOINIT;
+            }
+
+            auto deviceManager = lightFXExtender->GetDeviceManager();
+            if (deviceManager->GetChildrenCount() == 0) {
+                return LFX_ERROR_NODEVS;
+            }
+
             for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
                 deviceManager->GetChildByIndex(i)->Reset();
             }
-        } catch (...) {
+
+            return LFX_SUCCESS;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_Reset: " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
-
-        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_Update() {
-        if (!lightFXExtender->IsInitialized()) {
-            return LFX_ERROR_NOINIT;
-        }
-
-        auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (deviceManager->GetChildrenCount() == 0) {
-            return LFX_ERROR_NODEVS;
-        }
-
         try {
+
+            if (!lightFXExtender->IsInitialized()) {
+                return LFX_ERROR_NOINIT;
+            }
+
+            auto deviceManager = lightFXExtender->GetDeviceManager();
+            if (deviceManager->GetChildrenCount() == 0) {
+                return LFX_ERROR_NODEVS;
+            }
+
             for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
                 deviceManager->GetChildByIndex(i)->Update();
             }
-        } catch (...) {
+
+            return LFX_SUCCESS;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_Update: " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
-
-        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_UpdateDefault() {
@@ -121,239 +142,272 @@ extern "C" {
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetNumDevices(unsigned int* const numDevices) {
-        if (!lightFXExtender->IsInitialized()) {
-            return LFX_ERROR_NOINIT;
-        }
+        try {
 
-        auto deviceManager = lightFXExtender->GetDeviceManager();
-        size_t numberOfDevices = deviceManager->GetChildrenCount();
-        if (numberOfDevices == 0) {
-            return LFX_ERROR_NODEVS;
-        } else if (numberOfDevices > numeric_limits<unsigned int>::max()) {
+            if (!lightFXExtender->IsInitialized()) {
+                return LFX_ERROR_NOINIT;
+            }
+
+            auto deviceManager = lightFXExtender->GetDeviceManager();
+            size_t numberOfDevices = deviceManager->GetChildrenCount();
+            if (numberOfDevices == 0) {
+                return LFX_ERROR_NODEVS;
+            } else if (numberOfDevices > numeric_limits<unsigned int>::max()) {
+                return LFX_FAILURE;
+            }
+
+            *numDevices = static_cast<unsigned int>(numberOfDevices);
+            return LFX_SUCCESS;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_GetNumDevices: " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
-
-        *numDevices = static_cast<unsigned int>(numberOfDevices);
-        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetDeviceDescription(const unsigned int devIndex, char* const devDesc, const unsigned int devDescSize, unsigned char* const devType) {
-        if (!lightFXExtender->IsInitialized()) {
-            return LFX_ERROR_NOINIT;
-        }
-
-        auto deviceManager = lightFXExtender->GetDeviceManager();
-        size_t numberOfDevices = deviceManager->GetChildrenCount();
-        if (devIndex >= numberOfDevices) {
-            return LFX_ERROR_NODEVS;
-        } else if (numberOfDevices > numeric_limits<unsigned int>::max()) {
-            return LFX_FAILURE;
-        }
-
-        auto device = deviceManager->GetChildByIndex(devIndex);
-        string deviceName = wstring_to_string(device->GetDeviceName());
-        if (deviceName.length() > devDescSize) {
-            return LFX_ERROR_BUFFSIZE;
-        }
-
         try {
+
+            if (!lightFXExtender->IsInitialized()) {
+                return LFX_ERROR_NOINIT;
+            }
+
+            auto deviceManager = lightFXExtender->GetDeviceManager();
+            if (devIndex >= deviceManager->GetChildrenCount()) {
+                return LFX_ERROR_NODEVS;
+            }
+
+            auto device = deviceManager->GetChildByIndex(devIndex);
+            string deviceName = wstring_to_string(device->GetDeviceName());
+            if (deviceName.length() > devDescSize) {
+                return LFX_ERROR_BUFFSIZE;
+            }
+
             sprintf_s(devDesc, devDescSize, deviceName.c_str());
             *devType = device->GetDeviceType();
-        } catch (...) {
+
+            return LFX_SUCCESS;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_GetDeviceDescription (devIndex=" + to_wstring(devIndex) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
-
-        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetNumLights(const unsigned int devIndex, unsigned int* const numLights) {
-        if (!lightFXExtender->IsInitialized()) {
-            return LFX_ERROR_NOINIT;
-        }
-
-        auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (devIndex >= deviceManager->GetChildrenCount()) {
-            return LFX_ERROR_NODEVS;
-        }
-
         try {
+
+            if (!lightFXExtender->IsInitialized()) {
+                return LFX_ERROR_NOINIT;
+            }
+
+            auto deviceManager = lightFXExtender->GetDeviceManager();
+            if (devIndex >= deviceManager->GetChildrenCount()) {
+                return LFX_ERROR_NODEVS;
+            }
+
             size_t numberOfLights = deviceManager->GetChildByIndex(devIndex)->GetNumberOfLights();
             if (numberOfLights > numeric_limits<unsigned int>::max()) {
                 return LFX_FAILURE;
             }
             *numLights = static_cast<unsigned int>(numberOfLights);
-        } catch (...) {
+
+            return LFX_SUCCESS;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_GetNumLights (devIndex=" + to_wstring(devIndex) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
-
-        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetLightDescription(const unsigned int devIndex, const unsigned int lightIndex, char* const lightDesc, const unsigned int lightDescSize) {
-        if (!lightFXExtender->IsInitialized()) {
-            return LFX_ERROR_NOINIT;
-        }
-
-        auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (devIndex >= deviceManager->GetChildrenCount()) {
-            return LFX_ERROR_NODEVS;
-        }
-
-        auto device = deviceManager->GetChildByIndex(devIndex);
-        if (lightIndex >= device->GetNumberOfLights()) {
-            return LFX_ERROR_NOLIGHTS;
-        }
-
-        string lightName = wstring_to_string(device->GetLightData(lightIndex).Name);
-        if (lightName.length() > lightDescSize) {
-            return LFX_ERROR_BUFFSIZE;
-        }
-
         try {
+
+            if (!lightFXExtender->IsInitialized()) {
+                return LFX_ERROR_NOINIT;
+            }
+
+            auto deviceManager = lightFXExtender->GetDeviceManager();
+            if (devIndex >= deviceManager->GetChildrenCount()) {
+                return LFX_ERROR_NODEVS;
+            }
+
+            auto device = deviceManager->GetChildByIndex(devIndex);
+            if (lightIndex >= device->GetNumberOfLights()) {
+                return LFX_ERROR_NOLIGHTS;
+            }
+
+            string lightName = wstring_to_string(device->GetLightData(lightIndex).Name);
+            if (lightName.length() > lightDescSize) {
+                return LFX_ERROR_BUFFSIZE;
+            }
+
             sprintf_s(lightDesc, lightDescSize, lightName.c_str());
-        } catch (...) {
+
+            return LFX_SUCCESS;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_GetLightDescription (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
-
-        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetLightLocation(const unsigned int devIndex, const unsigned int lightIndex, PLFX_POSITION const lightLoc) {
-        if (!lightFXExtender->IsInitialized()) {
-            return LFX_ERROR_NOINIT;
-        }
-
-        auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (devIndex >= deviceManager->GetChildrenCount()) {
-            return LFX_ERROR_NODEVS;
-        }
-
-        auto device = deviceManager->GetChildByIndex(devIndex);
-        if (lightIndex >= device->GetNumberOfLights()) {
-            return LFX_ERROR_NOLIGHTS;
-        }
-
         try {
+
+            if (!lightFXExtender->IsInitialized()) {
+                return LFX_ERROR_NOINIT;
+            }
+
+            auto deviceManager = lightFXExtender->GetDeviceManager();
+            if (devIndex >= deviceManager->GetChildrenCount()) {
+                return LFX_ERROR_NODEVS;
+            }
+
+            auto device = deviceManager->GetChildByIndex(devIndex);
+            if (lightIndex >= device->GetNumberOfLights()) {
+                return LFX_ERROR_NOLIGHTS;
+            }
+
             *lightLoc = DeviceLightPositionToLfxPosition(device->GetLightData(lightIndex).Position);
-        } catch (...) {
+
+            return LFX_SUCCESS;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_GetLightLocation (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
-
-        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_GetLightColor(const unsigned int devIndex, const unsigned int lightIndex, PLFX_COLOR const lightCol) {
-        if (!lightFXExtender->IsInitialized()) {
-            return LFX_ERROR_NOINIT;
-        }
-
-        auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (devIndex >= deviceManager->GetChildrenCount()) {
-            return LFX_ERROR_NODEVS;
-        }
-
-        auto device = deviceManager->GetChildByIndex(devIndex);
-        if (lightIndex >= device->GetNumberOfLights()) {
-            return LFX_ERROR_NOLIGHTS;
-        }
-
         try {
+
+            if (!lightFXExtender->IsInitialized()) {
+                return LFX_ERROR_NOINIT;
+            }
+
+            auto deviceManager = lightFXExtender->GetDeviceManager();
+            if (devIndex >= deviceManager->GetChildrenCount()) {
+                return LFX_ERROR_NODEVS;
+            }
+
+            auto device = deviceManager->GetChildByIndex(devIndex);
+            if (lightIndex >= device->GetNumberOfLights()) {
+                return LFX_ERROR_NOLIGHTS;
+            }
+
             *lightCol = LightColorToLfxColor(device->GetLightColor(lightIndex));
-        } catch (...) {
+
+            return LFX_SUCCESS;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_GetLightColor (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
-
-        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_SetLightColor(const unsigned int devIndex, const unsigned int lightIndex, const PLFX_COLOR lightCol) {
-        if (!lightFXExtender->IsInitialized()) {
-            return LFX_ERROR_NOINIT;
-        }
-
-        auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (devIndex >= deviceManager->GetChildrenCount()) {
-            return LFX_ERROR_NODEVS;
-        }
-
-        auto device = deviceManager->GetChildByIndex(devIndex);
-        if (lightIndex >= device->GetNumberOfLights()) {
-            return LFX_ERROR_NOLIGHTS;
-        }
-
-        Timeline timeline = device->GetQueuedTimeline();
-        LightColor color = LfxColorToLightColor(*lightCol);
-
         try {
+
+            if (!lightFXExtender->IsInitialized()) {
+                return LFX_ERROR_NOINIT;
+            }
+
+            auto deviceManager = lightFXExtender->GetDeviceManager();
+            if (devIndex >= deviceManager->GetChildrenCount()) {
+                return LFX_ERROR_NODEVS;
+            }
+
+            auto device = deviceManager->GetChildByIndex(devIndex);
+            if (lightIndex >= device->GetNumberOfLights()) {
+                return LFX_ERROR_NOLIGHTS;
+            }
+
+            Timeline timeline = device->GetQueuedTimeline();
+            LightColor color = LfxColorToLightColor(*lightCol);
+
             timeline.SetTimeline(lightIndex, LightTimeline::NewInstant(color));
             device->QueueTimeline(timeline);
-        } catch (...) {
+
+            return LFX_SUCCESS;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_GetLightColor (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
-
-        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_Light(const unsigned int locationMask, const unsigned int lightCol) {
-        // Location mask not supported yet, so we set everything
-        LightColor color = IntToLightColor(lightCol);
-
-        if (!lightFXExtender->IsInitialized()) {
-            return LFX_ERROR_NOINIT;
-        }
-
-        auto deviceManager = lightFXExtender->GetDeviceManager();
         try {
+
+            // Location mask not supported yet, so we set everything
+            LightColor color = IntToLightColor(lightCol);
+
+            if (!lightFXExtender->IsInitialized()) {
+                return LFX_ERROR_NOINIT;
+            }
+
+            auto deviceManager = lightFXExtender->GetDeviceManager();
             for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
                 auto device = deviceManager->GetChildByIndex(i);
                 device->QueueTimeline(Timeline(device->GetNumberOfLights(), LightTimeline::NewInstant(color)));
             }
-        } catch (...) {
+
+            return LFX_SUCCESS;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_Light (locationMask=" + to_wstring(locationMask) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
-
-        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_SetLightActionColor(const unsigned int devIndex, const unsigned int lightIndex, const unsigned int actionType, const PLFX_COLOR primaryCol) {
-        if (!lightFXExtender->IsInitialized()) {
-            return LFX_ERROR_NOINIT;
-        }
+        try {
 
-        auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (devIndex >= deviceManager->GetChildrenCount()) {
-            return LFX_ERROR_NODEVS;
-        }
+            if (!lightFXExtender->IsInitialized()) {
+                return LFX_ERROR_NOINIT;
+            }
 
-        auto device = deviceManager->GetChildByIndex(devIndex);
-        if (lightIndex >= device->GetNumberOfLights()) {
-            return LFX_ERROR_NOLIGHTS;
-        }
+            auto deviceManager = lightFXExtender->GetDeviceManager();
+            if (devIndex >= deviceManager->GetChildrenCount()) {
+                return LFX_ERROR_NODEVS;
+            }
 
-        Timeline timeline = device->GetQueuedTimeline();
-        LFX_COLOR startColor = LightColorToLfxColor(device->GetLightColor(lightIndex));
-        return LFX_SetLightActionColorEx(devIndex, lightIndex, actionType, &startColor, primaryCol);
+            auto device = deviceManager->GetChildByIndex(devIndex);
+            if (lightIndex >= device->GetNumberOfLights()) {
+                return LFX_ERROR_NOLIGHTS;
+            }
+
+            Timeline timeline = device->GetQueuedTimeline();
+            LFX_COLOR startColor = LightColorToLfxColor(device->GetLightColor(lightIndex));
+            return LFX_SetLightActionColorEx(devIndex, lightIndex, actionType, &startColor, primaryCol);
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_SetLightActionColor (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L", actionType=" + to_wstring(actionType) + L"): " + string_to_wstring(ex.what()));
+            return LFX_FAILURE;
+        }
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_SetLightActionColorEx(const unsigned int devIndex, const unsigned int lightIndex, const unsigned int actionType, const PLFX_COLOR primaryCol, const PLFX_COLOR secondaryCol) {
-        if (!lightFXExtender->IsInitialized()) {
-            return LFX_ERROR_NOINIT;
-        }
-
-        auto deviceManager = lightFXExtender->GetDeviceManager();
-        if (devIndex >= deviceManager->GetChildrenCount()) {
-            return LFX_ERROR_NODEVS;
-        }
-
-        auto device = deviceManager->GetChildByIndex(devIndex);
-        if (lightIndex >= device->GetNumberOfLights()) {
-            return LFX_ERROR_NOLIGHTS;
-        }
-
-        Timeline timeline = device->GetQueuedTimeline();
-        LightColor startColor = LfxColorToLightColor(*primaryCol);
-        LightColor endColor = LfxColorToLightColor(*secondaryCol);
         try {
+
+            if (!lightFXExtender->IsInitialized()) {
+                return LFX_ERROR_NOINIT;
+            }
+
+            auto deviceManager = lightFXExtender->GetDeviceManager();
+            if (devIndex >= deviceManager->GetChildrenCount()) {
+                return LFX_ERROR_NODEVS;
+            }
+
+            auto device = deviceManager->GetChildByIndex(devIndex);
+            if (lightIndex >= device->GetNumberOfLights()) {
+                return LFX_ERROR_NOLIGHTS;
+            }
+
+            Timeline timeline = device->GetQueuedTimeline();
+            LightColor startColor = LfxColorToLightColor(*primaryCol);
+            LightColor endColor = LfxColorToLightColor(*secondaryCol);
             switch (actionType) {
             case LFX_ACTION_MORPH:
                 timeline.SetTimeline(lightIndex, LightTimeline::NewMorph(startColor, endColor, timing));
@@ -368,64 +422,80 @@ extern "C" {
                 break;
             }
             deviceManager->GetChildByIndex(devIndex)->QueueTimeline(timeline);
-        } catch (...) {
+
+            return LFX_SUCCESS;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_SetLightActionColorEx (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L", actionType=" + to_wstring(actionType) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
-
-        return LFX_SUCCESS;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_ActionColor(const unsigned int locationMask, const unsigned int actionType, const unsigned int primaryCol) {
-        // Location mask not supported yet, so we set everything
-        LFX_COLOR color = IntToLfxColor(primaryCol);
+        try {
 
-        LFX_RESULT result;
-        auto deviceManager = lightFXExtender->GetDeviceManager();
-        for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
-            if (i > numeric_limits<unsigned int>::max()) {
-                return LFX_FAILURE;
-            }
+            // Location mask not supported yet, so we set everything
+            LFX_COLOR color = IntToLfxColor(primaryCol);
 
-            auto device = deviceManager->GetChildByIndex(i);
-            for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
-                if (j > numeric_limits<unsigned int>::max()) {
+            LFX_RESULT result;
+            auto deviceManager = lightFXExtender->GetDeviceManager();
+            for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
+                if (i > numeric_limits<unsigned int>::max()) {
                     return LFX_FAILURE;
                 }
 
-                result = LFX_SetLightActionColor(static_cast<unsigned int>(i), static_cast<unsigned int>(j), actionType, &color);
-                if (result != LFX_SUCCESS) {
-                    return result;
+                auto device = deviceManager->GetChildByIndex(i);
+                for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
+                    if (j > numeric_limits<unsigned int>::max()) {
+                        return LFX_FAILURE;
+                    }
+
+                    result = LFX_SetLightActionColor(static_cast<unsigned int>(i), static_cast<unsigned int>(j), actionType, &color);
+                    if (result != LFX_SUCCESS) {
+                        return result;
+                    }
                 }
             }
+            return result;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_ActionColor (locationMask=" + to_wstring(locationMask) + L", actionType=" + to_wstring(actionType) + L"): " + string_to_wstring(ex.what()));
+            return LFX_FAILURE;
         }
-        return result;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_ActionColorEx(const unsigned int locationMask, const unsigned int actionType, const unsigned int primaryCol, const unsigned int secondaryCol) {
-        // Location mask not supported yet, so we set everything
-        LFX_COLOR color1 = IntToLfxColor(primaryCol);
-        LFX_COLOR color2 = IntToLfxColor(secondaryCol);
+        try {
 
-        LFX_RESULT result;
-        auto deviceManager = lightFXExtender->GetDeviceManager();
-        for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
-            if (i > numeric_limits<unsigned int>::max()) {
-                return LFX_FAILURE;
-            }
- 
-            auto device = deviceManager->GetChildByIndex(i);
-            for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
-                if (j > numeric_limits<unsigned int>::max()) {
+            // Location mask not supported yet, so we set everything
+            LFX_COLOR color1 = IntToLfxColor(primaryCol);
+            LFX_COLOR color2 = IntToLfxColor(secondaryCol);
+
+            LFX_RESULT result;
+            auto deviceManager = lightFXExtender->GetDeviceManager();
+            for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
+                if (i > numeric_limits<unsigned int>::max()) {
                     return LFX_FAILURE;
                 }
-            
-                result = LFX_SetLightActionColorEx(static_cast<unsigned int>(i), static_cast<unsigned int>(j), actionType, &color1, &color2);
-                if (result != LFX_SUCCESS) {
-                    return result;
+
+                auto device = deviceManager->GetChildByIndex(i);
+                for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
+                    if (j > numeric_limits<unsigned int>::max()) {
+                        return LFX_FAILURE;
+                    }
+
+                    result = LFX_SetLightActionColorEx(static_cast<unsigned int>(i), static_cast<unsigned int>(j), actionType, &color1, &color2);
+                    if (result != LFX_SUCCESS) {
+                        return result;
+                    }
                 }
             }
+            return result;
+
+        } catch (const exception& ex) {
+            lightFXExtender->GetLogManager()->Log(LogLevel::Error, L"Exception in LFX_ActionColorEx (locationMask=" + to_wstring(locationMask) + L", actionType=" + to_wstring(actionType) + L"): " + string_to_wstring(ex.what()));
+            return LFX_FAILURE;
         }
-        return result;
     }
 
     FN_DECLSPEC LFX_RESULT STDCALL LFX_SetTiming(const int newTiming) {
