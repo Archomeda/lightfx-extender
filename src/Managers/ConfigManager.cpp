@@ -7,13 +7,14 @@
 // Project includes
 #include "../Config/MainConfigFile.h"
 #include "../LightFXExtender.h"
-#include "LogManager.h"
+#include "../Utils/Log.h"
 
 
-#define LOG(logLevel, message) if (this->GetLightFXExtender() != nullptr) { LOG_(this->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"ConfigManager - ") + message) }
+#define LOG(logLevel, message) LOG_(logLevel, wstring(L"ConfigManager - ") + message)
 
 using namespace std;
 using namespace lightfx::config;
+using namespace lightfx::utils;
 
 namespace lightfx {
     namespace managers {

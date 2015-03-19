@@ -12,19 +12,20 @@
 
 // Project includes
 #include "../LightFXExtender.h"
+#include "../Config/MainConfigFile.h"
 #include "../Managers/ConfigManager.h"
 #include "../Managers/DeviceManager.h"
-#include "../Managers/LogManager.h"
-#include "../Config/MainConfigFile.h"
+#include "../Utils/Log.h"
 
 
-#define LOG(logLevel, message) if (this->GetManager() != nullptr) { LOG_(this->GetManager()->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"Game ") + this->GetGameName() + L" - " + message) }
+#define LOG(logLevel, message) LOG_(logLevel, wstring(L"Game ") + this->GetGameName() + L" - " + message)
 
 using namespace std;
 using namespace rapidjson;
 using namespace lightfx::devices;
 using namespace lightfx::managers;
 using namespace lightfx::timelines;
+using namespace lightfx::utils;
 
 namespace lightfx {
     namespace games {

@@ -8,14 +8,12 @@
 #include "Managers/ConfigManager.h"
 #include "Managers/DeviceManager.h"
 #include "Managers/GameManager.h"
-#include "Managers/LogManager.h"
 #include "Managers/TrayManager.h"
 #include "Managers/UpdateManager.h"
 #include "Config/MainConfigFile.h"
+#include "Utils/Log.h"
 #include "Utils/Windows.h"
 
-
-#define LOG(logLevel, message) LOG_(this->logManager, logLevel, message)
 
 using namespace std;
 using namespace lightfx::config;
@@ -28,21 +26,18 @@ namespace lightfx {
         shared_ptr<ConfigManager> configMgr = make_shared<ConfigManager>();
         shared_ptr<DeviceManager> deviceMgr = make_shared<DeviceManager>();
         shared_ptr<GameManager> gameMgr = make_shared<GameManager>();
-        shared_ptr<LogManager> logMgr = make_shared<LogManager>();
         shared_ptr<TrayManager> trayMgr = make_shared<TrayManager>();
         shared_ptr<UpdateManager> updateMgr = make_shared<UpdateManager>();
 
         configMgr->SetLightFXExtender(shared_from_this());
         deviceMgr->SetLightFXExtender(shared_from_this());
         gameMgr->SetLightFXExtender(shared_from_this());
-        logMgr->SetLightFXExtender(shared_from_this());
         trayMgr->SetLightFXExtender(shared_from_this());
         updateMgr->SetLightFXExtender(shared_from_this());
 
         this->configManager = configMgr;
         this->deviceManager = deviceMgr;
         this->gameManager = gameMgr;
-        this->logManager = logMgr;
         this->trayManager = trayMgr;
         this->updateManager = updateMgr;
     }
@@ -52,18 +47,18 @@ namespace lightfx {
     }
 
     LFXE_API void LightFXExtender::Start() {
-        this->logManager->RotateLog();
-        LOG(LogLevel::Info, L"LightFX Extender v" + this->updateManager->GetCurrentVersion().ToString());
+        Log::RotateLog();
+        LOG_(LogLevel::Info, L"LightFX Extender v" + this->updateManager->GetCurrentVersion().ToString());
 
         wstring processFileName;
         wstring ext;
         wstring processPath = GetProcessName(nullptr, nullptr, &processFileName, &ext);
         processFileName = processFileName + ext;
 
-        LOG(LogLevel::Info, L"Connected to " + processPath);
+        LOG_(LogLevel::Info, L"Connected to " + processPath);
 
         this->configManager->InitializeConfigs();
-        this->logManager->SetMinimumLogLevel(this->configManager->GetMainConfig()->MinimumLogLevel);
+        Log::SetMinimumLogLevel(this->configManager->GetMainConfig()->MinimumLogLevel);
         this->updateManager->CheckAsync();
         this->deviceManager->InitializeDevices();
         this->gameManager->InitializeGame(processFileName);

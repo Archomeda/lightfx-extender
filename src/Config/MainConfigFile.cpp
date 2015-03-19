@@ -47,6 +47,7 @@
 using namespace std;
 using namespace rapidjson;
 using namespace lightfx::managers;
+using namespace lightfx::utils;
 
 namespace lightfx {
     namespace config {

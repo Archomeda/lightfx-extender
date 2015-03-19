@@ -7,17 +7,17 @@
 // Project includes
 #include "../LightFXExtender.h"
 #include "ConfigManager.h"
-#include "LogManager.h"
 #include "../Config/MainConfigFile.h"
 #include "../Devices/DeviceLightFX.h"
 #include "../Devices/DeviceLightpack.h"
 #include "../Devices/DeviceLogitech.h"
 #include "../Devices/LightFX2.h"
 #include "../Utils/FileIO.h"
+#include "../Utils/Log.h"
 #include "../Utils/String.h"
 
 
-#define LOG(logLevel, message) if (this->GetLightFXExtender() != nullptr) { LOG_(this->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"DeviceManager - ") + message) }
+#define LOG(logLevel, message) LOG_(logLevel, wstring(L"DeviceManager - ") + message)
 
 using namespace std;
 using namespace lightfx::config;

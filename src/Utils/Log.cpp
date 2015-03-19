@@ -2,7 +2,7 @@
 #define LFXE_EXPORTS
 #endif
 
-#include "LogManager.h"
+#include "Log.h"
 
 // Standard includes
 #include <iostream>
@@ -16,25 +16,26 @@
 
 // Project includes
 #include "../LightFXExtender.h"
-#include "../Managers/ConfigManager.h"
-#include "../Config/MainConfigFile.h"
 #include "../Utils/FileIO.h"
 
 
 using namespace std;
-using namespace lightfx::utils;
 
 namespace lightfx {
-    namespace managers {
+    namespace utils {
 
-        LFXE_API LogManager::LogManager() {
-            this->logDirectory = GetDataStorageFolder();
-        }
+        wstring logFileName = L"LightFXExtender.log";
+        wstring logDirectory = GetDataStorageFolder();
+#ifdef LFXE_TESTING
+        LogLevel minimumLogLevel = LogLevel::Off;
+#else
+        LogLevel minimumLogLevel = LogLevel::Info;
+#endif
 
 
-        LFXE_API void LogManager::Log(const LogLevel logLevel, const std::wstring& line) {
+        LFXE_API void Log::LogLine(const LogLevel logLevel, const std::wstring& line) {
             // Check if the log level is equal or higher than the minimum log level that's currently set
-            if (this->minimumLogLevel > logLevel) {
+            if (minimumLogLevel > logLevel) {
                 return;
             }
 
@@ -65,14 +66,14 @@ namespace lightfx {
 
             // Log
             try {
-                wstring filePath = this->GetLogDirectory();
+                wstring filePath = logDirectory;
                 if (!DirExists(filePath)) {
                     if (CreateDirectoryW(filePath.c_str(), NULL) == FALSE) {
                         // Can't log the failure, since we just failed to create the directory where the log file should be...
                         return;
                     }
                 }
-                filePath += L"/" + this->logFileName;
+                filePath += L"/" + logFileName;
                 wofstream logStream;
                 logStream.imbue(locale(logStream.getloc(), new codecvt_utf8<wchar_t>));
                 logStream.open(filePath, wios::out | wios::binary | wios::app);
@@ -83,13 +84,13 @@ namespace lightfx {
             }
         }
 
-        LFXE_API void LogManager::LogLastWindowsError() {
+        LFXE_API void Log::LogLastWindowsError() {
             wstring message;
 
             //Get the error message, if any.
             DWORD errorMessageID = GetLastError();
             if (errorMessageID == 0) {
-                return this->Log(LogLevel::Debug, L"No Windows error found");
+                LOG_(LogLevel::Debug, L"No Windows error found");
             }
 
             LPWSTR messageBuffer = nullptr;
@@ -101,14 +102,14 @@ namespace lightfx {
             //Free the buffer.
             LocalFree(messageBuffer);
 
-            return Log(LogLevel::Error, L"Windows error: " + message);
+            LOG_(LogLevel::Error, L"Windows error: " + message);
         }
 
 
-        LFXE_API void LogManager::RotateLog() {
-            wstring filePath = this->GetLogDirectory();
+        LFXE_API void Log::RotateLog() {
+            wstring filePath = logDirectory;
             if (DirExists(filePath)) {
-                filePath += L"/" + this->logFileName;
+                filePath += L"/" + logFileName;
                 if (FileExists(filePath)) {
                     for (int i = 3; i >= 0; --i) {
                         wstring filePathOld = filePath + L"." + to_wstring(i);
@@ -127,25 +128,25 @@ namespace lightfx {
         }
 
 
-        LFXE_API const wstring LogManager::GetLogFileName() {
-            return this->logFileName;
+        LFXE_API const wstring Log::GetLogFileName() {
+            return logFileName;
         }
 
-        LFXE_API const wstring LogManager::GetLogDirectory() {
-            return this->logDirectory;
+        LFXE_API const wstring Log::GetLogDirectory() {
+            return logDirectory;
         }
 
-        LFXE_API void LogManager::SetLogDirectory(const wstring& directory) {
-            this->logDirectory = directory;
+        LFXE_API void Log::SetLogDirectory(const wstring& directory) {
+            logDirectory = directory;
         }
 
 
-        LFXE_API LogLevel LogManager::GetMinimumLogLevel() {
-            return this->minimumLogLevel;
+        LFXE_API LogLevel Log::GetMinimumLogLevel() {
+            return minimumLogLevel;
         }
 
-        LFXE_API void LogManager::SetMinimumLogLevel(const LogLevel logLevel) {
-            this->minimumLogLevel = logLevel;
+        LFXE_API void Log::SetMinimumLogLevel(const LogLevel logLevel) {
+            minimumLogLevel = logLevel;
         }
     }
 }

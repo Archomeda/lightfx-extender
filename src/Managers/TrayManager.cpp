@@ -14,11 +14,11 @@
 #include "../LightFXExtender.h"
 #include "ConfigManager.h"
 #include "DeviceManager.h"
-#include "LogManager.h"
 #include "UpdateManager.h"
 #include "../Config/MainConfigFile.h"
-#include "../Utils/Windows.h"
 #include "../Utils/FileIO.h"
+#include "../Utils/Log.h"
+#include "../Utils/Windows.h"
 #include "../resource.h"
 
 
@@ -32,7 +32,7 @@
 #define TRAY_BALLOON_TITLE L"LightFX Extender"
 #define TRAY_BALLOON_UPDATE_TEXT L" is available.\nClick here to download it."
 
-#define LOG(logLevel, message) if (this->GetLightFXExtender() != nullptr) { LOG_(this->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"TrayManager - ") + message) }
+#define LOG(logLevel, message) LOG_(logLevel, wstring(L"TrayManager - ") + message)
 
 using namespace std;
 using namespace lightfx::config;

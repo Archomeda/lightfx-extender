@@ -179,7 +179,6 @@
     <ClCompile Include="Devices\DeviceMock.h" />
     <ClCompile Include="Games\GameTest.cpp" />
     <ClCompile Include="Managers\ChildOfManagerTest.cpp" />
-    <ClCompile Include="Managers\LogManagerTest.cpp" />
     <ClCompile Include="Managers\ManagerTest.cpp" />
     <ClCompile Include="Managers\ManagerWithChildrenTest.cpp" />
     <ClCompile Include="Managers\TrayManagerTest.cpp" />
@@ -188,6 +187,7 @@
     <ClCompile Include="Timelines\LightTimelineItemTest.cpp" />
     <ClCompile Include="Timelines\LightTimelineTest.cpp" />
     <ClCompile Include="Utils\FileIOTest.cpp" />
+    <ClCompile Include="Utils\LogTest.cpp" />
     <ClCompile Include="Utils\StringTest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

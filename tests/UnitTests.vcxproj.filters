@@ -36,9 +36,6 @@
     <ClCompile Include="Managers\ChildOfManagerTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Managers\LogManagerTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Managers\TrayManagerTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -58,6 +55,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Timelines\LightTimelineTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\LogTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -17,12 +17,12 @@
 
 // Project includes
 #include "../LightFXExtender.h"
-#include "../Managers/LogManager.h"
 #include "../Utils/FileIO.h"
+#include "../Utils/Log.h"
 #include "../Utils/String.h"
 
 
-#define LOG(logLevel, message) if (this->GetManager() != nullptr) { LOG_(this->GetManager()->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"Config ") + this->GetCurrentFileName() + L" - " + message) }
+#define LOG(logLevel, message) LOG_(logLevel, wstring(L"Config ") + this->GetCurrentFileName() + L" - " + message)
 
 using namespace std;
 using namespace lightfx::managers;

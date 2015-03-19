@@ -10,11 +10,11 @@
 // Project includes
 #include "LightFX2.h"
 #include "../LightFXExtender.h"
-#include "../Managers/LogManager.h"
+#include "../Utils/Log.h"
 #include "../Utils/String.h"
 
 
-#define LOG(logLevel, message) if (this->GetManager() != nullptr) { LOG_(this->GetManager()->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"LightFX Device ") + this->GetDeviceName() + L" - " + message) }
+#define LOG(logLevel, message) LOG_(logLevel, wstring(L"LightFX Device ") + this->GetDeviceName() + L" - " + message)
 
 using namespace std;
 using namespace lightfx::managers;

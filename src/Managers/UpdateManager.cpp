@@ -21,16 +21,15 @@
 #include "../VersionInfo.h"
 #include "../LightFXExtender.h"
 #include "ConfigManager.h"
-#include "LogManager.h"
 #include "TrayManager.h"
 #include "../Config/MainConfigFile.h"
 #include "../Utils/FileIO.h"
+#include "../Utils/Log.h"
 #include "../Utils/String.h"
 #include "../Utils/Windows.h"
 
 
-#define LOG(logLevel, message) if (this->GetLightFXExtender() != nullptr) { LOG_(this->GetLightFXExtender()->GetLogManager(), logLevel, wstring(L"UpdateManager - ") + message) }
-#define LOGWINERROR() if (this->GetLightFXExtender() != nullptr) { this->GetLightFXExtender()->GetLogManager()->LogLastWindowsError(); }
+#define LOG(logLevel, message) LOG_(logLevel, wstring(L"UpdateManager - ") + message)
 
 #ifdef _WIN64
 #define PLATFORM "x64"
@@ -148,19 +147,19 @@ namespace lightfx {
             if (FileExists(dllFileName + L".bak")) {
                 if (!DeleteFileW((dllFileName + L".bak").c_str())) {
                     LOG(LogLevel::Error, L"Could not remove the back-upped DLL file from the previous version");
-                    LOGWINERROR();
+                    Log::LogLastWindowsError();
                     return false;
                 }
             }
             if (MoveFileW(dllFileName.c_str(), (dllFileName + L".bak").c_str()) == FALSE) {
                 LOG(LogLevel::Error, L"Could not rename the DLL file");
-                LOGWINERROR();
+                Log::LogLastWindowsError();
                 return false;
             }
             if (MoveFileW(newDllFileName.c_str(), dllFileName.c_str()) == FALSE) {
                 LOG(LogLevel::Error, L"Could not move the new DLL into its intended folder, LightFX Extender will not work unless you manually move " +
                     newDllFileName + L" to " + dllFileName);
-                LOGWINERROR();
+                Log::LogLastWindowsError();
                 return false;
             }
 

@@ -9,7 +9,7 @@
 
 // Project includes
 #include "ConfigFile.h"
-#include "../Managers/LogManager.h"
+#include "../Utils/Log.h"
 
 // API exports
 #include "../Common/ApiExports.h"
@@ -25,7 +25,7 @@ namespace lightfx {
 
         public:
             bool AutoUpdatesEnabled = true;
-            managers::LogLevel MinimumLogLevel = managers::LogLevel::Info;
+            utils::LogLevel MinimumLogLevel = utils::LogLevel::Info;
 
             bool TrayIconEnabled = true;
             bool TrayIconUseGameIcon = false;
