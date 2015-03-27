@@ -81,6 +81,11 @@ namespace lightfx {
         }
 
         LFXE_API bool DeviceLogitech::PushColorToDevice(const vector<LightColor>& colors) {
+            if (colors.size() < 1) {
+                LOG(LogLevel::Warning, L"Tried to update LED color without a set color, ignoring update");
+                return false;
+            }
+
             double red = colors[0].red;
             double green = colors[0].green;
             double blue = colors[0].blue;
