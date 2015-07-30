@@ -106,6 +106,10 @@ namespace lightfx {
                 auto deviceManager = this->GetManager()->GetLightFXExtender()->GetDeviceManager();
                 for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
                     auto device = deviceManager->GetChildByIndex(i);
+                    if (!device->IsEnabled()) {
+                        continue;
+                    }
+
                     vector<LightColor> resetColor = device->GetRecentTimeline().GetColorAtTime(device->GetRecentTimeline().GetTotalDuration());
 
                     Timeline timeline;
@@ -113,7 +117,13 @@ namespace lightfx {
                     if (config->GuildWars2TeamColorAnimation == L"Pulse") {
                         vector<LightTimeline> timelines;
                         for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
-                            timelines.push_back(LightTimeline::NewPulse(startColor, endColor, resetColor[j], 200, 5, 100, 400));
+                            LightColor color(255, 255, 255, 255);
+                            if (j < resetColor.size()) {
+                                color = resetColor[j];
+                            } else {
+                                LOG(LogLevel::Warning, L"No reset color defined for pulsing team color, using fallback color white");
+                            }
+                            timelines.push_back(LightTimeline::NewPulse(startColor, endColor, color, 200, 5, 100, 400));
                         }
                         timeline = Timeline(timelines);
                     } else if (config->GuildWars2TeamColorAnimation == L"Walk") {
