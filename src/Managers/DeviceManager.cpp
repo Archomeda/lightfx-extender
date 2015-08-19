@@ -83,10 +83,10 @@ namespace lightfx {
 
                         // TODO: Periodically check for changes (e.g. when a device gets connected or disconnected)
                     } else {
-                        LOG(LogLevel::Error, L"Failed to check the number of LightFX devices: " + to_wstring(result));
+                        LOG(LogLevel::Error, L"Failed to check the number of LightFX devices: " + GetFriendlyLfxResult(result));
                     }
                 } else {
-                    LOG(LogLevel::Error, L"Failed to initialize LightFX: " + to_wstring(result));
+                    LOG(LogLevel::Error, L"Failed to initialize LightFX: " + GetFriendlyLfxResult(result));
                 }
             } else {
                 LOG(LogLevel::Debug, L"Alienware LightFX.dll not found");

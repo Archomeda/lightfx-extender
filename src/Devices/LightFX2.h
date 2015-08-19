@@ -37,4 +37,6 @@ LFXE_API bool InitializeLightFX(std::wstring name, std::wstring backupName);
 LFXE_API bool IsLightFXInitialized();
 LFXE_API bool ReleaseLightFX();
 
+LFXE_API std::wstring GetFriendlyLfxResult(LFX_RESULT result);
+
 #pragma warning(pop)

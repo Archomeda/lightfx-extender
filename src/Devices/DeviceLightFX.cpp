@@ -35,7 +35,7 @@ namespace lightfx {
                     unsigned char devType = 0;
                     result = LightFX_GetDeviceDescription(this->GetDeviceIndex(), devDesc, LFX_MAX_STRING_SIZE, &devType);
                     if (result != LFX_SUCCESS) {
-                        LOG(LogLevel::Error, L"Couldn't get device description from " + to_wstring(this->GetDeviceIndex()) + L": " + to_wstring(result));
+                        LOG(LogLevel::Error, L"Couldn't get device description from " + to_wstring(this->GetDeviceIndex()) + L": " + GetFriendlyLfxResult(result));
                         LFX_SAFE_DELETE_ARRAY(devDesc);
                         return false;
                     }
@@ -47,7 +47,7 @@ namespace lightfx {
                     unsigned int numLights = 0;
                     result = LightFX_GetNumLights(this->GetDeviceIndex(), &numLights);
                     if (result != LFX_SUCCESS) {
-                        LOG(LogLevel::Error, L"Couldn't get the number of lights from " + to_wstring(this->GetDeviceIndex()) + L": " + to_wstring(result));
+                        LOG(LogLevel::Error, L"Couldn't get the number of lights from " + to_wstring(this->GetDeviceIndex()) + L": " + GetFriendlyLfxResult(result));
                         return false;
                     }
                     this->SetNumberOfLights(numLights);
@@ -63,7 +63,7 @@ namespace lightfx {
                         if (result == LFX_SUCCESS) {
                             lightData.Name = string_to_wstring(lightDesc);
                         } else {
-                            LOG(LogLevel::Error, L"Couldn't get light description " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + to_wstring(result));
+                            LOG(LogLevel::Error, L"Couldn't get light description " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + GetFriendlyLfxResult(result));
                         }
                         LFX_SAFE_DELETE_ARRAY(lightDesc);
                         if (lightData.Name == L"") {
@@ -77,7 +77,7 @@ namespace lightfx {
                         if (result == LFX_SUCCESS) {
                             lightData.Position = { lightLoc.x, lightLoc.y, lightLoc.z };
                         } else {
-                            LOG(LogLevel::Error, L"Couldn't get light location " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + to_wstring(result));
+                            LOG(LogLevel::Error, L"Couldn't get light location " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + GetFriendlyLfxResult(result));
                             lightData.Position = { 0, 0, 0 };
                         }
                         LOG(LogLevel::Debug, L"Light " + to_wstring(i) + L" pos: (" + to_wstring(lightData.Position.x) + L", " + to_wstring(lightData.Position.y) + L", " + to_wstring(lightData.Position.z) + L")");
@@ -129,13 +129,16 @@ namespace lightfx {
                 LOG(LogLevel::Debug, L"Update color of light " + this->GetLightData(i).Name + L" (" + to_wstring(i) + L") to (" + to_wstring(colors[i].red) + L"," + to_wstring(colors[i].green) + L"," + to_wstring(colors[i].blue) + L")");
                 result = LightFX_SetLightColor(this->GetDeviceIndex(), i, &color);
                 if (result != LFX_SUCCESS) {
+                    LOG(LogLevel::Warning, L"SetLightColor() failed: " + GetFriendlyLfxResult(result));
                     return false;
                 }
             }
 
             result = LightFX_Update();
+            if (result != LFX_SUCCESS) {
+                LOG(LogLevel::Warning, L"Update() failed: " + GetFriendlyLfxResult(result));
+            }
             return result == LFX_SUCCESS;
         }
-
     }
 }
