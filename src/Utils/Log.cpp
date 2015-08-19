@@ -5,9 +5,10 @@
 #include "Log.h"
 
 // Standard includes
-#include <iostream>
-#include <fstream>
 #include <codecvt>
+#include <fstream>
+#include <iostream>
+#include <mutex>
 
 // Windows includes
 #include "../Common/Windows.h"
@@ -31,6 +32,7 @@ namespace lightfx {
 #else
         LogLevel minimumLogLevel = LogLevel::Info;
 #endif
+        mutex logMutex;
 
 
         LFXE_API void Log::LogLine(const LogLevel logLevel, const std::wstring& line) {
@@ -76,9 +78,11 @@ namespace lightfx {
                 filePath += L"/" + logFileName;
                 wofstream logStream;
                 logStream.imbue(locale(logStream.getloc(), new codecvt_utf8<wchar_t>));
+                logMutex.lock(); // Exclusive lock on log file
                 logStream.open(filePath, wios::out | wios::binary | wios::app);
                 logStream << timePrefix << L" - " << logLevelPrefix << L" " << line << std::endl;
                 logStream.close();
+                logMutex.unlock(); // Release lock
             } catch (...) {
                 // Can't log the exception, since we just failed to log something else...
             }
