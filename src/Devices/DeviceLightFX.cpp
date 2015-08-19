@@ -63,7 +63,7 @@ namespace lightfx {
                         if (result == LFX_SUCCESS) {
                             lightData.Name = string_to_wstring(lightDesc);
                         } else {
-                            LOG(LogLevel::Error, L"Couldn't get light description " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + GetFriendlyLfxResult(result));
+                            LOG(LogLevel::Warning, L"Couldn't get light description " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + GetFriendlyLfxResult(result) + L" (using default)");
                         }
                         LFX_SAFE_DELETE_ARRAY(lightDesc);
                         if (lightData.Name == L"") {
@@ -77,7 +77,7 @@ namespace lightfx {
                         if (result == LFX_SUCCESS) {
                             lightData.Position = { lightLoc.x, lightLoc.y, lightLoc.z };
                         } else {
-                            LOG(LogLevel::Error, L"Couldn't get light location " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + GetFriendlyLfxResult(result));
+                            LOG(LogLevel::Warning, L"Couldn't get light location " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + GetFriendlyLfxResult(result) + L" (using default)");
                             lightData.Position = { 0, 0, 0 };
                         }
                         LOG(LogLevel::Debug, L"Light " + to_wstring(i) + L" pos: (" + to_wstring(lightData.Position.x) + L", " + to_wstring(lightData.Position.y) + L", " + to_wstring(lightData.Position.z) + L")");
