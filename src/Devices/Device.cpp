@@ -9,6 +9,8 @@
 
 // Project includes
 #include "../LightFXExtender.h"
+#include "../Managers/ConfigManager.h"
+#include "../Config/MainConfigFile.h"
 #include "../Utils/Log.h"
 
 
@@ -192,6 +194,9 @@ namespace lightfx {
             bool isUpdating = false;
             unsigned long long timelineStart = 0;
 
+            auto config = this->GetManager()->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
+            int timelineUpdateInterval = config->TimelineUpdateInterval;
+
             while (!this->stopUpdateWorker) {
                 unique_lock<mutex> lock(this->updateWorkerCvMutex);
                 this->updateWorkerCv.wait(lock, [&] { return this->notifyUpdateWorker && (isUpdating || !this->TimelineQueue.empty()) || this->stopUpdateWorker; });
@@ -237,6 +242,10 @@ namespace lightfx {
                     }
 
                     isUpdating = timelinePos <= this->ActiveTimeline.GetTotalDuration();
+                    if (isUpdating) {
+                        // Sleep for a while to prevent unneeded CPU usage
+                        this_thread::sleep_for(chrono::milliseconds(timelineUpdateInterval));
+                    }
                 }
             }
         }

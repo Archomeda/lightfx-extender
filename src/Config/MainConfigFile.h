@@ -26,6 +26,7 @@ namespace lightfx {
         public:
             bool AutoUpdatesEnabled = true;
             utils::LogLevel MinimumLogLevel = utils::LogLevel::Info;
+            int TimelineUpdateInterval = 20;
 
             bool TrayIconEnabled = true;
             bool TrayIconUseGameIcon = false;

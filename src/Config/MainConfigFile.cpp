@@ -12,6 +12,7 @@
 #pragma region Configuration keys
 #define CONF_AUTOUPDATESENABLED L"AutoUpdatesEnabled"
 #define CONF_MINIMUMLOGLEVEL L"MinimumLogLevel"
+#define CONF_TIMELINE_UPDATE_INTERVAL L"TimelineUpdateInterval"
 
 #define CONF_TRAYICON L"TrayIcon"
 #define CONF_TRAYICON_ENABLED L"Enabled"
@@ -59,6 +60,7 @@ namespace lightfx {
         LFXE_API void MainConfigFile::LoadDefaults() {
             this->AutoUpdatesEnabled = true;
             this->MinimumLogLevel = LogLevel::Info;
+            this->TimelineUpdateInterval = 20;
 
             this->TrayIconEnabled = true;
             this->TrayIconUseGameIcon = false;
@@ -105,6 +107,9 @@ namespace lightfx {
                 break;
             }
             this->doc.AddMember(CONF_MINIMUMLOGLEVEL, objMinimumLogLevel, allocator);
+
+            // Timeline update interval
+            this->doc.AddMember(CONF_TIMELINE_UPDATE_INTERVAL, this->TimelineUpdateInterval, allocator);
 
             this->doc.AddMember(CONF_TRAYICON, this->SerializeTrayIcon(allocator), allocator);
             this->doc.AddMember(CONF_DEVICES, this->SerializeDevices(allocator), allocator);
@@ -212,6 +217,11 @@ namespace lightfx {
                 } else if (minimumLogLevel == L"Error") {
                     this->MinimumLogLevel = LogLevel::Error;
                 }
+            }
+
+            // Timeline update interval
+            if (this->doc.HasMember(CONF_TIMELINE_UPDATE_INTERVAL) && this->doc[CONF_TIMELINE_UPDATE_INTERVAL].IsInt()) {
+                this->TimelineUpdateInterval = this->doc[CONF_TIMELINE_UPDATE_INTERVAL].GetInt();
             }
 
             this->DeserializeTrayIcon(this->doc);
