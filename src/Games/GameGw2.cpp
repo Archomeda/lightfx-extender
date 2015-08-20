@@ -83,24 +83,27 @@ namespace lightfx {
                 // Assume this is the start of the match (PvP) or map join (WvW).
                 // Therefore we can show the team color.
 
-                LightColor startColor(0, 0, 0, 0);
-                LightColor endColor(0, 0, 0, 255);
+                LightColor startColor;
+                LightColor endColor;
                 switch (teamColorId) {
                 case 9: // Blue
-                    startColor.blue = 255;
-                    endColor.blue = 255;
+                    startColor = { 29, 118, 169, 0 };
+                    endColor = { 29, 118, 169, 255 };
                     LOG(LogLevel::Debug, L"Mumble Link - Detected PvP/WvW blue team");
                     break;
                 case 55: // Green
-                    startColor.green = 255;
-                    endColor.green = 255;
+                    startColor = { 119, 192, 33, 0 };
+                    endColor = { 119, 192, 33, 255 };
                     LOG(LogLevel::Debug, L"Mumble Link - Detected PvP/WvW green team");
                     break;
                 case 376: // Red
-                    startColor.red = 255;
-                    endColor.red = 255;
+                    startColor = { 203, 28, 36, 0 };
+                    endColor = { 203, 28, 36, 255 };
                     LOG(LogLevel::Debug, L"Mumble Link - Detected PvP/WvW red team");
                     break;
+                default: // Unknown
+                    LOG(LogLevel::Info, L"Mumble Link - Detected unknown team color: " + to_wstring(teamColorId) + L", skipping");
+                    return;
                 }
 
                 auto deviceManager = this->GetManager()->GetLightFXExtender()->GetDeviceManager();
