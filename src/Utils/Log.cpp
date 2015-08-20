@@ -5,6 +5,7 @@
 #include "Log.h"
 
 // Standard includes
+#include <chrono>
 #include <codecvt>
 #include <fstream>
 #include <iostream>
@@ -46,8 +47,11 @@ namespace lightfx {
             time_t t = time(0);
             tm lt;
             localtime_s(&lt, &t);
+            chrono::milliseconds ms = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
             wcsftime(buff, 20, L"%Y-%m-%d %H:%M:%S", &lt);
             wstring timePrefix(buff);
+            swprintf_s(buff, 4, L"%03ld", ms.count() % 1000);
+            timePrefix += L"." + wstring(buff);
 
             // Determine the log level prefix
             wstring logLevelPrefix;
