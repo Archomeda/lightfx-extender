@@ -75,6 +75,9 @@ namespace lightfx {
             void QueueTimeline(const timelines::Timeline& timeline);
             void NotifyUpdate();
 
+            int GetTimelineUpdateInterval();
+            void SetTimelineUpdateInterval(const int interval);
+
             virtual const std::wstring GetDeviceName() = 0;
             virtual const DeviceType GetDeviceType() = 0;
 
@@ -103,6 +106,7 @@ namespace lightfx {
         private:
             bool isEnabled = false;
             bool isInitialized = false;
+            int timelineUpdateInterval = 20;
             size_t numberOfLights = 0;
             std::vector<timelines::LightColor> lightColor = {};
             std::vector<LightData> lightData = {};

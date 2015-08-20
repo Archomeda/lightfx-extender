@@ -137,6 +137,15 @@ namespace lightfx {
         }
 
 
+        LFXE_API int Device::GetTimelineUpdateInterval() {
+            return this->timelineUpdateInterval;
+        }
+
+        LFXE_API void Device::SetTimelineUpdateInterval(const int interval) {
+            this->timelineUpdateInterval = interval;
+        }
+
+
         LFXE_API const size_t Device::GetNumberOfLights() {
             return this->numberOfLights;
         }
@@ -194,9 +203,6 @@ namespace lightfx {
             bool isUpdating = false;
             unsigned long long timelineStart = 0;
 
-            auto config = this->GetManager()->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
-            int timelineUpdateInterval = config->TimelineUpdateInterval;
-
             while (!this->stopUpdateWorker) {
                 unique_lock<mutex> lock(this->updateWorkerCvMutex);
                 this->updateWorkerCv.wait(lock, [&] { return this->notifyUpdateWorker && (isUpdating || !this->TimelineQueue.empty()) || this->stopUpdateWorker; });
@@ -244,7 +250,7 @@ namespace lightfx {
                     isUpdating = timelinePos <= this->ActiveTimeline.GetTotalDuration();
                     if (isUpdating) {
                         // Sleep for a while to prevent unneeded CPU usage
-                        this_thread::sleep_for(chrono::milliseconds(timelineUpdateInterval));
+                        this_thread::sleep_for(chrono::milliseconds(this->timelineUpdateInterval));
                     }
                 }
             }

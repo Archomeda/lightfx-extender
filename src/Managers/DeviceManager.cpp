@@ -33,12 +33,14 @@ namespace lightfx {
 
             auto config = this->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
             auto lightpack = make_shared<DeviceLightpack>(config->LightpackHost, config->LightpackPort, config->LightpackKey);
+            lightpack->SetTimelineUpdateInterval(config->TimelineUpdateInterval);
             this->AddChild(L"Lightpack", lightpack);
             if (lightpack->Initialize()) {
                 ++i;
             }
 
             auto logitech = make_shared<DeviceLogitech>();
+            logitech->SetTimelineUpdateInterval(config->TimelineUpdateInterval);
             logitech->SetRange(config->LogitechColorRangeOutMin, config->LogitechColorRangeOutMax, config->LogitechColorRangeInMin, config->LogitechColorRangeInMax);
             this->AddChild(L"Logitech", logitech);
             logitech->SetG110WorkaroundEnabled(config->LogitechG110WorkaroundEnabled);
@@ -60,6 +62,7 @@ namespace lightfx {
 
                         for (unsigned int j = 0; j < numDevices; ++j) {
                             auto lightFX = make_shared<DeviceLightFX>();
+                            lightFX->SetTimelineUpdateInterval(config->TimelineUpdateInterval);
                             lightFX->SetDeviceIndex(j);
 
                             // Get device name first so we can properly add it to the list of devices
