@@ -23,23 +23,27 @@ using namespace lightfx::utils;
 namespace lightfx {
 
     LFXE_API void LightFXExtender::Initialize() {
-        shared_ptr<ConfigManager> configMgr = make_shared<ConfigManager>();
-        shared_ptr<DeviceManager> deviceMgr = make_shared<DeviceManager>();
-        shared_ptr<GameManager> gameMgr = make_shared<GameManager>();
-        shared_ptr<TrayManager> trayMgr = make_shared<TrayManager>();
-        shared_ptr<UpdateManager> updateMgr = make_shared<UpdateManager>();
+        if (!this->isInitialized) {
+            shared_ptr<ConfigManager> configMgr = make_shared<ConfigManager>();
+            shared_ptr<DeviceManager> deviceMgr = make_shared<DeviceManager>();
+            shared_ptr<GameManager> gameMgr = make_shared<GameManager>();
+            shared_ptr<TrayManager> trayMgr = make_shared<TrayManager>();
+            shared_ptr<UpdateManager> updateMgr = make_shared<UpdateManager>();
 
-        configMgr->SetLightFXExtender(shared_from_this());
-        deviceMgr->SetLightFXExtender(shared_from_this());
-        gameMgr->SetLightFXExtender(shared_from_this());
-        trayMgr->SetLightFXExtender(shared_from_this());
-        updateMgr->SetLightFXExtender(shared_from_this());
+            configMgr->SetLightFXExtender(shared_from_this());
+            deviceMgr->SetLightFXExtender(shared_from_this());
+            gameMgr->SetLightFXExtender(shared_from_this());
+            trayMgr->SetLightFXExtender(shared_from_this());
+            updateMgr->SetLightFXExtender(shared_from_this());
 
-        this->configManager = configMgr;
-        this->deviceManager = deviceMgr;
-        this->gameManager = gameMgr;
-        this->trayManager = trayMgr;
-        this->updateManager = updateMgr;
+            this->configManager = configMgr;
+            this->deviceManager = deviceMgr;
+            this->gameManager = gameMgr;
+            this->trayManager = trayMgr;
+            this->updateManager = updateMgr;
+
+            this->isInitialized = true;
+        }
     }
 
     LFXE_API bool LightFXExtender::IsInitialized() {

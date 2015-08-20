@@ -39,7 +39,7 @@ namespace lightfx {
         std::shared_ptr<managers::UpdateManager> GetUpdateManager() { return this->updateManager; }
 
     private:
-        bool isInitialized;
+        bool isInitialized = false;
 
         std::shared_ptr<managers::ConfigManager> configManager;
         std::shared_ptr<managers::DeviceManager> deviceManager;
