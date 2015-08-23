@@ -147,19 +147,19 @@ namespace lightfx {
             if (FileExists(dllFileName + L".bak")) {
                 if (!DeleteFileW((dllFileName + L".bak").c_str())) {
                     LOG(LogLevel::Error, L"Could not remove the back-upped DLL file from the previous version");
-                    Log::LogLastWindowsError();
+                    Log::LogLastWindowsErrorAsync();
                     return false;
                 }
             }
             if (MoveFileW(dllFileName.c_str(), (dllFileName + L".bak").c_str()) == FALSE) {
                 LOG(LogLevel::Error, L"Could not rename the DLL file");
-                Log::LogLastWindowsError();
+                Log::LogLastWindowsErrorAsync();
                 return false;
             }
             if (MoveFileW(newDllFileName.c_str(), dllFileName.c_str()) == FALSE) {
                 LOG(LogLevel::Error, L"Could not move the new DLL into its intended folder, LightFX Extender will not work unless you manually move " +
                     newDllFileName + L" to " + dllFileName);
-                Log::LogLastWindowsError();
+                Log::LogLastWindowsErrorAsync();
                 return false;
             }
 

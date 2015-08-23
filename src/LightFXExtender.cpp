@@ -51,6 +51,8 @@ namespace lightfx {
     }
 
     LFXE_API void LightFXExtender::Start() {
+        Log::StartLoggerWorker();
+
         Log::RotateLog();
         LOG_(LogLevel::Info, L"LightFX Extender v" + this->updateManager->GetCurrentVersion().ToString());
 
@@ -83,6 +85,8 @@ namespace lightfx {
         this->gameManager->UninitializeGames();
         this->deviceManager->StopUpdateDevicesWorker();
         this->deviceManager->UninitializeDevices();
+
+        Log::StopLoggerWorker();
     }
 
 }

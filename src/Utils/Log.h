@@ -1,6 +1,7 @@
 #pragma once
 
 // Standard includes
+#include <chrono>
 #include <string>
 
 // API exports
@@ -9,7 +10,7 @@
 
 #define LOG_(logLevel, message) {                                       \
     if (::lightfx::utils::Log::GetMinimumLogLevel() <= logLevel) {      \
-        ::lightfx::utils::Log::LogLine(logLevel, message); } }
+        ::lightfx::utils::Log::LogLineAsync(logLevel, message); } }
 
 #pragma warning(push)
 #pragma warning(disable : 4251)
@@ -28,8 +29,14 @@ namespace lightfx {
         class LFXE_API Log {
 
         public:
+            static void StartLoggerWorker();
+            static void StopLoggerWorker();
+
             static void LogLine(const LogLevel logLevel, const std::wstring& line);
             static void LogLastWindowsError();
+            static void LogLineAsync(const LogLevel logLevel, const std::wstring& line);
+            static void LogLastWindowsErrorAsync();
+            static void WriteLine(const LogLevel logLevel, const std::wstring& line, std::chrono::milliseconds logTime);
 
             static void RotateLog();
 
@@ -43,7 +50,6 @@ namespace lightfx {
         };
 
     }
-
 }
 
 #pragma warning(pop)
