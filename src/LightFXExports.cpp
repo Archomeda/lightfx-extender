@@ -124,10 +124,7 @@ extern "C" {
                 return LFX_ERROR_NODEVS;
             }
 
-            for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
-                deviceManager->GetChildByIndex(i)->Update();
-            }
-
+            deviceManager->UpdateDeviceLights();
             return LFX_SUCCESS;
 
         } catch (const exception& ex) {

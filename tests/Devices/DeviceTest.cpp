@@ -61,21 +61,33 @@ public:
         device->Enable();
         LightTimeline timeline = LightTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
         device->QueueTimeline(Timeline(1, timeline));
-        device->Update();
-        device->NotifyUpdate();
+        device->CommitQueuedTimeline();
+        bool ret = device->Update(chrono::milliseconds(0));
 
-        bool success = false;
-        for (int i = 0; i < 500; ++i) {
-            device->NotifyUpdate();
-            if (device->GetActiveTimeline().GetColorAtTime(0).size() > 0 && timeline.GetColorAtTime(0) == device->GetActiveTimeline().GetColorAtTime(0, 0)) {
-                success = true;
-                break;
-            }
-            this_thread::sleep_for(chrono::milliseconds(1));
-        }
-        if (!success) {
-            Assert::Fail(L"Active light actions do not match after an extended period of time");
-        }
+        Assert::IsFalse(ret, L"Return value should be false");
+        Assert::IsTrue(timeline.GetColorAtTime(0) == device->GetActiveTimeline().GetColorAtTime(0, 0), L"The active timeline should match with timeline");
+        device->Disable();
+    }
+
+    TEST_METHOD(QueueTimelineAndUpdateFlush) {
+        auto device = make_shared<DeviceMock>();
+        device->Reset();
+        device->Enable();
+        LightTimeline timeline1 = LightTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
+        LightTimeline timeline2 = LightTimeline::NewInstant(LightColor(3, 4, 5, 6));
+        device->QueueTimeline(Timeline(1, timeline1));
+        device->CommitQueuedTimeline();
+        bool ret = device->Update(chrono::milliseconds(0));
+
+        Assert::IsFalse(ret, L"Return value should be false");
+        Assert::IsTrue(timeline1.GetColorAtTime(0) == device->GetActiveTimeline().GetColorAtTime(0, 0), L"The active timeline should match with timeline1");
+
+        device->QueueTimeline(Timeline(1, timeline2));
+        device->CommitQueuedTimeline();
+        ret = device->Update(chrono::milliseconds(0));
+
+        Assert::IsTrue(ret, L"Return value should now be true");
+        Assert::IsTrue(timeline2.GetColorAtTime(0) == device->GetActiveTimeline().GetColorAtTime(0, 0), L"The active timeline should now match with timeline2");
         device->Disable();
     }
 
@@ -86,25 +98,18 @@ public:
         LightTimeline timeline1 = LightTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
         LightTimeline timeline2 = LightTimeline::NewInstant(LightColor(3, 4, 5, 6));
         device->QueueTimeline(Timeline(1, timeline1));
-        device->Update();
-        device->NotifyUpdate();
+        device->CommitQueuedTimeline();
+        bool ret = device->Update(chrono::milliseconds(0));
 
+        Assert::IsFalse(ret, L"Return value should be false");
+        Assert::IsTrue(timeline1.GetColorAtTime(0) == device->GetActiveTimeline().GetColorAtTime(0, 0), L"The active timeline should match with timeline1");
+        
         device->QueueTimeline(Timeline(1, timeline2));
-        device->Update(false);
-        device->NotifyUpdate();
+        device->CommitQueuedTimeline(false);
+        ret = device->Update(chrono::milliseconds(0));
 
-        bool success = false;
-        for (int i = 0; i < 500; ++i) {
-            device->NotifyUpdate();
-            if (device->GetActiveTimeline().GetColorAtTime(0).size() > 0 && timeline2.GetColorAtTime(0) != device->GetActiveTimeline().GetColorAtTime(0, 0)) {
-                success = true;
-                break;
-            }
-            this_thread::sleep_for(chrono::milliseconds(1));
-        }
-        if (!success) {
-            Assert::Fail(L"Active light actions do not match after an extended period of time");
-        }
+        Assert::IsFalse(ret, L"Return value should still be false");
+        Assert::IsTrue(timeline1.GetColorAtTime(0) == device->GetActiveTimeline().GetColorAtTime(0, 0), L"The active timeline should still match with timeline1");
         device->Disable();
     }
 
@@ -114,8 +119,7 @@ public:
         device->Enable();
         LightTimeline timeline = LightTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
         device->QueueTimeline(Timeline(1, timeline));
-        device->Update();
-        device->NotifyUpdate();
+        device->CommitQueuedTimeline();
 
         Assert::IsTrue(timeline.GetColorAtTime(0) == device->GetRecentTimeline().GetColorAtTime(0, 0));
         device->Disable();
@@ -128,12 +132,10 @@ public:
         LightTimeline timeline1 = LightTimeline::NewMorph(LightColor(1, 2, 3, 4), LightColor(2, 3, 4, 5), 60000);
         LightTimeline timeline2 = LightTimeline::NewInstant(LightColor(1, 2, 3, 4));
         device->QueueTimeline(Timeline(1, timeline1));
-        device->Update();
-        device->NotifyUpdate();
+        device->CommitQueuedTimeline();
 
         device->QueueTimeline(Timeline(1, timeline2));
-        device->Update(false);
-        device->NotifyUpdate();
+        device->CommitQueuedTimeline(false);
 
         Assert::IsTrue(timeline2.GetColorAtTime(0) == device->GetRecentTimeline().GetColorAtTime(0, 0));
         device->Disable();

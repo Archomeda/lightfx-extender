@@ -66,6 +66,7 @@ namespace lightfx {
         this->updateManager->CheckAsync();
         this->deviceManager->InitializeDevices();
         this->gameManager->InitializeGame(processFileName);
+        this->deviceManager->StartUpdateDevicesWorker();
 
         if (this->configManager->GetMainConfig()->TrayIconEnabled) {
             this->trayManager->AddTrayIcon();
@@ -78,8 +79,10 @@ namespace lightfx {
         }
 
         this->configManager->GetMainConfig()->Save();
-        this->deviceManager->UninitializeDevices();
+
         this->gameManager->UninitializeGames();
+        this->deviceManager->StopUpdateDevicesWorker();
+        this->deviceManager->UninitializeDevices();
     }
 
 }

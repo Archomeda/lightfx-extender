@@ -1,11 +1,9 @@
 #pragma once
 
 // Standard includes
-#include <atomic>
-#include <condition_variable>
+#include <chrono>
 #include <mutex>
 #include <string>
-#include <thread>
 #include <queue>
 
 // Project includes
@@ -66,17 +64,14 @@ namespace lightfx {
 
             virtual bool Initialize();
             virtual bool Release();
-            virtual bool Update(bool flushQueue = true);
+            virtual bool Update(const std::chrono::milliseconds& timeTick);
             virtual bool Reset();
 
             timelines::Timeline GetActiveTimeline();
             timelines::Timeline GetQueuedTimeline();
             timelines::Timeline GetRecentTimeline();
             void QueueTimeline(const timelines::Timeline& timeline);
-            void NotifyUpdate();
-
-            int GetTimelineUpdateInterval();
-            void SetTimelineUpdateInterval(const int interval);
+            bool CommitQueuedTimeline(const bool flushQueue = true);
 
             virtual const std::wstring GetDeviceName() = 0;
             virtual const DeviceType GetDeviceType() = 0;
@@ -94,29 +89,21 @@ namespace lightfx {
 
             timelines::Timeline ActiveTimeline;
             timelines::Timeline QueuedTimeline;
+            std::mutex QueuedTimelineMutex;
             std::queue<timelines::Timeline> TimelineQueue;
             std::mutex TimelineQueueMutex;
-            std::atomic<bool> TimelineQueueFlush = false;
 
-            void StartUpdateWorker();
-            void StopUpdateWorker();
-            void UpdateWorker();
             virtual bool PushColorToDevice(const std::vector<timelines::LightColor>& colors) = 0;
 
         private:
             bool isEnabled = false;
             bool isInitialized = false;
-            int timelineUpdateInterval = 20;
             size_t numberOfLights = 0;
             std::vector<timelines::LightColor> lightColor = {};
             std::vector<LightData> lightData = {};
 
-            bool updateWorkerActive = false;
-            std::atomic<bool> notifyUpdateWorker = false;
-            std::atomic<bool> stopUpdateWorker = false;
-            std::thread updateWorkerThread;
-            std::condition_variable updateWorkerCv;
-            std::mutex updateWorkerCvMutex;
+            bool timelineDone = true;
+            std::chrono::milliseconds timelineStart;
 
         };
 

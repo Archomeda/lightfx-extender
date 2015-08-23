@@ -1,12 +1,14 @@
 #pragma once
 
 // Standard includes
-#include <memory>
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
 
 // Project includes
 #include "ManagerWithChildren.h"
 #include "../Devices/Device.h"
-#include "../Utils/Timer.h"
 
 // API exports
 #include "../Common/ApiExports.h"
@@ -30,14 +32,24 @@ namespace lightfx {
             size_t InitializeDevices();
             size_t UninitializeDevices();
 
-            void StartUpdateTimer();
-            void StopUpdateTimer();
+            void StartUpdateDevicesWorker();
+            void StopUpdateDevicesWorker();
+            void UpdateDeviceLights(const bool flushQueue = true);
 
         protected:
-            void DeviceUpdateTask();
+            void UpdateDevicesWorker();
 
         private:
-            std::unique_ptr<utils::Timer> DeviceUpdateTimer;
+            bool flushQueue = false;
+
+            bool updateDevicesWorkerActive = false;
+            std::atomic<bool> updateDevices = false;
+            std::atomic<bool> stopUpdateDevicesWorker = false;
+            std::thread updateDevicesWorkerThread;
+            std::condition_variable updateDevicesWorkerCv;
+            std::mutex updateDevicesWorkerCvMutex;
+
+            int updateDevicesInterval = 20;
 
         };
 

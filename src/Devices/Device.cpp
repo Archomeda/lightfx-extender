@@ -25,7 +25,7 @@ namespace lightfx {
     namespace devices {
 
         LFXE_API Device::~Device() {
-            this->StopUpdateWorker();
+
         }
 
 
@@ -41,7 +41,6 @@ namespace lightfx {
         LFXE_API bool Device::Enable() {
             if (!this->isEnabled) {
                 LOG(LogLevel::Debug, L"Enabling");
-                this->StartUpdateWorker();
                 this->isEnabled = true;
             }
             return true;
@@ -50,7 +49,6 @@ namespace lightfx {
         LFXE_API bool Device::Disable() {
             if (this->isEnabled) {
                 LOG(LogLevel::Debug, L"Disabling");
-                this->StopUpdateWorker();
                 this->isEnabled = false;
             }
             return true;
@@ -75,38 +73,57 @@ namespace lightfx {
             return true;
         }
 
-        LFXE_API bool Device::Update(bool flushQueue) {
+        LFXE_API bool Device::Update(const chrono::milliseconds& timeTick) {
             if (this->isEnabled) {
-                // Place the pre-queued item into the queue
-                    {
-                        lock_guard<mutex> lock(this->TimelineQueueMutex);
-                        if (flushQueue) {
-                            this->TimelineQueue = {};
-                            this->TimelineQueueFlush = true;
-                        }
-                        this->TimelineQueue.push(this->QueuedTimeline);
-                        this->QueuedTimeline = {};
+                if (this->timelineDone) {
+                    // Previous timeline is done, get the next queued one if there is one
+                    lock_guard<mutex> lock(this->TimelineQueueMutex);
+                    if (this->TimelineQueue.size() > 0) {
+                        this->ActiveTimeline = this->TimelineQueue.front();
+                        this->TimelineQueue.pop();
+                        this->timelineStart = timeTick;
+                        LOG(LogLevel::Debug, L"Performing timeline " + this->ActiveTimeline.ToString());
+                    } else {
+                        return true;
                     }
-                return true;
+                }
+
+                // Get the color at the current time
+                unsigned long timelineTick = (timeTick - this->timelineStart).count();                
+                vector<LightColor> newColor = this->ActiveTimeline.GetColorAtTime(timelineTick);
+                if (newColor.size() == 0) {
+                    LOG(LogLevel::Warning, L"Timeline has no colors set! Ignoring update");
+                    return true;
+                }
+                bool needsUpdate = this->lightColor.size() != newColor.size();
+                if (!needsUpdate) {
+                    for (size_t i = 0; i < newColor.size(); ++i) {
+                        if (this->lightColor[i] != newColor[i]) {
+                            needsUpdate = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Update color if needed
+                if (needsUpdate) {
+                    this->lightColor = newColor;
+                    this->PushColorToDevice(this->lightColor);
+                }
+
+                this->timelineDone = timelineTick >= this->ActiveTimeline.GetTotalDuration();
+                return this->timelineDone && this->TimelineQueue.size() == 0;
             }
-            return false;
+            return true;
         }
 
         LFXE_API bool Device::Reset() {
-            bool running = this->updateWorkerActive;
-
-            if (running) {
-                this->StopUpdateWorker();
-            }
-
             this->ActiveTimeline = {};
             this->QueuedTimeline = {};
             this->TimelineQueue = {};
-            this->TimelineQueueFlush = false;
 
-            if (running) {
-                this->StartUpdateWorker();
-            }
+            this->timelineDone = true;
+            this->timelineStart = {};
 
             return true;
         }
@@ -117,6 +134,7 @@ namespace lightfx {
         }
 
         LFXE_API Timeline Device::GetQueuedTimeline() {
+            lock_guard<mutex> lock(this->QueuedTimelineMutex);
             return this->QueuedTimeline;
         }
 
@@ -128,21 +146,24 @@ namespace lightfx {
         }
 
         LFXE_API void Device::QueueTimeline(const Timeline& timeline) {
+            lock_guard<mutex> lock(this->QueuedTimelineMutex);
             this->QueuedTimeline = timeline;
         }
 
-        LFXE_API void Device::NotifyUpdate() {
-            this->notifyUpdateWorker = true;
-            this->updateWorkerCv.notify_all();
-        }
-
-
-        LFXE_API int Device::GetTimelineUpdateInterval() {
-            return this->timelineUpdateInterval;
-        }
-
-        LFXE_API void Device::SetTimelineUpdateInterval(const int interval) {
-            this->timelineUpdateInterval = interval;
+        LFXE_API bool Device::CommitQueuedTimeline(const bool flushQueue) {
+            if (this->isEnabled) {
+                // Place the pre-queued item into the queue
+                lock_guard<mutex> lock(this->TimelineQueueMutex);
+                if (flushQueue) {
+                    this->TimelineQueue = {};
+                    this->timelineDone = true;
+                }
+                lock_guard<mutex> lock2(this->QueuedTimelineMutex);
+                this->TimelineQueue.push(this->QueuedTimeline);
+                this->QueuedTimeline = {};
+                return true;
+            }
+            return false;
         }
 
 
@@ -177,83 +198,6 @@ namespace lightfx {
 
         LFXE_API void Device::SetInitialized(const bool initialized) {
             this->isInitialized = initialized;
-        }
-
-
-        LFXE_API void Device::StartUpdateWorker() {
-            if (!this->updateWorkerActive) {
-                this->updateWorkerActive = true;
-                this->stopUpdateWorker = false;
-                this->updateWorkerThread = thread(&Device::UpdateWorker, this);
-            }
-        }
-
-        LFXE_API void Device::StopUpdateWorker() {
-            if (this->updateWorkerActive) {
-                this->stopUpdateWorker = true;
-                this->updateWorkerCv.notify_all();
-                if (this->updateWorkerThread.joinable()) {
-                    this->updateWorkerThread.join();
-                }
-                this->updateWorkerActive = false;
-            }
-        }
-
-        LFXE_API void Device::UpdateWorker() {
-            bool isUpdating = false;
-            unsigned long long timelineStart = 0;
-
-            while (!this->stopUpdateWorker) {
-                unique_lock<mutex> lock(this->updateWorkerCvMutex);
-                this->updateWorkerCv.wait(lock, [&] { return this->notifyUpdateWorker && (isUpdating || !this->TimelineQueue.empty()) || this->stopUpdateWorker; });
-                this->notifyUpdateWorker = false;
-
-                if (this->stopUpdateWorker) {
-                    break;
-                }
-
-                if (!this->TimelineQueue.empty()) {
-                    if (!isUpdating || this->TimelineQueueFlush) {
-                        // Not currently updating the color or the queue needs to be flushed
-                        this->TimelineQueueFlush = false;
-                        isUpdating = true;
-                        {
-                            lock_guard<mutex> lock(this->TimelineQueueMutex);
-                            this->ActiveTimeline = this->TimelineQueue.front();
-                            this->TimelineQueue.pop();
-                        }
-                        LOG(LogLevel::Debug, L"Performing timeline " + this->ActiveTimeline.ToString());
-                        timelineStart = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
-                    }
-                }
-
-                if (isUpdating) {
-                    // Get the color at the current time
-                    unsigned long timelinePos = unsigned long(chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count() - timelineStart);
-                    vector<LightColor> newColor = this->ActiveTimeline.GetColorAtTime(timelinePos);
-                    bool needsUpdate = this->lightColor.size() != newColor.size();
-                    if (!needsUpdate) {
-                        for (size_t i = 0; i < newColor.size(); ++i) {
-                            if (this->lightColor[i] != newColor[i]) {
-                                needsUpdate = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    // Update color if needed
-                    if (needsUpdate) {
-                        this->lightColor = newColor;
-                        this->PushColorToDevice(this->lightColor);
-                    }
-
-                    isUpdating = timelinePos <= this->ActiveTimeline.GetTotalDuration();
-                    if (isUpdating) {
-                        // Sleep for a while to prevent unneeded CPU usage
-                        this_thread::sleep_for(chrono::milliseconds(this->timelineUpdateInterval));
-                    }
-                }
-            }
         }
 
     }

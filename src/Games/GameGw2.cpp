@@ -133,8 +133,8 @@ namespace lightfx {
                         timeline = Timeline::NewWalk(device->GetNumberOfLights(), startColor, endColor, resetColor, 1000, 4, 100);
                     }
                     device->QueueTimeline(timeline);
-                    device->Update();
                 }
+                deviceManager->UpdateDeviceLights(false);
 
                 this->lastTeamColorLightUpdate = currentTick;
             }

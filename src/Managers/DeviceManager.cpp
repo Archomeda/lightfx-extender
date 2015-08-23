@@ -32,15 +32,15 @@ namespace lightfx {
             size_t i = 0;
 
             auto config = this->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
+            this->updateDevicesInterval = config->TimelineUpdateInterval;
+
             auto lightpack = make_shared<DeviceLightpack>(config->LightpackHost, config->LightpackPort, config->LightpackKey);
-            lightpack->SetTimelineUpdateInterval(config->TimelineUpdateInterval);
             this->AddChild(L"Lightpack", lightpack);
             if (lightpack->Initialize()) {
                 ++i;
             }
 
             auto logitech = make_shared<DeviceLogitech>();
-            logitech->SetTimelineUpdateInterval(config->TimelineUpdateInterval);
             logitech->SetRange(config->LogitechColorRangeOutMin, config->LogitechColorRangeOutMax, config->LogitechColorRangeInMin, config->LogitechColorRangeInMax);
             this->AddChild(L"Logitech", logitech);
             logitech->SetG110WorkaroundEnabled(config->LogitechG110WorkaroundEnabled);
@@ -62,7 +62,6 @@ namespace lightfx {
 
                         for (unsigned int j = 0; j < numDevices; ++j) {
                             auto lightFX = make_shared<DeviceLightFX>();
-                            lightFX->SetTimelineUpdateInterval(config->TimelineUpdateInterval);
                             lightFX->SetDeviceIndex(j);
 
                             // Get device name first so we can properly add it to the list of devices
@@ -113,18 +112,12 @@ namespace lightfx {
                 }
             }
 
-            // Start update timer
-            this->StartUpdateTimer();
-
             return i;
         }
 
         LFXE_API size_t DeviceManager::UninitializeDevices() {
             LOG(LogLevel::Debug, L"Uninitializing devices");
             size_t i = 0;
-
-            // Stop update timer
-            this->StopUpdateTimer();
 
             // Unload devices
             for (size_t j = 0; j < this->GetChildrenCount(); ++j) {
@@ -151,26 +144,72 @@ namespace lightfx {
             LOG(LogLevel::Info, L"Successfully uninitialized " + to_wstring(i) + L" devices");
             return i;
         }
-
-
-        LFXE_API void DeviceManager::StartUpdateTimer() {
-            if (this->DeviceUpdateTimer == nullptr || !this->DeviceUpdateTimer->IsActive()) {
-                this->DeviceUpdateTimer = make_unique<Timer>(10, &DeviceManager::DeviceUpdateTask, this);
+   
+        LFXE_API void DeviceManager::StartUpdateDevicesWorker() {
+            if (!this->updateDevicesWorkerActive) {
+                this->updateDevicesWorkerActive = true;
+                this->stopUpdateDevicesWorker = false;
+                this->updateDevicesWorkerThread = thread(&DeviceManager::UpdateDevicesWorker, this);
             }
         }
 
-        LFXE_API void DeviceManager::StopUpdateTimer() {
-            if (this->DeviceUpdateTimer != nullptr && this->DeviceUpdateTimer->IsActive()) {
-                this->DeviceUpdateTimer->Stop();
-            }
-        }
-
-        LFXE_API void DeviceManager::DeviceUpdateTask() {
-            for (size_t i = 0; i < this->GetChildrenCount(); ++i) {
-                auto device = this->GetChildByIndex(i);
-                if (device->IsEnabled()) {
-                    device->NotifyUpdate();
+        LFXE_API void DeviceManager::StopUpdateDevicesWorker() {
+            if (this->updateDevicesWorkerActive) {
+                this->stopUpdateDevicesWorker = true;
+                this->updateDevicesWorkerCv.notify_all();
+                if (this->updateDevicesWorkerThread.joinable()) {
+                    this->updateDevicesWorkerThread.join();
                 }
+                this->updateDevicesWorkerActive = false;
+            }
+        }
+
+        LFXE_API void DeviceManager::UpdateDeviceLights(const bool flushQueue) {
+            if (this->updateDevicesWorkerActive) {
+                this->flushQueue = flushQueue;
+                this->updateDevices = true;
+                this->updateDevicesWorkerCv.notify_all();
+            }
+        }
+
+        LFXE_API void DeviceManager::UpdateDevicesWorker() {
+            bool isUpdating = false;
+            chrono::milliseconds timeTick;
+
+            while (!this->stopUpdateDevicesWorker) {
+                bool flushQueue = false;
+                if (isUpdating && !this->updateDevices) {
+                    // Still updating from previous iterations without new updates coming in, sleep for a while to prevent unneeded CPU usage
+                    this_thread::sleep_for(chrono::milliseconds(this->updateDevicesInterval));
+                } else {
+                    // Wait for when we get signaled to update or stop
+                    unique_lock<mutex> lock(this->updateDevicesWorkerCvMutex);
+                    this->updateDevicesWorkerCv.wait(lock, [&] { return this->updateDevices || this->stopUpdateDevicesWorker; });
+                    this->updateDevices = false;
+
+                    // Reset certain variables since we should have a new timeline here
+                    flushQueue = this->flushQueue;
+                    this->flushQueue = false;
+                    isUpdating = false;
+                }
+
+                // Stop worker if it has been signaled to stop
+                if (this->stopUpdateDevicesWorker) {
+                    break;
+                }
+
+                // Update every device
+                bool done = true;
+                timeTick = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
+                for (size_t i = 0; i < this->GetChildrenCount(); ++i) {
+                    if (!isUpdating) {
+                        // This update is done for the first time, commit queued timeline and optionally flush the queue
+                        this->GetChildByIndex(i)->CommitQueuedTimeline(flushQueue);
+                    }
+                    done &= this->GetChildByIndex(i)->Update(timeTick);
+                }
+
+                isUpdating = !done;
             }
         }
 
