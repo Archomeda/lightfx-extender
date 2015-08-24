@@ -36,7 +36,6 @@ namespace lightfx {
             static void LogLastWindowsError();
             static void LogLineAsync(const LogLevel logLevel, const std::wstring& line);
             static void LogLastWindowsErrorAsync();
-            static void WriteLine(const LogLevel logLevel, const std::wstring& line, std::chrono::milliseconds logTime);
 
             static void RotateLog();
 
@@ -46,6 +45,13 @@ namespace lightfx {
 
             static LogLevel GetMinimumLogLevel();
             static void SetMinimumLogLevel(const LogLevel logLevel);
+
+        private:
+            static void LoggerWorker();
+
+            static std::wofstream OpenStream();
+            static std::wstring GetLine(const LogLevel logLevel, const std::wstring& line, std::chrono::milliseconds logTime);
+            static void WriteBacklog();
 
         };
 

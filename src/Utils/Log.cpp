@@ -54,27 +54,6 @@ namespace lightfx {
         NotifyEvent notifyEvent;
 
 
-        void LoggerWorker() {
-            while (true) {
-                notifyEvent.Wait();
-
-                LogMessage message;
-                {
-                    lock_guard<mutex> lock(logQueueMutex);
-                    if (logQueue.size() > 0) {
-                        message = logQueue.front();
-                        logQueue.pop();
-                    } else if (logQueue.size() == 0 && stopLoggerWorker) {
-                        break;
-                    } else {
-                        continue;
-                    }
-                }
-
-                Log::WriteLine(message.level, message.message, message.time);
-            }
-        }
-
         LFXE_API void Log::StartLoggerWorker() {
             if (!loggerWorkerActive) {
                 loggerWorkerActive = true;
@@ -119,7 +98,17 @@ namespace lightfx {
             if (minimumLogLevel > logLevel) {
                 return;
             }
-            WriteLine(logLevel, line, chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()));
+            wstring logLine = GetLine(logLevel, line, chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()));
+
+            try {
+                logMutex.lock();
+                wofstream logStream = OpenStream();
+                logStream << logLine << endl;
+                logStream.close();
+                logMutex.unlock();
+            } catch (...) {
+                // Can't log the exception, since we just failed to log something else...
+            }
         }
 
         LFXE_API void Log::LogLastWindowsError() {
@@ -151,56 +140,6 @@ namespace lightfx {
                 return;
             }
             LogLineAsync(LogLevel::Error, GetLastWindowsError());
-        }
-
-        LFXE_API void Log::WriteLine(const LogLevel logLevel, const wstring& line, chrono::milliseconds logTime) {
-            // Get a nice date/time prefix first
-            wchar_t buff[20];
-            time_t t = chrono::duration_cast<chrono::seconds>(logTime).count();
-            tm lt;
-            localtime_s(&lt, &t);
-            wcsftime(buff, 20, L"%Y-%m-%d %H:%M:%S", &lt);
-            wstring timePrefix(buff);
-            swprintf_s(buff, 4, L"%03ld", logTime.count() % 1000);
-            timePrefix += L"." + wstring(buff);
-
-            // Determine the log level prefix
-            wstring logLevelPrefix;
-            switch (logLevel) {
-            case LogLevel::Debug:
-                logLevelPrefix = L"[DEBUG]";
-                break;
-            case LogLevel::Info:
-                logLevelPrefix = L"[INFO]";
-                break;
-            case LogLevel::Warning:
-                logLevelPrefix = L"[WARNING]";
-                break;
-            case LogLevel::Error:
-                logLevelPrefix = L"[ERROR]";
-                break;
-            }
-            
-            // Log
-            try {
-                wstring filePath = logDirectory;
-                if (!DirExists(filePath)) {
-                    if (CreateDirectoryW(filePath.c_str(), NULL) == FALSE) {
-                        // Can't log the failure, since we just failed to create the directory where the log file should be...
-                        return;
-                    }
-                }
-                filePath += L"/" + logFileName;
-                wofstream logStream;
-                logStream.imbue(locale(logStream.getloc(), new codecvt_utf8<wchar_t>));
-                logMutex.lock(); // Exclusive lock on log file
-                logStream.open(filePath, wios::out | wios::binary | wios::app);
-                logStream << timePrefix << L" - " << logLevelPrefix << L" " << line << endl;
-                logStream.close();
-                logMutex.unlock(); // Release lock
-            } catch (...) {
-                // Can't log the exception, since we just failed to log something else...
-            }
         }
 
 
@@ -246,5 +185,90 @@ namespace lightfx {
         LFXE_API void Log::SetMinimumLogLevel(const LogLevel logLevel) {
             minimumLogLevel = logLevel;
         }
-    }
+
+
+        LFXE_API void Log::LoggerWorker() {
+            while (true) {
+                notifyEvent.Wait();
+                if (stopLoggerWorker) {
+                    break;
+                }
+                WriteBacklog();
+            }
+        }
+
+        LFXE_API wofstream Log::OpenStream() {
+            wstring filePath = logDirectory;
+            if (!DirExists(filePath)) {
+                if (CreateDirectoryW(filePath.c_str(), NULL) == FALSE) {
+                    throw exception("Failed to create directory");
+                }
+            }
+            filePath += L"/" + logFileName;
+            wofstream logStream;
+            logStream.imbue(locale(logStream.getloc(), new codecvt_utf8<wchar_t>));
+            logStream.open(filePath, wios::out | wios::binary | wios::app);
+            return logStream;
+        }
+
+        LFXE_API wstring Log::GetLine(const LogLevel logLevel, const wstring& line, chrono::milliseconds logTime) {
+            // Get a nice date/time prefix first
+            wchar_t buff[20];
+            time_t t = chrono::duration_cast<chrono::seconds>(logTime).count();
+            tm lt;
+            localtime_s(&lt, &t);
+            wcsftime(buff, 20, L"%Y-%m-%d %H:%M:%S", &lt);
+            wstring timePrefix(buff);
+            swprintf_s(buff, 4, L"%03ld", logTime.count() % 1000);
+            timePrefix += L"." + wstring(buff);
+
+            // Determine the log level prefix
+            wstring logLevelPrefix;
+            switch (logLevel) {
+            case LogLevel::Debug:
+                logLevelPrefix = L"[DEBUG]";
+                break;
+            case LogLevel::Info:
+                logLevelPrefix = L"[INFO]";
+                break;
+            case LogLevel::Warning:
+                logLevelPrefix = L"[WARNING]";
+                break;
+            case LogLevel::Error:
+                logLevelPrefix = L"[ERROR]";
+                break;
+            }
+
+            return timePrefix + L" - " + logLevelPrefix + L" " + line;
+        }
+
+        LFXE_API void Log::WriteBacklog() {
+            try {
+                logMutex.lock();
+                wofstream logStream = OpenStream();
+
+                while (true) {
+                    LogMessage message;
+                    {
+                        lock_guard<mutex> lock(logQueueMutex);
+                        if (logQueue.size() > 0) {
+                            message = logQueue.front();
+                            logQueue.pop();
+                        } else {
+                            break;
+                        }
+                    }
+
+                    wstring logLine = GetLine(message.level, message.message, message.time);
+                    logStream << logLine << endl;
+                }
+
+                logStream.close();
+                logMutex.unlock();
+            } catch (...) {
+                // Can't log the exception, since we just failed to log something else...
+            }
+        }
+
+   }
 }
