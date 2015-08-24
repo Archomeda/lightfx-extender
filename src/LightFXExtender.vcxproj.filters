@@ -108,10 +108,13 @@
     <ClInclude Include="Devices\DeviceLightFX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Utils\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Log.h">
+    <ClInclude Include="Utils\NotifyEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

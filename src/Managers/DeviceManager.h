@@ -2,13 +2,12 @@
 
 // Standard includes
 #include <atomic>
-#include <condition_variable>
-#include <mutex>
 #include <thread>
 
 // Project includes
 #include "ManagerWithChildren.h"
 #include "../Devices/Device.h"
+#include "../Utils/NotifyEvent.h"
 
 // API exports
 #include "../Common/ApiExports.h"
@@ -43,11 +42,9 @@ namespace lightfx {
             bool flushQueue = false;
 
             bool updateDevicesWorkerActive = false;
-            std::atomic<bool> updateDevices = false;
             std::atomic<bool> stopUpdateDevicesWorker = false;
             std::thread updateDevicesWorkerThread;
-            std::condition_variable updateDevicesWorkerCv;
-            std::mutex updateDevicesWorkerCvMutex;
+            utils::NotifyEvent updateDevicesNotifyEvent;
 
             int updateDevicesInterval = 20;
 

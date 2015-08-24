@@ -8,7 +8,6 @@
 #include <atomic>
 #include <chrono>
 #include <codecvt>
-#include <condition_variable>
 #include <fstream>
 #include <iostream>
 #include <mutex>
@@ -22,7 +21,8 @@
 
 // Project includes
 #include "../LightFXExtender.h"
-#include "../Utils/FileIO.h"
+#include "FileIO.h"
+#include "NotifyEvent.h"
 
 
 using namespace std;
@@ -46,22 +46,17 @@ namespace lightfx {
         mutex logMutex;
 
         bool loggerWorkerActive = false;
-        atomic<bool> notifyLoggerWorker = false;
         atomic<bool> stopLoggerWorker = false;
         thread loggerWorkerThread;
-        condition_variable loggerWorkerCv;
-        mutex loggerWorkerCvMutex;
         queue<LogMessage> logQueue;
         mutex logQueueMutex;
+
+        NotifyEvent notifyEvent;
 
 
         void LoggerWorker() {
             while (true) {
-                {
-                    unique_lock<mutex> lock(loggerWorkerCvMutex);
-                    loggerWorkerCv.wait(lock, [&] { return notifyLoggerWorker || stopLoggerWorker; });
-                    notifyLoggerWorker = false;
-                }
+                notifyEvent.Wait();
 
                 LogMessage message;
                 {
@@ -91,7 +86,7 @@ namespace lightfx {
         LFXE_API void Log::StopLoggerWorker() {
             if (loggerWorkerActive) {
                 stopLoggerWorker = true;
-                loggerWorkerCv.notify_all();
+                notifyEvent.Notify();
                 if (loggerWorkerThread.joinable()) {
                     loggerWorkerThread.join();
                 }
@@ -148,11 +143,7 @@ namespace lightfx {
                 lock_guard<mutex> lock(logQueueMutex);
                 logQueue.emplace(message);
             }
-            {
-                lock_guard<mutex> lock(loggerWorkerCvMutex);
-                notifyLoggerWorker = true;
-                loggerWorkerCv.notify_all();
-            }
+            notifyEvent.Notify();
         }
 
         LFXE_API void Log::LogLastWindowsErrorAsync() {

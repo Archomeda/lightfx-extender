@@ -156,7 +156,7 @@ namespace lightfx {
         LFXE_API void DeviceManager::StopUpdateDevicesWorker() {
             if (this->updateDevicesWorkerActive) {
                 this->stopUpdateDevicesWorker = true;
-                this->updateDevicesWorkerCv.notify_all();
+                this->updateDevicesNotifyEvent.Notify();
                 if (this->updateDevicesWorkerThread.joinable()) {
                     this->updateDevicesWorkerThread.join();
                 }
@@ -167,8 +167,7 @@ namespace lightfx {
         LFXE_API void DeviceManager::UpdateDeviceLights(const bool flushQueue) {
             if (this->updateDevicesWorkerActive) {
                 this->flushQueue = flushQueue;
-                this->updateDevices = true;
-                this->updateDevicesWorkerCv.notify_all();
+                this->updateDevicesNotifyEvent.Notify();
             }
         }
 
@@ -178,14 +177,12 @@ namespace lightfx {
 
             while (!this->stopUpdateDevicesWorker) {
                 bool flushQueue = false;
-                if (isUpdating && !this->updateDevices) {
+                if (isUpdating && !this->updateDevicesNotifyEvent.IsNotified()) {
                     // Still updating from previous iterations without new updates coming in, sleep for a while to prevent unneeded CPU usage
                     this_thread::sleep_for(chrono::milliseconds(this->updateDevicesInterval));
                 } else {
                     // Wait for when we get signaled to update or stop
-                    unique_lock<mutex> lock(this->updateDevicesWorkerCvMutex);
-                    this->updateDevicesWorkerCv.wait(lock, [&] { return this->updateDevices || this->stopUpdateDevicesWorker; });
-                    this->updateDevices = false;
+                    this->updateDevicesNotifyEvent.Wait();
 
                     // Reset certain variables since we should have a new timeline here
                     flushQueue = this->flushQueue;
