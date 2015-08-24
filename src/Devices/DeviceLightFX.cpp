@@ -10,6 +10,7 @@
 // Project includes
 #include "LightFX2.h"
 #include "../LightFXExtender.h"
+#include "../Utils/LightFX.h"
 #include "../Utils/Log.h"
 #include "../Utils/String.h"
 

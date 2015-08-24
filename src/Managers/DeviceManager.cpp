@@ -13,6 +13,7 @@
 #include "../Devices/DeviceLogitech.h"
 #include "../Devices/LightFX2.h"
 #include "../Utils/FileIO.h"
+#include "../Utils/LightFX.h"
 #include "../Utils/Log.h"
 #include "../Utils/String.h"
 

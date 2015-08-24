@@ -7,7 +7,6 @@
 #include "../Common/ApiExports.h"
 
 
-
 namespace lightfx {
     namespace utils {
 

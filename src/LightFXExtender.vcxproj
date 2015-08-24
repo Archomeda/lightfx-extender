@@ -316,6 +316,7 @@
     <ClInclude Include="Timelines\LightTimelineItem.h" />
     <ClInclude Include="Timelines\Timeline.h" />
     <ClInclude Include="Utils\FileIO.h" />
+    <ClInclude Include="Utils\LightFX.h" />
     <ClInclude Include="Utils\Log.h" />
     <ClInclude Include="Utils\String.h" />
     <ClInclude Include="Utils\NotifyEvent.h" />
@@ -351,6 +352,7 @@
     <ClCompile Include="Timelines\LightTimelineItem.cpp" />
     <ClCompile Include="Timelines\Timeline.cpp" />
     <ClCompile Include="Utils\FileIO.cpp" />
+    <ClCompile Include="Utils\LightFX.cpp" />
     <ClCompile Include="Utils\Log.cpp" />
     <ClCompile Include="Utils\String.cpp" />
     <ClCompile Include="Utils\Windows.cpp" />
