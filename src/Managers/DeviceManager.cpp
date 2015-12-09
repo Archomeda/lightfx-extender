@@ -44,6 +44,7 @@ namespace lightfx {
             auto logitech = make_shared<DeviceLogitech>();
             logitech->SetRange(config->LogitechColorRangeOutMin, config->LogitechColorRangeOutMax, config->LogitechColorRangeInMin, config->LogitechColorRangeInMax);
             this->AddChild(L"Logitech", logitech);
+			logitech->SetRestoreLightsOnNullEnabled(config->LogitechRestoreLightsOnNullEnabled);
             logitech->SetG110WorkaroundEnabled(config->LogitechG110WorkaroundEnabled);
             if (logitech->Initialize()) {
                 ++i;

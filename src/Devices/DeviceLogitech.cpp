@@ -33,6 +33,10 @@ namespace lightfx {
             this->rangeInMax = inMax;
         }
 
+		LFXE_API void DeviceLogitech::SetRestoreLightsOnNullEnabled(const bool enabled) {
+			this->RestoreLightsOnNullEnabled = enabled;
+		}
+
         LFXE_API void DeviceLogitech::SetG110WorkaroundEnabled(const bool enabled) {
             this->g110WorkaroundEnabled = enabled;
         }
@@ -59,6 +63,7 @@ namespace lightfx {
                 if (Device::Enable()) {
                     if (LogiLedInit()) {
                         this->Reset();
+						LogiLedSaveCurrentLighting();
                         return true;
                     } else {
                         LOG(LogLevel::Error, L"Could not enable Logitech, make sure that Logitech Gaming Software is running and that it's at least at version 8.57.145");
@@ -72,6 +77,7 @@ namespace lightfx {
         LFXE_API bool DeviceLogitech::Disable() {
             if (this->IsEnabled()) {
                 if (Device::Disable()) {
+					LogiLedRestoreLighting();
                     LogiLedShutdown();
                     return true;
                 }
@@ -84,6 +90,12 @@ namespace lightfx {
             double red = colors[0].red;
             double green = colors[0].green;
             double blue = colors[0].blue;
+			double alpha = colors[0].brightness;
+
+			if (this->RestoreLightsOnNullEnabled && red == 0.0 && green == 0.0 && blue == 0.0 && alpha == 0.0)
+			{
+				return LogiLedRestoreLighting();
+			}
 
             if (this->g110WorkaroundEnabled) {
                 double total = red + blue;

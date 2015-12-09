@@ -31,6 +31,7 @@
 #define CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX L"LightFXMax"
 #define CONF_DEVICES_LOGITECH_COLORRANGE_INMIN L"LogitechMin"
 #define CONF_DEVICES_LOGITECH_COLORRANGE_INMAX L"LogitechMax"
+#define CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL L"RestoreLightsOnNullEnabled"
 #define CONF_DEVICES_LOGITECH_G110WORKAROUND L"G110WorkaroundEnabled"
 
 #define CONF_DEVICES_LIGHTPACK L"Lightpack"
@@ -76,6 +77,7 @@ namespace lightfx {
             this->LogitechColorRangeOutMax = 255;
             this->LogitechColorRangeInMin = 0;
             this->LogitechColorRangeInMax = 100;
+			this->LogitechRestoreLightsOnNullEnabled = false;
             this->LogitechG110WorkaroundEnabled = false;
 
             this->GuildWars2TeamColorEnabled = true;
@@ -174,6 +176,7 @@ namespace lightfx {
             objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMIN, this->LogitechColorRangeInMin, allocator);
             objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMAX, this->LogitechColorRangeInMax, allocator);
             objLogitech.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE, objLogitechColorRange, allocator);
+			objLogitech.AddMember(CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL, this->LogitechRestoreLightsOnNullEnabled, allocator);
             objLogitech.AddMember(CONF_DEVICES_LOGITECH_G110WORKAROUND, this->LogitechG110WorkaroundEnabled, allocator);
 
             obj.AddMember(CONF_DEVICES_LOGITECH, objLogitech, allocator);
@@ -309,6 +312,9 @@ namespace lightfx {
                     if (objLogitech.HasMember(CONF_DEVICES_LOGITECH_G110WORKAROUND) && objLogitech[CONF_DEVICES_LOGITECH_G110WORKAROUND].IsBool()) {
                         this->LogitechG110WorkaroundEnabled = objLogitech[CONF_DEVICES_LOGITECH_G110WORKAROUND].GetBool();
                     }
+					if (objLogitech.HasMember(CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL) && objLogitech[CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL].IsBool()) {
+						this->LogitechRestoreLightsOnNullEnabled = objLogitech[CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL].GetBool();
+					}
                 }
             }
         }
