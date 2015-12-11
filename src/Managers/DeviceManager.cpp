@@ -11,6 +11,7 @@
 #include "../Devices/DeviceLightFX.h"
 #include "../Devices/DeviceLightpack.h"
 #include "../Devices/DeviceLogitech.h"
+#include "../Devices/DeviceCorsair.h"
 #include "../Devices/LightFX2.h"
 #include "../Utils/FileIO.h"
 #include "../Utils/LightFX.h"
@@ -41,6 +42,7 @@ namespace lightfx {
                 ++i;
             }
 
+
             auto logitech = make_shared<DeviceLogitech>();
             logitech->SetRange(config->LogitechColorRangeOutMin, config->LogitechColorRangeOutMax, config->LogitechColorRangeInMin, config->LogitechColorRangeInMax);
             this->AddChild(L"Logitech", logitech);
@@ -49,6 +51,15 @@ namespace lightfx {
             if (logitech->Initialize()) {
                 ++i;
             }
+
+			
+			auto corsair = make_shared<DeviceCorsair>();
+			corsair->SetRange(config->CorsairColorRangeOutMin, config->CorsairColorRangeOutMax, config->CorsairColorRangeInMin, config->CorsairColorRangeInMax);
+			this->AddChild(L"Corsair", corsair);
+			if (corsair->Initialize()) {
+				++i;
+			}
+			
 
             // Load native LightFX devices
             if (InitializeLightFX(config->AlienwareDllName, config->AlienwareBackupDllName)) {
