@@ -214,4 +214,8 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\lib\x86\CUESDK_2013.dll" />
+    <None Include="..\lib\x64\CUESDK.x64_2013.dll" />
+  </ItemGroup>
 </Project>
