@@ -169,7 +169,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)lib\x86\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)lib\x86\LogitechLEDLib.lib;$(SolutionDir)lib\x86\CUESDK_2013.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
     </Link>
@@ -184,7 +184,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)lib\x64\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)lib\x64\LogitechLEDLib.lib;$(SolutionDir)lib\x64\CUESDK.x64_2013.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
     </Link>
@@ -199,7 +199,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)lib\x86\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)lib\x86\LogitechLEDLib.lib;$(SolutionDir)lib\x86\CUESDK_2013.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
     </Link>
@@ -214,7 +214,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)lib\x64\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)lib\x64\LogitechLEDLib.lib;$(SolutionDir)lib\x64\CUESDK.x64_2013.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
     </Link>
@@ -233,7 +233,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$(SolutionDir)lib\x86\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)lib\x86\LogitechLEDLib.lib;$(SolutionDir)lib\x86\CUESDK_2013.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
     </Link>
@@ -252,7 +252,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$(SolutionDir)lib\x64\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)lib\x64\LogitechLEDLib.lib;$(SolutionDir)lib\x64\CUESDK.x64_2013.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
     </Link>
@@ -270,7 +270,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$(SolutionDir)lib\x86\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)lib\x86\LogitechLEDLib.lib;$(SolutionDir)lib\x86\CUESDK_2013.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
@@ -289,7 +289,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$(SolutionDir)lib\x64\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)lib\x64\LogitechLEDLib.lib;$(SolutionDir)lib\x64\CUESDK.x64_2013.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
@@ -301,6 +301,7 @@
     <ClInclude Include="Config\ConfigFile.h" />
     <ClInclude Include="Config\MainConfigFile.h" />
     <ClInclude Include="Devices\Device.h" />
+    <ClInclude Include="Devices\DeviceCorsair.h" />
     <ClInclude Include="Devices\DeviceLightFX.h" />
     <ClInclude Include="Devices\DeviceLightpack.h" />
     <ClInclude Include="Devices\DeviceLogitech.h" />
@@ -342,6 +343,7 @@
     <ClCompile Include="Config\ConfigFile.cpp" />
     <ClCompile Include="Config\MainConfigFile.cpp" />
     <ClCompile Include="Devices\Device.cpp" />
+    <ClCompile Include="Devices\DeviceCorsair.cpp" />
     <ClCompile Include="Devices\DeviceLightFX.cpp" />
     <ClCompile Include="Devices\DeviceLightpack.cpp" />
     <ClCompile Include="Devices\DeviceLogitech.cpp" />
@@ -364,6 +366,16 @@
     <ClCompile Include="Utils\Log.cpp" />
     <ClCompile Include="Utils\String.cpp" />
     <ClCompile Include="Utils\Windows.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content  Include="..\lib\x64\CUESDK.x64_2013.dll">
+      <Link>..\x64\CUESDK.x64_2013.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content  Include="..\lib\x86\CUESDK_2013.dll">
+      <Link>..\x86\CUESDK_2013.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

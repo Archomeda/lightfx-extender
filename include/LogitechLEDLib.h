@@ -11,9 +11,20 @@
 #define LOGI_LED_BITMAP_HEIGHT 6
 #define LOGI_LED_BITMAP_BYTES_PER_KEY 4
 
-#define LOGI_LED_BITMAP_SIZE LOGI_LED_BITMAP_WIDTH*LOGI_LED_BITMAP_HEIGHT*LOGI_LED_BITMAP_BYTES_PER_KEY
+#define LOGI_LED_BITMAP_SIZE (LOGI_LED_BITMAP_WIDTH*LOGI_LED_BITMAP_HEIGHT*LOGI_LED_BITMAP_BYTES_PER_KEY)
 
 #define LOGI_LED_DURATION_INFINITE 0
+
+#define LOGI_DEVICETYPE_MONOCHROME_ORD  0
+#define LOGI_DEVICETYPE_RGB_ORD         1
+#define LOGI_DEVICETYPE_PERKEY_RGB_ORD  2
+
+#define LOGI_DEVICETYPE_MONOCHROME  (1 << LOGI_DEVICETYPE_MONOCHROME_ORD)
+#define LOGI_DEVICETYPE_RGB         (1 << LOGI_DEVICETYPE_RGB_ORD)
+#define LOGI_DEVICETYPE_PERKEY_RGB  (1 << LOGI_DEVICETYPE_PERKEY_RGB_ORD)
+
+#define LOGI_DEVICETYPE_ALL (LOGI_DEVICETYPE_MONOCHROME | LOGI_DEVICETYPE_RGB | LOGI_DEVICETYPE_PERKEY_RGB)
+
 
 namespace LogiLed
 {
@@ -128,17 +139,32 @@ namespace LogiLed
 }
 
 bool LogiLedInit();
+
+bool LogiLedGetSdkVersion(int *majorNum, int *minorNum, int *buildNum);
+
+//Generic functions => Apply to any device type.
+bool LogiLedSetTargetDevice(int targetDevice);
 bool LogiLedSaveCurrentLighting();
 bool LogiLedSetLighting(int redPercentage, int greenPercentage, int bluePercentage);
 bool LogiLedRestoreLighting();
 bool LogiLedFlashLighting(int redPercentage, int greenPercentage, int bluePercentage, int milliSecondsDuration, int milliSecondsInterval);
 bool LogiLedPulseLighting(int redPercentage, int greenPercentage, int bluePercentage, int milliSecondsDuration, int milliSecondsInterval);
 bool LogiLedStopEffects();
-bool LogiLedSetLightingFromBitmap(BYTE bitmap[]);
+
+//Per-key functions => only apply to LOGI_DEVICETYPE_PERKEY_RGB devices.
+bool LogiLedSetLightingFromBitmap(unsigned char bitmap[]);
 bool LogiLedSetLightingForKeyWithScanCode(int keyCode, int redPercentage, int greenPercentage, int bluePercentage);
 bool LogiLedSetLightingForKeyWithHidCode(int keyCode, int redPercentage, int greenPercentage, int bluePercentage);
 bool LogiLedSetLightingForKeyWithQuartzCode(int keyCode, int redPercentage, int greenPercentage, int bluePercentage);
 bool LogiLedSetLightingForKeyWithKeyName(LogiLed::KeyName keyName, int redPercentage, int greenPercentage, int bluePercentage);
+bool LogiLedSaveLightingForKey(LogiLed::KeyName keyName);
+bool LogiLedRestoreLightingForKey(LogiLed::KeyName keyName);
+
+//Per-key effects => only apply to LOGI_DEVICETYPE_PERKEY_RGB devices.
+bool LogiLedFlashSingleKey(LogiLed::KeyName keyName, int redPercentage, int greenPercentage, int bluePercentage, int msDuration, int msInterval);
+bool LogiLedPulseSingleKey(LogiLed::KeyName keyName, int startRedPercentage, int startGreenPercentage, int startBluePercentage, int finishRedPercentage, int finishGreenPercentage, int finishBluePercentage, int msDuration, bool isInfinite);
+bool LogiLedStopEffectsOnKey(LogiLed::KeyName keyName);
+
 void LogiLedShutdown();
 
 

@@ -31,7 +31,15 @@
 #define CONF_DEVICES_LOGITECH_COLORRANGE_OUTMAX L"LightFXMax"
 #define CONF_DEVICES_LOGITECH_COLORRANGE_INMIN L"LogitechMin"
 #define CONF_DEVICES_LOGITECH_COLORRANGE_INMAX L"LogitechMax"
+#define CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL L"RestoreLightsOnNullEnabled"
 #define CONF_DEVICES_LOGITECH_G110WORKAROUND L"G110WorkaroundEnabled"
+
+#define CONF_DEVICES_CORSAIR L"Corsair"
+#define CONF_DEVICES_CORSAIR_COLORRANGE L"ColorRange"
+#define CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN L"LightFXMin"
+#define CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX L"LightFXMax"
+#define CONF_DEVICES_CORSAIR_COLORRANGE_INMIN L"CorsairMin"
+#define CONF_DEVICES_CORSAIR_COLORRANGE_INMAX L"CorsairMax"
 
 #define CONF_DEVICES_LIGHTPACK L"Lightpack"
 #define CONF_DEVICES_LIGHTPACK_API L"SocketApi"
@@ -76,7 +84,13 @@ namespace lightfx {
             this->LogitechColorRangeOutMax = 255;
             this->LogitechColorRangeInMin = 0;
             this->LogitechColorRangeInMax = 100;
+			this->LogitechRestoreLightsOnNullEnabled = false;
             this->LogitechG110WorkaroundEnabled = false;
+
+			this->CorsairColorRangeOutMin = 0;
+			this->CorsairColorRangeOutMax = 255;
+			this->CorsairColorRangeInMin = 0;
+			this->CorsairColorRangeInMax = 255;
 
             this->GuildWars2TeamColorEnabled = true;
             this->GuildWars2TeamColorAnimation = L"Pulse";
@@ -174,9 +188,23 @@ namespace lightfx {
             objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMIN, this->LogitechColorRangeInMin, allocator);
             objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMAX, this->LogitechColorRangeInMax, allocator);
             objLogitech.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE, objLogitechColorRange, allocator);
+			objLogitech.AddMember(CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL, this->LogitechRestoreLightsOnNullEnabled, allocator);
             objLogitech.AddMember(CONF_DEVICES_LOGITECH_G110WORKAROUND, this->LogitechG110WorkaroundEnabled, allocator);
 
             obj.AddMember(CONF_DEVICES_LOGITECH, objLogitech, allocator);
+
+			// Logitech
+			WValue objCorsair(kObjectType);
+
+			// Logitech color range
+			WValue objCorsairColorRange(kObjectType);
+			objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN, this->CorsairColorRangeOutMin, allocator);
+			objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX, this->CorsairColorRangeOutMax, allocator);
+			objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMIN, this->CorsairColorRangeInMin, allocator);
+			objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMAX, this->CorsairColorRangeInMax, allocator);
+			objCorsair.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE, objCorsairColorRange, allocator);
+
+			obj.AddMember(CONF_DEVICES_CORSAIR, objCorsair, allocator);
 
             return obj;
         }
@@ -309,7 +337,31 @@ namespace lightfx {
                     if (objLogitech.HasMember(CONF_DEVICES_LOGITECH_G110WORKAROUND) && objLogitech[CONF_DEVICES_LOGITECH_G110WORKAROUND].IsBool()) {
                         this->LogitechG110WorkaroundEnabled = objLogitech[CONF_DEVICES_LOGITECH_G110WORKAROUND].GetBool();
                     }
+					if (objLogitech.HasMember(CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL) && objLogitech[CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL].IsBool()) {
+						this->LogitechRestoreLightsOnNullEnabled = objLogitech[CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL].GetBool();
+					}
                 }
+
+				// Corsair
+				if (objDevices.HasMember(CONF_DEVICES_CORSAIR) && objDevices[CONF_DEVICES_CORSAIR].IsObject()) {
+					const WValue& objCorsair = objDevices[CONF_DEVICES_CORSAIR];
+					// Corsair color range
+					if (objCorsair.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE) && objCorsair[CONF_DEVICES_CORSAIR_COLORRANGE].IsObject()) {
+						const WValue& colorRange = objCorsair[CONF_DEVICES_CORSAIR_COLORRANGE];
+						if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN].IsInt()) {
+							this->CorsairColorRangeOutMin = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN].GetInt();
+						}
+						if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX].IsInt()) {
+							this->CorsairColorRangeOutMax = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX].GetInt();
+						}
+						if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMIN) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMIN].IsInt()) {
+							this->CorsairColorRangeInMin = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMIN].GetInt();
+						}
+						if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMAX) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMAX].IsInt()) {
+							this->CorsairColorRangeInMax = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMAX].GetInt();
+						}
+					}
+				}
             }
         }
 

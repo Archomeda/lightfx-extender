@@ -38,6 +38,7 @@ open `settings.json` within the configuration folder (see
   - For version 8.58.177 and lower, G110 users have to enable
 [a workaround](https://github.com/Archomeda/lightfx-extender/wiki/Logitech-G110-Workaround)
 for a bug that will be fixed in an upcoming version
+- Corsair keyboards and mice for both RGB and Monochrome
 - Lightpack devices through a recent version of Prismatik (or similar hardware
 and software that support the same API, tested on version 5.11.1 only)
 - Alienware devices that originally support LightFX
