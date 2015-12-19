@@ -46,20 +46,20 @@ namespace lightfx {
             auto logitech = make_shared<DeviceLogitech>();
             logitech->SetRange(config->LogitechColorRangeOutMin, config->LogitechColorRangeOutMax, config->LogitechColorRangeInMin, config->LogitechColorRangeInMax);
             this->AddChild(L"Logitech", logitech);
-			logitech->SetRestoreLightsOnNullEnabled(config->LogitechRestoreLightsOnNullEnabled);
+            logitech->SetRestoreLightsOnNullEnabled(config->LogitechRestoreLightsOnNullEnabled);
             logitech->SetG110WorkaroundEnabled(config->LogitechG110WorkaroundEnabled);
             if (logitech->Initialize()) {
                 ++i;
             }
 
-			
-			auto corsair = make_shared<DeviceCorsair>();
-			corsair->SetRange(config->CorsairColorRangeOutMin, config->CorsairColorRangeOutMax, config->CorsairColorRangeInMin, config->CorsairColorRangeInMax);
-			this->AddChild(L"Corsair", corsair);
-			if (corsair->Initialize()) {
-				++i;
-			}
-			
+            
+            auto corsair = make_shared<DeviceCorsair>();
+            corsair->SetRange(config->CorsairColorRangeOutMin, config->CorsairColorRangeOutMax, config->CorsairColorRangeInMin, config->CorsairColorRangeInMax);
+            this->AddChild(L"Corsair", corsair);
+            if (corsair->Initialize()) {
+                ++i;
+            }
+            
 
             // Load native LightFX devices
             if (InitializeLightFX(config->AlienwareDllName, config->AlienwareBackupDllName)) {

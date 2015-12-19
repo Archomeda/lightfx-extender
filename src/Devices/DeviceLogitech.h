@@ -14,8 +14,8 @@ namespace lightfx {
 
         public: 
             void SetRange(const int outMin, const int outMax, const int inMin, const int inMax);
-			void SetRestoreLightsOnNullEnabled(const bool enabled);
-			void SetG110WorkaroundEnabled(const bool enabled);
+            void SetRestoreLightsOnNullEnabled(const bool enabled);
+            void SetG110WorkaroundEnabled(const bool enabled);
 
 
             virtual bool Initialize() override;
@@ -34,7 +34,7 @@ namespace lightfx {
             int rangeInMin = 0;
             int rangeInMax = 100;
 
-			bool RestoreLightsOnNullEnabled = false;
+            bool RestoreLightsOnNullEnabled = false;
             bool g110WorkaroundEnabled = false;
 
         };
