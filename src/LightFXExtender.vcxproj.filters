@@ -114,9 +114,6 @@
     <ClInclude Include="Utils\NotifyEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\LightFX.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Devices\DeviceCorsair.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -205,9 +202,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Utils\Log.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\LightFX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Devices\DeviceCorsair.cpp">

@@ -13,7 +13,6 @@
 #include "../Devices/DeviceLogitech.h"
 #include "../Devices/DeviceCorsair.h"
 #include "../Utils/FileIO.h"
-#include "../Utils/LightFX.h"
 #include "../Utils/Log.h"
 #include "../Utils/String.h"
 
@@ -99,10 +98,10 @@ namespace lightfx {
 
                         //TODO: Periodically check for changes (e.g. when a device gets connected or disconnected)
                     } else {
-                        LOG(LogLevel::Error, L"Failed to check the number of LightFX devices: " + GetFriendlyLfxResult(result));
+                        LOG(LogLevel::Error, L"Failed to check the number of LightFX devices: " + this->lightFXLibrary->LfxResultToString(result));
                     }
                 } else {
-                    LOG(LogLevel::Error, L"Failed to initialize LightFX: " + GetFriendlyLfxResult(result));
+                    LOG(LogLevel::Error, L"Failed to initialize LightFX: " + this->lightFXLibrary->LfxResultToString(result));
                 }
             } else {
                 LOG(LogLevel::Debug, L"Alienware LightFX library not found");

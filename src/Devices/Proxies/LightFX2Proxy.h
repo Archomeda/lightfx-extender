@@ -35,6 +35,9 @@ namespace lightfx {
 
                 using DeviceLibraryProxy::IsLoaded;
 
+                std::wstring LfxResultToString(const LFX_RESULT result);
+
+                // LightFX function declarations
                 LFX2INITIALIZE LFX_Initialize;
                 LFX2RELEASE LFX_Release;
                 LFX2RESET LFX_Reset;

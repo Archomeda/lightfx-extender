@@ -81,6 +81,26 @@ namespace lightfx {
                 return true;
             }
 
+            LFXE_API wstring LightFX2Proxy::LfxResultToString(const LFX_RESULT result) {
+                switch (result)
+                {
+                case LFX_SUCCESS:
+                    return L"LFX_SUCCESS";
+                case LFX_FAILURE:
+                    return L"LFX_FAILURE";
+                case LFX_ERROR_NOINIT:
+                    return L"LFX_ERROR_NOINIT";
+                case LFX_ERROR_NODEVS:
+                    return L"LFX_ERROR_NODEVS";
+                case LFX_ERROR_NOLIGHTS:
+                    return L"LFX_ERROR_NOLIGHTS";
+                case LFX_ERROR_BUFFSIZE:
+                    return L"LFX_ERROR_BUFFSIZE";
+                default:
+                    return L"Unknown error " + to_wstring(result);
+                }
+            }
+
             LFXE_API bool LightFX2Proxy::IsOfficialLightFX(const HINSTANCE hInstance) {
                 return GetProcAddress(hInstance, "LFXE_GetVersion") == NULL;
             }
