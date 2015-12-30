@@ -120,6 +120,9 @@
     <ClInclude Include="Utils\LightFX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Devices\DeviceRazer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Devices\DeviceCorsair.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -213,9 +216,8 @@
     <ClCompile Include="Devices\DeviceCorsair.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\lib\x86\CUESDK_2013.dll" />
-    <None Include="..\lib\x64\CUESDK.x64_2013.dll" />
+    <ClCompile Include="Devices\DeviceRazer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

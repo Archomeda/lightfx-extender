@@ -35,6 +35,8 @@ namespace lightfx {
             virtual const std::wstring GetConfigDirectory();
             virtual void SetConfigDirectory(const std::wstring& directory);
 
+            bool configLoaded = false;
+
         protected:
             virtual void LoadDefaults() = 0;
             virtual std::wstring Serialize() = 0;

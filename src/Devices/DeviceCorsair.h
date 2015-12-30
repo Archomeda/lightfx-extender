@@ -10,32 +10,32 @@
 
 
 namespace lightfx {
-	namespace devices {
+    namespace devices {
 
-		class LFXE_API DeviceCorsair : public Device {
+        class LFXE_API DeviceCorsair : public Device {
 
-		public:
-			void SetRange(const int outMin, const int outMax, const int inMin, const int inMax);
+        public:
+            void SetRange(const int outMin, const int outMax, const int inMin, const int inMax);
 
-			virtual bool Initialize() override;
-			virtual bool Enable() override;
-			virtual bool Disable() override;
+            virtual bool Initialize() override;
+            virtual bool Enable() override;
+            virtual bool Disable() override;
 
-			virtual const std::wstring GetDeviceName() override { return L"Corsair"; }
-			virtual const DeviceType GetDeviceType() override { return DeviceType::DeviceKeyboard; }
+            virtual const std::wstring GetDeviceName() override { return L"Corsair"; }
+            virtual const DeviceType GetDeviceType() override { return DeviceType::DeviceKeyboard; }
 
-		protected:
-			virtual bool PushColorToDevice(const std::vector<timelines::LightColor>& colors) override;
+        protected:
+            virtual bool PushColorToDevice(const std::vector<timelines::LightColor>& colors) override;
 
-		private:
-			int rangeOutMin = 0;
-			int rangeOutMax = 255;
-			int rangeInMin = 0;
-			int rangeInMax = 255;
-			CorsairLedPositions* ledPositions;
+        private:
+            int rangeOutMin = 0;
+            int rangeOutMax = 255;
+            int rangeInMin = 0;
+            int rangeInMax = 255;
+            CorsairLedPositions* ledPositions;
 
-			const char* toString(CorsairError error);
-		};
+            const char* toString(CorsairError error);
+        };
 
-	}
+    }
 }

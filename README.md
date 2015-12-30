@@ -13,6 +13,9 @@ starting that game, LightFX Extender should load up and place itself in the
 notification area next to the clock on your taskbar. Right-click on the icon and
 enable the devices that you want to have LightFX Extender support for.
 
+When LightFX Extender is started for the first time, it will automatically attempt to
+enable supported devices.
+
 For advanced configuration, please check the file `settings.json` in the
 configuration folder (`%APPDATA%\LightFX Extender`) or right-click on the icon
 in your taskbar and choose *Open configuration folder*. This file will be
@@ -38,7 +41,8 @@ open `settings.json` within the configuration folder (see
   - For version 8.58.177 and lower, G110 users have to enable
 [a workaround](https://github.com/Archomeda/lightfx-extender/wiki/Logitech-G110-Workaround)
 for a bug that will be fixed in an upcoming version
-- Corsair keyboards and mice for both RGB and Monochrome
+- Corsair keyboards and mice for both RGB and Monochrome (by @antonpup)
+- Razer Chroma products
 - Lightpack devices through a recent version of Prismatik (or similar hardware
 and software that support the same API, tested on version 5.11.1 only)
 - Alienware devices that originally support LightFX
@@ -52,7 +56,9 @@ tested games are:
 - Guild Wars 2
  - Extended feature: Change color based on your PvP/WvW team upon entering the
    map or switching PvP teams
-
+ - The 64-bit client is not detecting the 64-bit build of LightFX Extender
+   properly
+   
 *Unless otherwise specified, the games are x86 and therefore use the x86 build
 of LightFX Extender.*
 

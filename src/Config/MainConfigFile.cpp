@@ -8,7 +8,6 @@
 #include "../LightFXExtender.h"
 #include "../Managers/DeviceManager.h"
 
-
 #pragma region Configuration keys
 #define CONF_AUTOUPDATESENABLED L"AutoUpdatesEnabled"
 #define CONF_MINIMUMLOGLEVEL L"MinimumLogLevel"
@@ -41,6 +40,15 @@
 #define CONF_DEVICES_CORSAIR_COLORRANGE_INMIN L"CorsairMin"
 #define CONF_DEVICES_CORSAIR_COLORRANGE_INMAX L"CorsairMax"
 
+#define CONF_DEVICES_RAZER L"Razer"
+#define CONF_DEVICES_RAZER_HARDWARE L"Hardware"
+#define CONF_DEVICES_RAZER_HARDWARE_KEYBOARD L"UseWithKeyboard"
+#define CONF_DEVICES_RAZER_HARDWARE_MOUSE L"UseWithMouse"
+#define CONF_DEVICES_RAZER_HARDWARE_HEADSET L"UseWithHeadset"
+#define CONF_DEVICES_RAZER_HARDWARE_MOUSEPAD L"UseWithMousepad"
+#define CONF_DEVICES_RAZER_HARDWARE_KEYPAD L"UseWithKeypad"
+
+
 #define CONF_DEVICES_LIGHTPACK L"Lightpack"
 #define CONF_DEVICES_LIGHTPACK_API L"SocketApi"
 #define CONF_DEVICES_LIGHTPACK_API_HOST L"Hostname"
@@ -63,9 +71,12 @@ namespace lightfx {
 
         LFXE_API void MainConfigFile::Load() {
             ConfigFile::Load(L"settings.json");
+
+            this->AutoDeviceDetection = !ConfigFile::configLoaded;
         }
 
         LFXE_API void MainConfigFile::LoadDefaults() {
+            this->AutoDeviceDetection = true;
             this->AutoUpdatesEnabled = true;
             this->MinimumLogLevel = LogLevel::Info;
             this->TimelineUpdateInterval = 20;
@@ -84,13 +95,19 @@ namespace lightfx {
             this->LogitechColorRangeOutMax = 255;
             this->LogitechColorRangeInMin = 0;
             this->LogitechColorRangeInMax = 100;
-			this->LogitechRestoreLightsOnNullEnabled = false;
+            this->LogitechRestoreLightsOnNullEnabled = false;
             this->LogitechG110WorkaroundEnabled = false;
 
-			this->CorsairColorRangeOutMin = 0;
-			this->CorsairColorRangeOutMax = 255;
-			this->CorsairColorRangeInMin = 0;
-			this->CorsairColorRangeInMax = 255;
+            this->CorsairColorRangeOutMin = 0;
+            this->CorsairColorRangeOutMax = 255;
+            this->CorsairColorRangeInMin = 0;
+            this->CorsairColorRangeInMax = 255;
+
+            this->RazerUseWithKeyboard = true;
+            this->RazerUseWithMouse = true;
+            this->RazerUseWithHeadset = true;
+            this->RazerUseWithMousepad = true;
+            this->RazerUseWithKeypad = true;
 
             this->GuildWars2TeamColorEnabled = true;
             this->GuildWars2TeamColorAnimation = L"Pulse";
@@ -188,23 +205,34 @@ namespace lightfx {
             objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMIN, this->LogitechColorRangeInMin, allocator);
             objLogitechColorRange.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE_INMAX, this->LogitechColorRangeInMax, allocator);
             objLogitech.AddMember(CONF_DEVICES_LOGITECH_COLORRANGE, objLogitechColorRange, allocator);
-			objLogitech.AddMember(CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL, this->LogitechRestoreLightsOnNullEnabled, allocator);
+            objLogitech.AddMember(CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL, this->LogitechRestoreLightsOnNullEnabled, allocator);
             objLogitech.AddMember(CONF_DEVICES_LOGITECH_G110WORKAROUND, this->LogitechG110WorkaroundEnabled, allocator);
 
             obj.AddMember(CONF_DEVICES_LOGITECH, objLogitech, allocator);
 
-			// Logitech
-			WValue objCorsair(kObjectType);
+            // Corsair
+            WValue objCorsair(kObjectType);
 
-			// Logitech color range
-			WValue objCorsairColorRange(kObjectType);
-			objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN, this->CorsairColorRangeOutMin, allocator);
-			objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX, this->CorsairColorRangeOutMax, allocator);
-			objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMIN, this->CorsairColorRangeInMin, allocator);
-			objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMAX, this->CorsairColorRangeInMax, allocator);
-			objCorsair.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE, objCorsairColorRange, allocator);
+            // Corsair color range
+            WValue objCorsairColorRange(kObjectType);
+            objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN, this->CorsairColorRangeOutMin, allocator);
+            objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX, this->CorsairColorRangeOutMax, allocator);
+            objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMIN, this->CorsairColorRangeInMin, allocator);
+            objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMAX, this->CorsairColorRangeInMax, allocator);
+            objCorsair.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE, objCorsairColorRange, allocator);
 
-			obj.AddMember(CONF_DEVICES_CORSAIR, objCorsair, allocator);
+            obj.AddMember(CONF_DEVICES_CORSAIR, objCorsair, allocator);
+
+            // Razer
+            WValue objRazer(kObjectType);
+            WValue objRazerHardware(kObjectType);
+            objRazerHardware.AddMember(CONF_DEVICES_RAZER_HARDWARE_KEYBOARD, this->RazerUseWithKeyboard, allocator);
+            objRazerHardware.AddMember(CONF_DEVICES_RAZER_HARDWARE_MOUSE, this->RazerUseWithMouse, allocator);
+            objRazerHardware.AddMember(CONF_DEVICES_RAZER_HARDWARE_HEADSET, this->RazerUseWithHeadset, allocator);
+            objRazerHardware.AddMember(CONF_DEVICES_RAZER_HARDWARE_MOUSEPAD, this->RazerUseWithMousepad, allocator);
+            objRazerHardware.AddMember(CONF_DEVICES_RAZER_HARDWARE_KEYPAD, this->RazerUseWithKeypad, allocator);
+            objRazer.AddMember(CONF_DEVICES_RAZER_HARDWARE, objRazerHardware, allocator);
+            obj.AddMember(CONF_DEVICES_RAZER, objRazer, allocator);
 
             return obj;
         }
@@ -337,31 +365,55 @@ namespace lightfx {
                     if (objLogitech.HasMember(CONF_DEVICES_LOGITECH_G110WORKAROUND) && objLogitech[CONF_DEVICES_LOGITECH_G110WORKAROUND].IsBool()) {
                         this->LogitechG110WorkaroundEnabled = objLogitech[CONF_DEVICES_LOGITECH_G110WORKAROUND].GetBool();
                     }
-					if (objLogitech.HasMember(CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL) && objLogitech[CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL].IsBool()) {
-						this->LogitechRestoreLightsOnNullEnabled = objLogitech[CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL].GetBool();
-					}
+                    if (objLogitech.HasMember(CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL) && objLogitech[CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL].IsBool()) {
+                        this->LogitechRestoreLightsOnNullEnabled = objLogitech[CONF_DEVICES_LOGITECH_RESTORELIGHTSONNULL].GetBool();
+                    }
                 }
 
-				// Corsair
-				if (objDevices.HasMember(CONF_DEVICES_CORSAIR) && objDevices[CONF_DEVICES_CORSAIR].IsObject()) {
-					const WValue& objCorsair = objDevices[CONF_DEVICES_CORSAIR];
-					// Corsair color range
-					if (objCorsair.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE) && objCorsair[CONF_DEVICES_CORSAIR_COLORRANGE].IsObject()) {
-						const WValue& colorRange = objCorsair[CONF_DEVICES_CORSAIR_COLORRANGE];
-						if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN].IsInt()) {
-							this->CorsairColorRangeOutMin = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN].GetInt();
-						}
-						if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX].IsInt()) {
-							this->CorsairColorRangeOutMax = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX].GetInt();
-						}
-						if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMIN) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMIN].IsInt()) {
-							this->CorsairColorRangeInMin = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMIN].GetInt();
-						}
-						if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMAX) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMAX].IsInt()) {
-							this->CorsairColorRangeInMax = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMAX].GetInt();
-						}
-					}
-				}
+                // Corsair
+                if (objDevices.HasMember(CONF_DEVICES_CORSAIR) && objDevices[CONF_DEVICES_CORSAIR].IsObject()) {
+                    const WValue& objCorsair = objDevices[CONF_DEVICES_CORSAIR];
+                    // Corsair color range
+                    if (objCorsair.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE) && objCorsair[CONF_DEVICES_CORSAIR_COLORRANGE].IsObject()) {
+                        const WValue& colorRange = objCorsair[CONF_DEVICES_CORSAIR_COLORRANGE];
+                        if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN].IsInt()) {
+                            this->CorsairColorRangeOutMin = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN].GetInt();
+                        }
+                        if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX].IsInt()) {
+                            this->CorsairColorRangeOutMax = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX].GetInt();
+                        }
+                        if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMIN) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMIN].IsInt()) {
+                            this->CorsairColorRangeInMin = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMIN].GetInt();
+                        }
+                        if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMAX) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMAX].IsInt()) {
+                            this->CorsairColorRangeInMax = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMAX].GetInt();
+                        }
+                    }
+                }
+
+                // Razer
+                if (objDevices.HasMember(CONF_DEVICES_RAZER) && objDevices[CONF_DEVICES_RAZER].IsObject()) {
+                    const WValue& objRazer = objDevices[CONF_DEVICES_RAZER];
+                    // Razer Hardware
+                    if (objRazer.HasMember(CONF_DEVICES_RAZER_HARDWARE) && objRazer[CONF_DEVICES_RAZER_HARDWARE].IsObject()) {
+                        const WValue& razerHardware = objRazer[CONF_DEVICES_RAZER_HARDWARE];
+                        if (razerHardware.HasMember(CONF_DEVICES_RAZER_HARDWARE_KEYBOARD) && razerHardware[CONF_DEVICES_RAZER_HARDWARE_KEYBOARD].IsBool()) {
+                            this->RazerUseWithKeyboard = razerHardware[CONF_DEVICES_RAZER_HARDWARE_KEYBOARD].IsBool();
+                        }
+                        if (razerHardware.HasMember(CONF_DEVICES_RAZER_HARDWARE_MOUSE) && razerHardware[CONF_DEVICES_RAZER_HARDWARE_MOUSE].IsBool()) {
+                            this->RazerUseWithMouse = razerHardware[CONF_DEVICES_RAZER_HARDWARE_MOUSE].IsBool();
+                        }
+                        if (razerHardware.HasMember(CONF_DEVICES_RAZER_HARDWARE_HEADSET) && razerHardware[CONF_DEVICES_RAZER_HARDWARE_HEADSET].IsBool()) {
+                            this->RazerUseWithHeadset = razerHardware[CONF_DEVICES_RAZER_HARDWARE_HEADSET].IsBool();
+                        }
+                        if (razerHardware.HasMember(CONF_DEVICES_RAZER_HARDWARE_MOUSEPAD) && razerHardware[CONF_DEVICES_RAZER_HARDWARE_MOUSEPAD].IsBool()) {
+                            this->RazerUseWithMousepad = razerHardware[CONF_DEVICES_RAZER_HARDWARE_MOUSEPAD].IsBool();
+                        }
+                        if (razerHardware.HasMember(CONF_DEVICES_RAZER_HARDWARE_KEYPAD) && razerHardware[CONF_DEVICES_RAZER_HARDWARE_KEYPAD].IsBool()) {
+                            this->RazerUseWithKeypad = razerHardware[CONF_DEVICES_RAZER_HARDWARE_KEYPAD].IsBool();
+                        }
+                    }
+                }
             }
         }
 

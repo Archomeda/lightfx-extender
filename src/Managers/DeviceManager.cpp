@@ -12,6 +12,7 @@
 #include "../Devices/DeviceLightpack.h"
 #include "../Devices/DeviceLogitech.h"
 #include "../Devices/DeviceCorsair.h"
+#include "../Devices/DeviceRazer.h"
 #include "../Devices/LightFX2.h"
 #include "../Utils/FileIO.h"
 #include "../Utils/LightFX.h"
@@ -46,20 +47,26 @@ namespace lightfx {
             auto logitech = make_shared<DeviceLogitech>();
             logitech->SetRange(config->LogitechColorRangeOutMin, config->LogitechColorRangeOutMax, config->LogitechColorRangeInMin, config->LogitechColorRangeInMax);
             this->AddChild(L"Logitech", logitech);
-			logitech->SetRestoreLightsOnNullEnabled(config->LogitechRestoreLightsOnNullEnabled);
+            logitech->SetRestoreLightsOnNullEnabled(config->LogitechRestoreLightsOnNullEnabled);
             logitech->SetG110WorkaroundEnabled(config->LogitechG110WorkaroundEnabled);
             if (logitech->Initialize()) {
                 ++i;
             }
 
-			
-			auto corsair = make_shared<DeviceCorsair>();
-			corsair->SetRange(config->CorsairColorRangeOutMin, config->CorsairColorRangeOutMax, config->CorsairColorRangeInMin, config->CorsairColorRangeInMax);
-			this->AddChild(L"Corsair", corsair);
-			if (corsair->Initialize()) {
-				++i;
-			}
-			
+            
+            auto corsair = make_shared<DeviceCorsair>();
+            corsair->SetRange(config->CorsairColorRangeOutMin, config->CorsairColorRangeOutMax, config->CorsairColorRangeInMin, config->CorsairColorRangeInMax);
+            this->AddChild(L"Corsair", corsair);
+            if (corsair->Initialize()) {
+                ++i;
+            }
+            
+            auto razer = make_shared<DeviceRazer>();
+            razer->SetHardware(config->RazerUseWithKeyboard, config->RazerUseWithMouse, config->RazerUseWithHeadset, config->RazerUseWithMousepad, config->RazerUseWithKeypad);
+            this->AddChild(L"Razer", razer);
+            if (razer->Initialize()) {
+                ++i;
+            }
 
             // Load native LightFX devices
             if (InitializeLightFX(config->AlienwareDllName, config->AlienwareBackupDllName)) {
@@ -110,21 +117,41 @@ namespace lightfx {
             LOG(LogLevel::Info, L"Successfully initialized " + to_wstring(i) + L" devices");
 
             // Enable devices where needed
-            for (pair<wstring, bool> device : config->EnabledDevices) {
-                if (device.second) {
-                    auto dev = this->GetChild(device.first);
-                    if (dev == nullptr) {
-                        LOG(LogLevel::Warning, L"Device " + device.first + L" is configured in settings, but was not found in the system");
+            if (config->AutoDeviceDetection)
+            {
+                for (size_t i = 0; i < this->GetChildrenCount(); ++i) {
+                    auto device = this->GetChildByIndex(i);
+
+                    if (device == nullptr) {
+                        LOG(LogLevel::Warning, L"Device " + device->GetDeviceName() + L" is configured in settings, but was not found in the system");
                         continue;
                     }
-                    if (!dev->IsInitialized()) {
-                        LOG(LogLevel::Warning, L"Device " + device.first + L" cannot be enabled, because was not initialized");
+                    if (!device->IsInitialized()) {
+                        LOG(LogLevel::Warning, L"Device " + device->GetDeviceName() + L" cannot be enabled, because was not initialized");
                         continue;
                     }
-                    dev->Enable();
+
+                    bool auto_result = device->Enable();
+                    LOG(LogLevel::Warning, L"Device " + device->GetDeviceName() + L" was automatically set to " + (auto_result ? L"ON" : L"OFF"));
                 }
             }
-
+            else
+            {
+                for (pair<wstring, bool> device : config->EnabledDevices) {
+                    if (device.second) {
+                        auto dev = this->GetChild(device.first);
+                        if (dev == nullptr) {
+                            LOG(LogLevel::Warning, L"Device " + device.first + L" is configured in settings, but was not found in the system");
+                            continue;
+                        }
+                        if (!dev->IsInitialized()) {
+                            LOG(LogLevel::Warning, L"Device " + device.first + L" cannot be enabled, because was not initialized");
+                            continue;
+                        }
+                        dev->Enable();
+                    }
+                }
+            }
             return i;
         }
 
