@@ -19,7 +19,6 @@ namespace lightfx {
 
             virtual bool Initialize() override;
             virtual bool Enable() override;
-            virtual bool Disable() override;
 
             virtual const std::wstring GetDeviceName() override { return L"Corsair"; }
             virtual const DeviceType GetDeviceType() override { return DeviceType::DeviceKeyboard; }

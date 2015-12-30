@@ -58,12 +58,12 @@ namespace lightfx {
 
                         this->Reset();
                         this->DisconnectAPI();
-                        return true;
                     }
+                } else {
+                    return false;
                 }
             }
-            this->SetInitialized(false);
-            return false;
+            return true;
         }
 
         bool DeviceLightpack::Enable() {
@@ -71,23 +71,23 @@ namespace lightfx {
                 if (Device::Enable()) {
                     if (this->ConnectAPI()) {
                         this->Reset();
-                        return true;
                     }
+                } else {
+                    return false;
                 }
             }
-            this->SetEnabled(false);
-            return false;
+            return true;
         }
 
         bool DeviceLightpack::Disable() {
             if (this->IsEnabled()) {
                 if (Device::Disable()) {
                     this->DisconnectAPI();
-                    return true;
+                } else {
+                    return false;
                 }
             }
-            this->SetEnabled(true);
-            return false;
+            return true;
         }
 
         bool DeviceLightpack::PushColorToDevice(const vector<LightColor>& colors) {

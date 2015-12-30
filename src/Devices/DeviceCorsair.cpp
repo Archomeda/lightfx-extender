@@ -48,43 +48,30 @@ namespace lightfx {
                     this->SetLightData(0, LightData());
 
                     this->Reset();
-                    return true;
+                } else {
+                    return false;
                 }
             }
-            this->SetInitialized(false);
-            return false;
+            return true;
         }
 
         LFXE_API bool DeviceCorsair::Enable() {
             if (!this->IsEnabled()) {
                 if (Device::Enable()) {
-                    
                     CorsairPerformProtocolHandshake();
                     if (const auto error = CorsairGetLastError()) {
                         const char* str_error = toString(error);
                         wstring wstr(str_error, str_error + strlen(str_error));
                         LOG(LogLevel::Error, L"Handshake with Corsair failed: " + wstr);
-                    }
-                    else
-                    {
+                    } else {
                         this->Reset();
                         this->ledPositions = CorsairGetLedPositions();
-                        return true;
                     }
+                } else {
+                    return false;
                 }
             }
-            this->SetEnabled(false);
-            return false;
-        }
-
-        LFXE_API bool DeviceCorsair::Disable() {
-            if (this->IsEnabled()) {
-                if (Device::Disable()) {
-                    return true;
-                }
-            }
-            this->SetEnabled(true);
-            return false;
+            return true;
         }
 
         LFXE_API bool DeviceCorsair::PushColorToDevice(const vector<LightColor>& colors) {
