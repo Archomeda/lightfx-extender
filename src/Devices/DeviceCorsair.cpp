@@ -97,7 +97,7 @@ namespace lightfx {
 
             LOG(LogLevel::Debug, L"Update color to (" + to_wstring(updated_red) + L"," + to_wstring(updated_green) + L"," + to_wstring(updated_blue) + L")");
 
-            return CorsairSetLedsColorsAsync(vec.size(), vec.data(), nullptr, nullptr);
+            return CorsairSetLedsColorsAsync(static_cast<unsigned int>(vec.size()), vec.data(), nullptr, nullptr);
         }
 
 
