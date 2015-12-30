@@ -66,6 +66,7 @@ namespace lightfx {
                         LogiLedSaveCurrentLighting();
                     } else {
                         LOG(LogLevel::Error, L"Could not enable Logitech, make sure that Logitech Gaming Software is running and that it's at least at version 8.57.145");
+                        this->SetEnabled(false);
                         return false;
                     }
                 } else {
