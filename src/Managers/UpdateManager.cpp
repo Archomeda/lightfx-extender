@@ -69,7 +69,7 @@ namespace lightfx {
                     if (json[i].HasMember("tag_name") && json[i]["tag_name"].IsString()) {
                         if (json[i].HasMember("prerelease") && json[i]["prerelease"].IsBool()) {
                             if (json[i]["prerelease"].GetBool()) {
-                                //TODO Skip pre-releases for now, include an optional configuration to download them first
+                                //TODO: Skip pre-releases for now, include an optional configuration to download them first
                                 continue;
                             }
                         }

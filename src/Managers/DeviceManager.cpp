@@ -96,7 +96,7 @@ namespace lightfx {
                             LFX_SAFE_DELETE_ARRAY(devDesc);
                         }
 
-                        //TODO Periodically check for changes (e.g. when a device gets connected or disconnected)
+                        //TODO: Periodically check for changes (e.g. when a device gets connected or disconnected)
                     } else {
                         LOG(LogLevel::Error, L"Failed to check the number of LightFX devices: " + GetFriendlyLfxResult(result));
                     }
