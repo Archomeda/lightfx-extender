@@ -3,6 +3,9 @@
 // Windows includes
 #include "Device.h"
 
+// Project includes
+#include "Proxies/LightFX2Proxy.h"
+
 // API exports
 #include "../Common/ApiExports.h"
 
@@ -17,6 +20,7 @@ namespace lightfx {
 
         public:
             virtual bool Initialize() override;
+            virtual bool Release() override;
 
             virtual const unsigned int GetDeviceIndex();
             virtual void SetDeviceIndex(const unsigned int deviceIndex);
@@ -29,6 +33,8 @@ namespace lightfx {
             virtual bool PushColorToDevice(const std::vector<timelines::LightColor>& colors) override;
 
         private:
+            std::unique_ptr<proxies::LightFX2Proxy> library;
+
             unsigned int deviceIndex = 0;
             std::wstring deviceName = L"Unknown LightFX device";
             DeviceType deviceType = DeviceType::DeviceUnknown;

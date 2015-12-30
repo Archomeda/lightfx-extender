@@ -12,7 +12,6 @@
 #include "../Devices/DeviceLightpack.h"
 #include "../Devices/DeviceLogitech.h"
 #include "../Devices/DeviceCorsair.h"
-#include "../Devices/LightFX2.h"
 #include "../Utils/FileIO.h"
 #include "../Utils/LightFX.h"
 #include "../Utils/Log.h"
@@ -24,6 +23,7 @@
 using namespace std;
 using namespace lightfx::config;
 using namespace lightfx::devices;
+using namespace lightfx::devices::proxies;
 using namespace lightfx::utils;
 
 namespace lightfx {
@@ -62,14 +62,15 @@ namespace lightfx {
             
 
             // Load native LightFX devices
-            if (InitializeLightFX(config->AlienwareDllName, config->AlienwareBackupDllName)) {
-                LOG(LogLevel::Debug, L"Alienware LightFX.dll loaded");
+            this->lightFXLibrary = unique_ptr<LightFX2Proxy>(new LightFX2Proxy(config->AlienwareDllName, config->AlienwareBackupDllName));
+            if (this->lightFXLibrary->Load()) {
+                LOG(LogLevel::Debug, L"Alienware LightFX library found");
                 LFX_RESULT result;
 
-                result = LightFX_Initialize();
+                result = this->lightFXLibrary->LFX_Initialize();
                 if (result == LFX_SUCCESS) {
                     unsigned int numDevices = 0;
-                    result = LightFX_GetNumDevices(&numDevices);
+                    result = this->lightFXLibrary->LFX_GetNumDevices(&numDevices);
                     if (result == LFX_SUCCESS) {
                         LOG(LogLevel::Debug, to_wstring(numDevices) + L" LightFX devices found");
 
@@ -80,7 +81,7 @@ namespace lightfx {
                             // Get device name first so we can properly add it to the list of devices
                             char* devDesc = new char[LFX_MAX_STRING_SIZE];
                             unsigned char devType = 0;
-                            if (LightFX_GetDeviceDescription(j, devDesc, LFX_MAX_STRING_SIZE, &devType) == LFX_SUCCESS) {
+                            if (this->lightFXLibrary->LFX_GetDeviceDescription(j, devDesc, LFX_MAX_STRING_SIZE, &devType) == LFX_SUCCESS) {
                                 wstring deviceName = string_to_wstring(devDesc);
                                 if (deviceName == L"") {
                                     deviceName = L"LightFX " + to_wstring(j);
@@ -104,7 +105,7 @@ namespace lightfx {
                     LOG(LogLevel::Error, L"Failed to initialize LightFX: " + GetFriendlyLfxResult(result));
                 }
             } else {
-                LOG(LogLevel::Debug, L"Alienware LightFX.dll not found");
+                LOG(LogLevel::Debug, L"Alienware LightFX library not found");
             }
 
             LOG(LogLevel::Info, L"Successfully initialized " + to_wstring(i) + L" devices");
@@ -141,13 +142,13 @@ namespace lightfx {
             }
 
             // Unload native LightFX devices if needed
-            if (IsLightFXInitialized()) {
-                LFX_RESULT result = LightFX_Release();
+            if (this->lightFXLibrary->IsLoaded()) {
+                LFX_RESULT result = this->lightFXLibrary->LFX_Release();
                 if (result == LFX_SUCCESS) {
-                    if (ReleaseLightFX()) {
-                        LOG(LogLevel::Debug, L"Alienware LightFX.dll unloaded");
+                    if (this->lightFXLibrary->Unload()) {
+                        LOG(LogLevel::Debug, L"Alienware LightFX library unloaded");
                     } else {
-                        LOG(LogLevel::Error, L"Alienware LightFX.dll not unloaded");
+                        LOG(LogLevel::Error, L"Could not unload Alienware LightFX library");
                     }
                 } else {
                     LOG(LogLevel::Error, L"Failed to release LightFX: " + to_wstring(result));

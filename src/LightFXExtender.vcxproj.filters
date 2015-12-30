@@ -102,9 +102,6 @@
     <ClInclude Include="Timelines\Timeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Devices\LightFX2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Devices\DeviceLightFX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -121,6 +118,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Devices\DeviceCorsair.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Devices\Proxies\DeviceLibraryProxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Devices\Proxies\LightFX2Proxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -198,9 +201,6 @@
     <ClCompile Include="Timelines\Timeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Devices\LightFX2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Devices\DeviceLightFX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -213,9 +213,11 @@
     <ClCompile Include="Devices\DeviceCorsair.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\lib\x86\CUESDK_2013.dll" />
-    <None Include="..\lib\x64\CUESDK.x64_2013.dll" />
+    <ClCompile Include="Devices\Proxies\DeviceLibraryProxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Devices\Proxies\LightFX2Proxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
