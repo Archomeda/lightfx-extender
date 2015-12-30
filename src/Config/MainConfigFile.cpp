@@ -210,10 +210,10 @@ namespace lightfx {
 
             obj.AddMember(CONF_DEVICES_LOGITECH, objLogitech, allocator);
 
-            // Corsair
+            // Logitech
             WValue objCorsair(kObjectType);
 
-            // Corsair color range
+            // Logitech color range
             WValue objCorsairColorRange(kObjectType);
             objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN, this->CorsairColorRangeOutMin, allocator);
             objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX, this->CorsairColorRangeOutMax, allocator);

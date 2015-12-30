@@ -41,7 +41,7 @@ open `settings.json` within the configuration folder (see
   - For version 8.58.177 and lower, G110 users have to enable
 [a workaround](https://github.com/Archomeda/lightfx-extender/wiki/Logitech-G110-Workaround)
 for a bug that will be fixed in an upcoming version
-- Corsair keyboards and mice for both RGB and Monochrome (by @antonpup)
+- Corsair keyboards and mice for both RGB and Monochrome (by [@antonpup](https://github.com/antonpup))
 - Razer Chroma products
 - Lightpack devices through a recent version of Prismatik (or similar hardware
 and software that support the same API, tested on version 5.11.1 only)
@@ -58,7 +58,7 @@ tested games are:
    map or switching PvP teams
  - The 64-bit client is not detecting the 64-bit build of LightFX Extender
    properly
-   
+
 *Unless otherwise specified, the games are x86 and therefore use the x86 build
 of LightFX Extender.*
 

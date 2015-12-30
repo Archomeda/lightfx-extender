@@ -85,12 +85,11 @@ namespace lightfx {
 
                         this->SetLightData(i, lightData);
                     }
-
-                    return true;
+                } else {
+                    return false;
                 }
-
             }
-            return false;
+            return true;
         }
 
         LFXE_API const unsigned int DeviceLightFX::GetDeviceIndex() {

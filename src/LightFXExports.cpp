@@ -413,7 +413,7 @@ extern "C" {
                 break;
 
             case LFX_ACTION_PULSE:
-                timeline.SetTimeline(lightIndex, LightTimeline::NewPulse(startColor, endColor, timing, 100)); // TODO: Make this infinite instead of a hardcoded amount
+                timeline.SetTimeline(lightIndex, LightTimeline::NewPulse(startColor, endColor, timing, 100)); //TODO: Make this infinite instead of a hardcoded amount
                 break;
 
             default:

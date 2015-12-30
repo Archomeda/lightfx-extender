@@ -100,7 +100,7 @@ LFXE_API bool IsLightFXInitialized() {
 }
 
 LFXE_API bool ReleaseLightFX() {
-    if (!hInstanceLightFX) {
+    if (hInstanceLightFX) {
         bool result = FreeLibrary(hInstanceLightFX) == TRUE;
         hInstanceLightFX = NULL;
         return result;

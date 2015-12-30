@@ -48,43 +48,33 @@ namespace lightfx {
                     this->SetLightData(0, LightData());
 
                     this->Reset();
-                    return true;
+                }
+                else {
+                    return false;
                 }
             }
-            this->SetInitialized(false);
-            return false;
+            return true;
         }
 
         LFXE_API bool DeviceCorsair::Enable() {
             if (!this->IsEnabled()) {
                 if (Device::Enable()) {
-                    
                     CorsairPerformProtocolHandshake();
                     if (const auto error = CorsairGetLastError()) {
                         const char* str_error = toString(error);
                         wstring wstr(str_error, str_error + strlen(str_error));
                         LOG(LogLevel::Error, L"Handshake with Corsair failed: " + wstr);
                     }
-                    else
-                    {
+                    else {
                         this->Reset();
                         this->ledPositions = CorsairGetLedPositions();
-                        return true;
                     }
                 }
-            }
-            this->SetEnabled(false);
-            return false;
-        }
-
-        LFXE_API bool DeviceCorsair::Disable() {
-            if (this->IsEnabled()) {
-                if (Device::Disable()) {
-                    return true;
+                else {
+                    return false;
                 }
             }
-            this->SetEnabled(true);
-            return false;
+            return true;
         }
 
         LFXE_API bool DeviceCorsair::PushColorToDevice(const vector<LightColor>& colors) {
@@ -110,7 +100,7 @@ namespace lightfx {
 
             LOG(LogLevel::Debug, L"Update color to (" + to_wstring(updated_red) + L"," + to_wstring(updated_green) + L"," + to_wstring(updated_blue) + L")");
 
-            return CorsairSetLedsColorsAsync(vec.size(), vec.data(), nullptr, nullptr);
+            return CorsairSetLedsColorsAsync(static_cast<unsigned int>(vec.size()), vec.data(), nullptr, nullptr);
         }
 
 
