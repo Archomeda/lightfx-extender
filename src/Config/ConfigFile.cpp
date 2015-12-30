@@ -81,7 +81,7 @@ namespace lightfx {
                 wstring filePath = this->GetConfigDirectory();
                 if (!DirExists(filePath)) {
                     if (CreateDirectoryW(filePath.c_str(), NULL) == FALSE) {
-                        // TODO: Log directory creation failure
+                        //TODO Log directory creation failure
                         return;
                     }
                 }

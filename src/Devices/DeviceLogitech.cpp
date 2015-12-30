@@ -46,7 +46,7 @@ namespace lightfx {
             if (!this->IsInitialized()) {
                 if (Device::Initialize()) {
                     // Just do an initial pass to set how many LEDs there are available
-                    // TODO: Support more Logitech customization (e.g. Logitech G910 single-key colors)
+                    //TODO Support more Logitech customization (e.g. Logitech G910 single-key colors)
                     this->SetNumberOfLights(1);
                     this->SetLightData(0, LightData());
 
