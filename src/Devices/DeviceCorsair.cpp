@@ -11,13 +11,6 @@
 // 3rd party includes
 #include "CUESDK.h"
 
-#include <iostream>
-#include <algorithm>
-#include <thread>
-#include <future>
-#include <vector>
-
-
 // Project includes
 #include "../LightFXExtender.h"
 #include "../Utils/Log.h"
@@ -29,6 +22,19 @@ using namespace std;
 using namespace lightfx::managers;
 using namespace lightfx::timelines;
 using namespace lightfx::utils;
+
+
+CORSAIRSETLEDSCOLORS Corsair_SetLedsColors;
+CORSAIRSETLEDSCOLORSASYNC Corsair_SetLedsColorsAsync;
+CORSAIRGETDEVICECOUNT Corsair_GetDeviceCount;
+CORSAIRGETDEVICEINFO Corsair_GetDeviceInfo;
+CORSAIRGETLEDPOSITIONS Corsair_GetLedPositions;
+CORSAIRGETLEDIDFORKEYNAME Corsair_GetLedIdForKeyName;
+CORSAIRREQUESTCONTROL Corsair_RequestControl;
+CORSAIRPERFORMPROTOCOLHANDSHAKE Corsair_PerformProtocolHandshake;
+CORSAIRGETLASTERROR Corsair_GetLastError;
+
+HINSTANCE hInstanceCorsair = NULL;
 
 namespace lightfx {
     namespace devices {
@@ -43,11 +49,49 @@ namespace lightfx {
         LFXE_API bool DeviceCorsair::Initialize() {
             if (!this->IsInitialized()) {
                 if (Device::Initialize()) {
+                    // Load the library
+                    if (!hInstanceCorsair) {
+                        hInstanceCorsair = LoadLibraryA(CORSAIR_DLL_NAME);
+                    }
+
+                    if (!hInstanceCorsair) {
+                        LOG(LogLevel::Error, L"Failed to initialize the CUESDK library");
+                        this->SetInitialized(false);
+                        return false;
+                    }
+
+                    // Load the function addresses
+                    Corsair_SetLedsColors = (CORSAIRSETLEDSCOLORS)GetProcAddress(hInstanceCorsair, CORSAIR_DLL_SETLEDSCOLORS);
+                    Corsair_SetLedsColorsAsync = (CORSAIRSETLEDSCOLORSASYNC)GetProcAddress(hInstanceCorsair, CORSAIR_DLL_SETLEDSCOLORSASYNC);
+                    Corsair_GetDeviceCount = (CORSAIRGETDEVICECOUNT)GetProcAddress(hInstanceCorsair, CORSAIR_DLL_GETDEVICECOUNT);
+                    Corsair_GetDeviceInfo = (CORSAIRGETDEVICEINFO)GetProcAddress(hInstanceCorsair, CORSAIR_DLL_GETDEVICEINFO);
+                    Corsair_GetLedPositions = (CORSAIRGETLEDPOSITIONS)GetProcAddress(hInstanceCorsair, CORSAIR_DLL_GETLEDPOSITIONS);
+                    Corsair_GetLedIdForKeyName = (CORSAIRGETLEDIDFORKEYNAME)GetProcAddress(hInstanceCorsair, CORSAIR_DLL_GETLEDIDFORKEYNAME);
+                    Corsair_RequestControl = (CORSAIRREQUESTCONTROL)GetProcAddress(hInstanceCorsair, CORSAIR_DLL_REQUESTCONTROL);
+                    Corsair_PerformProtocolHandshake = (CORSAIRPERFORMPROTOCOLHANDSHAKE)GetProcAddress(hInstanceCorsair, CORSAIR_DLL_PERFORMPROTOCOLHANDSHAKE);
+                    Corsair_GetLastError = (CORSAIRGETLASTERROR)GetProcAddress(hInstanceCorsair, CORSAIR_DLL_GETLASTERROR);
+
                     // Just do an initial pass to set how many LEDs there are available
                     this->SetNumberOfLights(1);
                     this->SetLightData(0, LightData());
 
                     this->Reset();
+                }
+                else {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        LFXE_API bool DeviceCorsair::Release() {
+            if (this->IsInitialized()) {
+                if (Device::Release()) {
+                    if (hInstanceCorsair) {
+                        bool result = FreeLibrary(hInstanceCorsair) == TRUE;
+                        hInstanceCorsair = NULL;
+                        return result;
+                    }
                 } else {
                     return false;
                 }
@@ -58,16 +102,18 @@ namespace lightfx {
         LFXE_API bool DeviceCorsair::Enable() {
             if (!this->IsEnabled()) {
                 if (Device::Enable()) {
-                    CorsairPerformProtocolHandshake();
-                    if (const auto error = CorsairGetLastError()) {
+                    Corsair_PerformProtocolHandshake();
+                    if (const auto error = Corsair_GetLastError()) {
                         const char* str_error = toString(error);
                         wstring wstr(str_error, str_error + strlen(str_error));
                         LOG(LogLevel::Error, L"Handshake with Corsair failed: " + wstr);
-                    } else {
-                        this->Reset();
-                        this->ledPositions = CorsairGetLedPositions();
                     }
-                } else {
+                    else {
+                        this->Reset();
+                        this->ledPositions = Corsair_GetLedPositions();
+                    }
+                }
+                else {
                     return false;
                 }
             }
@@ -97,7 +143,7 @@ namespace lightfx {
 
             LOG(LogLevel::Debug, L"Update color to (" + to_wstring(updated_red) + L"," + to_wstring(updated_green) + L"," + to_wstring(updated_blue) + L")");
 
-            return CorsairSetLedsColorsAsync(static_cast<unsigned int>(vec.size()), vec.data(), nullptr, nullptr);
+            return Corsair_SetLedsColorsAsync(static_cast<unsigned int>(vec.size()), vec.data(), nullptr, nullptr);
         }
 
 

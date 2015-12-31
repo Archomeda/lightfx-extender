@@ -24,6 +24,7 @@ namespace lightfx {
         class LFXE_API MainConfigFile : public ConfigFile {
 
         public:
+            bool AutoDeviceDetection = true;
             bool AutoUpdatesEnabled = true;
             utils::LogLevel MinimumLogLevel = utils::LogLevel::Info;
             int TimelineUpdateInterval = 20;
@@ -51,6 +52,12 @@ namespace lightfx {
             int CorsairColorRangeOutMax = 255;
             int CorsairColorRangeInMin = 0;
             int CorsairColorRangeInMax = 255;
+
+            bool RazerUseWithKeyboard = true;
+            bool RazerUseWithMouse = true;
+            bool RazerUseWithHeadset = true;
+            bool RazerUseWithMousepad = true;
+            bool RazerUseWithKeypad = true;
 
             bool GuildWars2TeamColorEnabled = true;
             std::wstring GuildWars2TeamColorAnimation = L"Pulse";

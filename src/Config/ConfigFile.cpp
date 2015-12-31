@@ -44,9 +44,9 @@ namespace lightfx {
 
             // Load the config file
             try {
-                wstring filePath = this->GetConfigDirectory();
-                if (DirExists(filePath)) {
-                    filePath += L"/" + fileName;
+                wstring dirPath = this->GetConfigDirectory();
+                wstring filePath = dirPath + L"\\" + fileName;
+                if (DirExists(dirPath) && FileExists(filePath)) {
                     wifstream configStream;
                     configStream.imbue(locale(configStream.getloc(), new codecvt_utf8<wchar_t>));
                     configStream.open(filePath, wios::in | wios::binary);
@@ -60,12 +60,15 @@ namespace lightfx {
                     // Deserialize this stuff
                     this->Deserialize(data);
 
+                    this->configLoaded = true;
                     LOG(LogLevel::Info, L"Loaded configuration");
                 } else {
+                    this->configLoaded = false;
                     LOG(LogLevel::Info, L"No configuration found, using defaults");
                 }
             } catch (exception& e) {
                 LOG(LogLevel::Warning, L"Exception while loading configuration: " + string_to_wstring(e.what()));
+                this->configLoaded = false;
             }
         }
 
