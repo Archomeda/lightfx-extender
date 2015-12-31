@@ -77,6 +77,8 @@ namespace lightfx {
                     if (const auto error = this->library->CorsairGetLastError()) {
                         LOG(LogLevel::Error, L"Handshake with Corsair failed: " + this->library->CorsairErrorToString(error));
                     } else {
+                        this->SetEnabled(false);
+                        return false;
                         this->Reset();
                         this->ledPositions = this->library->CorsairGetLedPositions();
                     }

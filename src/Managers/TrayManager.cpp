@@ -25,6 +25,7 @@
 #define WINDOW_CLASSNAME L"TrayIcon"
 #define TRAYID 1
 #define WM_TRAYICON WM_USER + 1
+#define WM_TRAYICON_CLOSE WM_USER + 100
 
 #define MENU_CONFFOLDER_NAME L"Open &configuration folder"
 #define MENU_UPDATE_NAME L"&Download new version"
@@ -51,6 +52,41 @@ namespace lightfx {
                 return;
             }
 
+            this->trayIconThread = thread(&TrayManager::AddTrayIconThreaded, this);
+        }
+
+        LFXE_API void TrayManager::RemoveTrayIcon() {
+            if (!this->isTrayIconAdded) {
+                return;
+            }
+
+            SendMessage(this->hTrayIconWindow, WM_TRAYICON_CLOSE, 0, 0);
+            this->trayIconThread.join();
+
+            if (!this->isTrayIconAdded) {
+                LOG(LogLevel::Debug, L"Tray icon removed");
+            } else {
+                LOG(LogLevel::Debug, L"Failed to remove tray icon");
+            }
+        }
+
+
+        LFXE_API bool TrayManager::HasUpdateNotification() {
+            return !this->updateVersionString.empty() && !this->updateVersionUrl.empty();
+        }
+
+        LFXE_API void TrayManager::SetUpdateNotification(const wstring& versionString, const wstring& downloadUrl) {
+            this->updateVersionString = versionString;
+            this->updateVersionUrl = downloadUrl;
+
+            this->trayIconData.dwInfoFlags = NIIF_INFO | 0x80;
+            StringCchCopyW(this->trayIconData.szInfoTitle, ARRAYSIZE(this->trayIconData.szInfoTitle), TRAY_BALLOON_TITLE);
+            StringCchCopyW(this->trayIconData.szInfo, ARRAYSIZE(this->trayIconData.szInfo), (L"Version " + versionString + TRAY_BALLOON_UPDATE_TEXT).c_str());
+            Shell_NotifyIconW(NIM_MODIFY, &this->trayIconData);
+        }
+
+
+        void TrayManager::AddTrayIconThreaded() {
             this->hModuleInstance = GetCurrentModule();
             this->trayIconWindowClass.lpfnWndProc = &TrayManager::WndProc;
             this->trayIconWindowClass.hInstance = this->hModuleInstance;
@@ -89,42 +125,22 @@ namespace lightfx {
             } else {
                 LOG(LogLevel::Debug, L"Failed to add tray icon");
             }
-        }
 
-        LFXE_API void TrayManager::RemoveTrayIcon() {
-            if (!this->isTrayIconAdded) {
-                return;
-            }
 
-            bool result = Shell_NotifyIconW(NIM_DELETE, &this->trayIconData) == TRUE;
-            DestroyWindow(this->hTrayIconWindow);
-            this->hTrayIconWindow = NULL;
-            UnregisterClassW(WINDOW_CLASSNAME, this->hModuleInstance);
-            this->hModuleInstance = NULL;
-
-            this->isTrayIconAdded = !result;
-            if (!this->isTrayIconAdded) {
-                LOG(LogLevel::Debug, L"Tray icon removed");
-            } else {
-                LOG(LogLevel::Debug, L"Failed to remove tray icon");
+            // Process the message loop until we remove the icon
+            MSG msg;
+            BOOL hasMsg;
+            while ((hasMsg = GetMessage(&msg, NULL, 0, 0)) != 0) {
+                if (hasMsg == -1) {
+                    // Error
+                    LOG(LogLevel::Error, L"Error in processing tray icon message loop");
+                    break;
+                } else {
+                    TranslateMessage(&msg);
+                    DispatchMessage(&msg);
+                }
             }
         }
-
-
-        LFXE_API bool TrayManager::HasUpdateNotification() {
-            return !this->updateVersionString.empty() && !this->updateVersionUrl.empty();
-        }
-
-        LFXE_API void TrayManager::SetUpdateNotification(const wstring& versionString, const wstring& downloadUrl) {
-            this->updateVersionString = versionString;
-            this->updateVersionUrl = downloadUrl;
-
-            this->trayIconData.dwInfoFlags = NIIF_INFO | 0x80;
-            StringCchCopyW(this->trayIconData.szInfoTitle, ARRAYSIZE(this->trayIconData.szInfoTitle), TRAY_BALLOON_TITLE);
-            StringCchCopyW(this->trayIconData.szInfo, ARRAYSIZE(this->trayIconData.szInfo), (L"Version " + versionString + TRAY_BALLOON_UPDATE_TEXT).c_str());
-            Shell_NotifyIconW(NIM_MODIFY, &this->trayIconData);
-        }
-
 
         LRESULT CALLBACK TrayManager::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             if (msg == WM_NCCREATE) {
@@ -140,6 +156,15 @@ namespace lightfx {
             switch (msg) {
             case WM_TRAYICON:
                 that->TrayIconCallback(wParam, lParam);
+                break;
+            case WM_TRAYICON_CLOSE:
+                bool result = Shell_NotifyIconW(NIM_DELETE, &that->trayIconData) == TRUE;
+                DestroyWindow(that->hTrayIconWindow);
+                that->hTrayIconWindow = NULL;
+                UnregisterClassW(WINDOW_CLASSNAME, that->hModuleInstance);
+                that->hModuleInstance = NULL;
+                that->isTrayIconAdded = !result;
+                PostQuitMessage(0);
                 break;
             }
             return DefWindowProcW(hWnd, msg, wParam, lParam);

@@ -2,6 +2,7 @@
 
 // Standard includes
 #include <string>
+#include <thread>
 #include <vector>
 
 // Windows includes
@@ -47,6 +48,10 @@ namespace lightfx {
             NOTIFYICONDATAW trayIconData = {};
 
             bool isTrayIconAdded = false;
+            bool isTrayIconRemoving = false;
+            std::thread trayIconThread;
+
+            void AddTrayIconThreaded();
 
             static LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
             void TrayIconCallback(WPARAM wParam, LPARAM lParam);
