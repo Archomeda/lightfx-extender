@@ -13,7 +13,7 @@
 
 
 #ifdef _WIN64
-#define LFXE_DLL_NAME L"LFXE64.dll"
+#define LFXE_DLL_NAME L"LFXE.x64.dll"
 #else
 #define LFXE_DLL_NAME L"LFXE.dll"
 #endif

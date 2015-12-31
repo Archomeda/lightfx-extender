@@ -125,7 +125,7 @@
     <IntDir>obj\$(Configuration)\x86\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Tests|x64'">
-    <TargetName>LFXE64</TargetName>
+    <TargetName>LFXE.x64</TargetName>
     <OutDir>$(SolutionDir)bin\$(Configuration)\x64\</OutDir>
     <IntDir>obj\$(Configuration)\x64\</IntDir>
   </PropertyGroup>
@@ -135,7 +135,7 @@
     <IntDir>obj\$(Configuration)\x86\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>LFXE64</TargetName>
+    <TargetName>LFXE.x64</TargetName>
     <OutDir>$(SolutionDir)bin\$(Configuration)\x64\</OutDir>
     <IntDir>obj\$(Configuration)\x64\</IntDir>
   </PropertyGroup>
@@ -145,7 +145,7 @@
     <IntDir>obj\$(Configuration)\x86\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Tests|x64'">
-    <TargetName>LFXE64</TargetName>
+    <TargetName>LFXE.x64</TargetName>
     <OutDir>$(SolutionDir)bin\$(Configuration)\x64\</OutDir>
     <IntDir>obj\$(Configuration)\x64\</IntDir>
   </PropertyGroup>
@@ -155,7 +155,7 @@
     <IntDir>obj\$(Configuration)\x86\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>LFXE64</TargetName>
+    <TargetName>LFXE.x64</TargetName>
     <OutDir>$(SolutionDir)bin\$(Configuration)\x64\</OutDir>
     <IntDir>obj\$(Configuration)\x64\</IntDir>
   </PropertyGroup>
