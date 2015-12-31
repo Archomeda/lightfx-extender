@@ -157,7 +157,7 @@ namespace lightfx {
 
             wstring dllDrive, dllDirectory;
             GetDllName(&dllDrive, &dllDirectory, nullptr, nullptr);
-            wstring dllFileName = dllDrive + L"\\" + dllDirectory + string_to_wstring(filename);
+            wstring dllFileName = dllDrive + dllDirectory + string_to_wstring(filename);
             wstring newDllFileName = string_to_wstring(tempFileName);
 
             if (FileExists(dllFileName + L".bak")) {
