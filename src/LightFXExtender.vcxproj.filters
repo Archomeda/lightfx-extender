@@ -129,6 +129,9 @@
     <ClInclude Include="Devices\Proxies\CUESDKProxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Devices\Proxies\RzChromaSDKProxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LightFXExtender.rc">
@@ -223,6 +226,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Devices\Proxies\CUESDKProxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Devices\Proxies\RzChromaSDKProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

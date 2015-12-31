@@ -309,6 +309,7 @@
     <ClInclude Include="Devices\Proxies\CUESDKProxy.h" />
     <ClInclude Include="Devices\Proxies\DeviceLibraryProxy.h" />
     <ClInclude Include="Devices\Proxies\LightFX2Proxy.h" />
+    <ClInclude Include="Devices\Proxies\RzChromaSDKProxy.h" />
     <ClInclude Include="Games\Game.h" />
     <ClInclude Include="Games\GameGw2.h" />
     <ClInclude Include="Games\MumbleLink.h" />
@@ -353,6 +354,7 @@
     <ClCompile Include="Devices\Proxies\CUESDKProxy.cpp" />
     <ClCompile Include="Devices\Proxies\DeviceLibraryProxy.cpp" />
     <ClCompile Include="Devices\Proxies\LightFX2Proxy.cpp" />
+    <ClCompile Include="Devices\Proxies\RzChromaSDKProxy.cpp" />
     <ClCompile Include="Games\Game.cpp" />
     <ClCompile Include="Games\GameGw2.cpp" />
     <ClCompile Include="LightFXExports.cpp" />
