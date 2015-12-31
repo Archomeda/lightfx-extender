@@ -1,7 +1,5 @@
-#include "CppUnitTest.h"
-
-// Project includes
 #include "DeviceMock.h"
+#include "CppUnitTest.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
