@@ -1,10 +1,5 @@
 #pragma once
 
-// 3rd party includes
-#include "RzChromaSDKDefines.h"
-#include "RzChromaSDKTypes.h"
-#include "RzErrors.h"
-
 // Project includes
 #include "Device.h"
 #include "Proxies/RzChromaSDKProxy.h"
