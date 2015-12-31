@@ -60,12 +60,15 @@ namespace lightfx {
                     // Deserialize this stuff
                     this->Deserialize(data);
 
+                    this->configLoaded = true;
                     LOG(LogLevel::Info, L"Loaded configuration");
                 } else {
+                    this->configLoaded = false;
                     LOG(LogLevel::Info, L"No configuration found, using defaults");
                 }
             } catch (exception& e) {
                 LOG(LogLevel::Warning, L"Exception while loading configuration: " + string_to_wstring(e.what()));
+                this->configLoaded = false;
             }
         }
 

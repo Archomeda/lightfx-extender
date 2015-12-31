@@ -48,7 +48,8 @@ namespace lightfx {
                     this->SetLightData(0, LightData());
 
                     this->Reset();
-                } else {
+                }
+                else {
                     return false;
                 }
             }
@@ -63,11 +64,13 @@ namespace lightfx {
                         const char* str_error = toString(error);
                         wstring wstr(str_error, str_error + strlen(str_error));
                         LOG(LogLevel::Error, L"Handshake with Corsair failed: " + wstr);
-                    } else {
+                    }
+                    else {
                         this->Reset();
                         this->ledPositions = CorsairGetLedPositions();
                     }
-                } else {
+                }
+                else {
                     return false;
                 }
             }

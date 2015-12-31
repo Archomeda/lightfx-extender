@@ -13,6 +13,9 @@ starting that game, LightFX Extender should load up and place itself in the
 notification area next to the clock on your taskbar. Right-click on the icon and
 enable the devices that you want to have LightFX Extender support for.
 
+When LightFX Extender is started for the first time, it will automatically attempt to
+enable supported devices.
+
 For advanced configuration, please check the file `settings.json` in the
 configuration folder (`%APPDATA%\LightFX Extender`) or right-click on the icon
 in your taskbar and choose *Open configuration folder*. This file will be
@@ -39,6 +42,7 @@ open `settings.json` within the configuration folder (see
 [a workaround](https://github.com/Archomeda/lightfx-extender/wiki/Logitech-G110-Workaround)
 for a bug that will be fixed in an upcoming version
 - Corsair keyboards and mice for both RGB and Monochrome (by [@antonpup](https://github.com/antonpup))
+- Razer Chroma products
 - Lightpack devices through a recent version of Prismatik (or similar hardware
 and software that support the same API, tested on version 5.11.1 only)
 - Alienware devices that originally support LightFX

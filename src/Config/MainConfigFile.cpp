@@ -8,7 +8,6 @@
 #include "../LightFXExtender.h"
 #include "../Managers/DeviceManager.h"
 
-
 #pragma region Configuration keys
 #define CONF_AUTOUPDATESENABLED L"AutoUpdatesEnabled"
 #define CONF_MINIMUMLOGLEVEL L"MinimumLogLevel"
@@ -41,6 +40,15 @@
 #define CONF_DEVICES_CORSAIR_COLORRANGE_INMIN L"CorsairMin"
 #define CONF_DEVICES_CORSAIR_COLORRANGE_INMAX L"CorsairMax"
 
+#define CONF_DEVICES_RAZER L"Razer"
+#define CONF_DEVICES_RAZER_HARDWARE L"Hardware"
+#define CONF_DEVICES_RAZER_HARDWARE_KEYBOARD L"UseWithKeyboard"
+#define CONF_DEVICES_RAZER_HARDWARE_MOUSE L"UseWithMouse"
+#define CONF_DEVICES_RAZER_HARDWARE_HEADSET L"UseWithHeadset"
+#define CONF_DEVICES_RAZER_HARDWARE_MOUSEPAD L"UseWithMousepad"
+#define CONF_DEVICES_RAZER_HARDWARE_KEYPAD L"UseWithKeypad"
+
+
 #define CONF_DEVICES_LIGHTPACK L"Lightpack"
 #define CONF_DEVICES_LIGHTPACK_API L"SocketApi"
 #define CONF_DEVICES_LIGHTPACK_API_HOST L"Hostname"
@@ -63,9 +71,12 @@ namespace lightfx {
 
         LFXE_API void MainConfigFile::Load() {
             ConfigFile::Load(L"settings.json");
+
+            this->AutoDeviceDetection = !ConfigFile::configLoaded;
         }
 
         LFXE_API void MainConfigFile::LoadDefaults() {
+            this->AutoDeviceDetection = true;
             this->AutoUpdatesEnabled = true;
             this->MinimumLogLevel = LogLevel::Info;
             this->TimelineUpdateInterval = 20;
@@ -91,6 +102,12 @@ namespace lightfx {
             this->CorsairColorRangeOutMax = 255;
             this->CorsairColorRangeInMin = 0;
             this->CorsairColorRangeInMax = 255;
+
+            this->RazerUseWithKeyboard = true;
+            this->RazerUseWithMouse = true;
+            this->RazerUseWithHeadset = true;
+            this->RazerUseWithMousepad = true;
+            this->RazerUseWithKeypad = true;
 
             this->GuildWars2TeamColorEnabled = true;
             this->GuildWars2TeamColorAnimation = L"Pulse";
@@ -205,6 +222,17 @@ namespace lightfx {
             objCorsair.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE, objCorsairColorRange, allocator);
 
             obj.AddMember(CONF_DEVICES_CORSAIR, objCorsair, allocator);
+
+            // Razer
+            WValue objRazer(kObjectType);
+            WValue objRazerHardware(kObjectType);
+            objRazerHardware.AddMember(CONF_DEVICES_RAZER_HARDWARE_KEYBOARD, this->RazerUseWithKeyboard, allocator);
+            objRazerHardware.AddMember(CONF_DEVICES_RAZER_HARDWARE_MOUSE, this->RazerUseWithMouse, allocator);
+            objRazerHardware.AddMember(CONF_DEVICES_RAZER_HARDWARE_HEADSET, this->RazerUseWithHeadset, allocator);
+            objRazerHardware.AddMember(CONF_DEVICES_RAZER_HARDWARE_MOUSEPAD, this->RazerUseWithMousepad, allocator);
+            objRazerHardware.AddMember(CONF_DEVICES_RAZER_HARDWARE_KEYPAD, this->RazerUseWithKeypad, allocator);
+            objRazer.AddMember(CONF_DEVICES_RAZER_HARDWARE, objRazerHardware, allocator);
+            obj.AddMember(CONF_DEVICES_RAZER, objRazer, allocator);
 
             return obj;
         }
@@ -359,6 +387,30 @@ namespace lightfx {
                         }
                         if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMAX) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMAX].IsInt()) {
                             this->CorsairColorRangeInMax = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMAX].GetInt();
+                        }
+                    }
+                }
+
+                // Razer
+                if (objDevices.HasMember(CONF_DEVICES_RAZER) && objDevices[CONF_DEVICES_RAZER].IsObject()) {
+                    const WValue& objRazer = objDevices[CONF_DEVICES_RAZER];
+                    // Razer Hardware
+                    if (objRazer.HasMember(CONF_DEVICES_RAZER_HARDWARE) && objRazer[CONF_DEVICES_RAZER_HARDWARE].IsObject()) {
+                        const WValue& razerHardware = objRazer[CONF_DEVICES_RAZER_HARDWARE];
+                        if (razerHardware.HasMember(CONF_DEVICES_RAZER_HARDWARE_KEYBOARD) && razerHardware[CONF_DEVICES_RAZER_HARDWARE_KEYBOARD].IsBool()) {
+                            this->RazerUseWithKeyboard = razerHardware[CONF_DEVICES_RAZER_HARDWARE_KEYBOARD].IsBool();
+                        }
+                        if (razerHardware.HasMember(CONF_DEVICES_RAZER_HARDWARE_MOUSE) && razerHardware[CONF_DEVICES_RAZER_HARDWARE_MOUSE].IsBool()) {
+                            this->RazerUseWithMouse = razerHardware[CONF_DEVICES_RAZER_HARDWARE_MOUSE].IsBool();
+                        }
+                        if (razerHardware.HasMember(CONF_DEVICES_RAZER_HARDWARE_HEADSET) && razerHardware[CONF_DEVICES_RAZER_HARDWARE_HEADSET].IsBool()) {
+                            this->RazerUseWithHeadset = razerHardware[CONF_DEVICES_RAZER_HARDWARE_HEADSET].IsBool();
+                        }
+                        if (razerHardware.HasMember(CONF_DEVICES_RAZER_HARDWARE_MOUSEPAD) && razerHardware[CONF_DEVICES_RAZER_HARDWARE_MOUSEPAD].IsBool()) {
+                            this->RazerUseWithMousepad = razerHardware[CONF_DEVICES_RAZER_HARDWARE_MOUSEPAD].IsBool();
+                        }
+                        if (razerHardware.HasMember(CONF_DEVICES_RAZER_HARDWARE_KEYPAD) && razerHardware[CONF_DEVICES_RAZER_HARDWARE_KEYPAD].IsBool()) {
+                            this->RazerUseWithKeypad = razerHardware[CONF_DEVICES_RAZER_HARDWARE_KEYPAD].IsBool();
                         }
                     }
                 }
