@@ -11,13 +11,6 @@
 // 3rd party includes
 #include "CUESDK.h"
 
-#include <iostream>
-#include <algorithm>
-#include <thread>
-#include <future>
-#include <vector>
-
-
 // Project includes
 #include "../LightFXExtender.h"
 #include "../Utils/Log.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-// Windows includes
+// Project includes
 #include "Device.h"
 
 // API exports

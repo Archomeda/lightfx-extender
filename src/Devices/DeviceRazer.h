@@ -1,15 +1,20 @@
 #pragma once
 
 // Windows includes
+#include "../Common/Windows.h"
+#include <Windows.h>
+
+// 3rd party includes
+#include "RzChromaSDKDefines.h"
+#include "RzChromaSDKTypes.h"
+#include "RzErrors.h"
+
+// Project includes
 #include "Device.h"
 
 // API exports
 #include "../Common/ApiExports.h"
 
-#include <Windows.h>
-#include "RzChromaSDKDefines.h"
-#include "RzChromaSDKTypes.h"
-#include "RzErrors.h"
 
 namespace lightfx {
     namespace devices {

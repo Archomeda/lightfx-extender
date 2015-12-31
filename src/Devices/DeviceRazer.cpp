@@ -4,16 +4,7 @@
 
 #include "DeviceRazer.h"
 
-// Windows includes
-#include "../Common/Windows.h"
-
-// 3rd party includes
-
-#include <iostream>
-#include <algorithm>
-#include <thread>
-#include <future>
-#include <vector>
+// Standard includes
 #include <tchar.h>
 
 // Project includes
@@ -295,7 +286,7 @@ namespace lightfx {
                 RZRESULT Result = QueryDevice(DeviceId, DeviceInfo);
 
                 if (Result == RZRESULT_SUCCESS)
-                    return DeviceInfo.Connected;
+                    return DeviceInfo.Connected == TRUE;
                 else
                     return false;
             }
