@@ -19,12 +19,14 @@
 #endif
 
 
+#include <string>
+
 #include "Windows.h"
 #include <ShlObj.h>
 
-#include <string>
-
 #include "LFX2.h"
+
+#include "Initializer.h"
 
 
 typedef bool(*LFXEGETVERSION)(char* const, const unsigned int);
@@ -70,18 +72,35 @@ extern "C" {
         }
 
         // We assume that our main library is located inside "%APPDATA%\LightFX Extender"
-        wstring path;
+        wstring appDataPath;
+        wstring dllPath;
         wchar_t* appDataFolder = nullptr;
         if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &appDataFolder))) {
-            path = wstring(appDataFolder) + L"\\LightFX Extender\\" + LFXE_DLL_NAME;
+            appDataPath = wstring(appDataFolder) + L"\\LightFX Extender";
+            dllPath = appDataPath + L"\\" + LFXE_DLL_NAME;
             CoTaskMemFree(appDataFolder);
         } else {
             CoTaskMemFree(appDataFolder);
             return LFX_FAILURE;
         }
 
+        // Check if our library exists
+        DWORD fileType = GetFileAttributesW(dllPath.c_str());
+        if (fileType == INVALID_FILE_ATTRIBUTES) {
+            // Our library doesn't exist yet, initialize it
+            try {
+                string version = InitializeLightFXExtender();
+                MessageBoxA(NULL, string("LightFX Extender " + version + " has been downloaded and successfully initialized for the first time. This message will only be shown once.\r\n\r\n" +
+                    "Every time you start up a game that supports LightFX or AlienFX, LightFX Extender will check for updates automatically. " +
+                    "You can disable this behavior in the configuration file.\r\n\r\n" +
+                    "Don't forget to check https://github.com/Archomeda/lightfx-extender/ for more information about LightFX Extender.\r\nEnjoy!").c_str(), "Initializing LightFX Extender", MB_OK | MB_ICONINFORMATION);
+            } catch (const exception& e) {
+                MessageBoxA(NULL, string("Failed to download LightFX Extender.\r\n" + string(e.what()) + "\r\n\r\nLightFX Extender will not work until this error has been resolved.").c_str(), "Initializing LightFX Extender", MB_OK | MB_ICONERROR);
+            }
+        }
+
         // Load our library
-        hInstanceForward = LoadLibraryW(path.c_str());
+        hInstanceForward = LoadLibraryW(dllPath.c_str());
         if (!hInstanceForward) {
             return LFX_FAILURE;
         }
@@ -105,6 +124,9 @@ extern "C" {
         Forward_LFX_SetTiming = (LFX2SETTIMING)GetProcAddress(hInstanceForward, LFX_DLL_SETTIMING);
         Forward_LFX_GetVersion = (LFX2GETVERSION)GetProcAddress(hInstanceForward, LFX_DLL_GETVERSION);
         Forward_LFXE_GetVersion = (LFXEGETVERSION)GetProcAddress(hInstanceForward, LFXE_DLL_GETVERSION);
+
+        // Now we add "%APPDATA%\LightFX Extender" to the list of directories that are searched for additional libraries
+        SetDllDirectoryW(appDataPath.c_str());
 
         // Proceed loading externally and return afterwards
         return Forward_LFX_Initialize();

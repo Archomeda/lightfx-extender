@@ -18,9 +18,15 @@
     <ClCompile Include="LightFXExports.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Initializer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Windows.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Initializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

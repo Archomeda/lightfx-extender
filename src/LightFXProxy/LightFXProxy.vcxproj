@@ -288,9 +288,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Initializer.cpp" />
     <ClCompile Include="LightFXExports.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Initializer.h" />
     <ClInclude Include="Windows.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
