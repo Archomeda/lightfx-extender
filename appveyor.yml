@@ -41,5 +41,5 @@ deploy:
   artifact: /artifacts\\.*/
   draft: true
   on:
-    platform: release
     appveyor_repo_tag: true
+    platform: release
