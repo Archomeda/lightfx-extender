@@ -13,12 +13,11 @@
 [Rr]elease/
 [Rr]eleases/
 [Rr]elease_[Tt]ests/
-#x64/
-#x86/
 build/
 bld/
 [Bb]in/
 [Oo]bj/
+artifacts/
 
 # Roslyn cache directories
 *.ide/
@@ -127,7 +126,7 @@ publish/
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
-# TODO: Comment the next line if you want to checkin your web deploy settings 
+# TODO: Comment the next line if you want to checkin your web deploy settings
 # but database connection strings (with potential passwords) will be unencrypted
 *.pubxml
 *.publishproj

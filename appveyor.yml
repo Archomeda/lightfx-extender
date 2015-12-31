@@ -7,31 +7,39 @@ environment:
 platform:
   - x86
   - x64
+  - release
+
+matrix:
+  fast_finish: true
 
 
 before_build:
   - ps: appveyor\UpdateBuildVersion.ps1
 
 build:
-  project: msbuild\ReleaseTestAndRelease_$(platform).proj
+  project: appveyor\Build_$(platform).proj
   verbosity: minimal
 
+after_build:
+  - ps: appveyor\PackageArtifacts.ps1
+
 test_script:
-  - cmd: vstest.console /Platform:%platform% /logger:Appveyor bin\Release_Tests\%platform%\UnitTests.dll
+  - ps: appveyor\Test.ps1
 
 on_success:
   - ps: appveyor\PrepareNewBuildVersion.ps1
 
 
 artifacts:
-  - path: bin\Release\$(platform)
-    name: LightFX-Extender-v$(appveyor_build_version)_$(platform)
-    type: zip
+  - path: artifacts\*.zip
+    name: LightFX Extender v$(appveyor_build_version)-$(platform)
 
 deploy:
   provider: GitHub
   auth_token:
     secure: fHXemLwKHEg/6UXe2alr3/fUlPoZrNLmIsWgErk4u7vjCgMKGHYys+msNct3REOY
-  artifact: bin\Release\LightFX-Extender-v$(appveyor_build_version)_$(platform).zip
+  artifact: /artifacts\\.*/
+  draft: true
   on:
+    platform: release
     appveyor_repo_tag: true
