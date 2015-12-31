@@ -44,9 +44,9 @@ namespace lightfx {
 
             // Load the config file
             try {
-                wstring filePath = this->GetConfigDirectory();
-                if (DirExists(filePath)) {
-                    filePath += L"/" + fileName;
+                wstring dirPath = this->GetConfigDirectory();
+                wstring filePath = dirPath + L"\\" + fileName;
+                if (DirExists(dirPath) && FileExists(filePath)) {
                     wifstream configStream;
                     configStream.imbue(locale(configStream.getloc(), new codecvt_utf8<wchar_t>));
                     configStream.open(filePath, wios::in | wios::binary);
