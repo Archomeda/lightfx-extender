@@ -126,6 +126,9 @@
     <ClInclude Include="Devices\Proxies\LightFX2Proxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Devices\Proxies\CUESDKProxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LightFXExtender.rc">
@@ -217,6 +220,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Devices\DeviceRazer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Devices\Proxies\CUESDKProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -306,6 +306,7 @@
     <ClInclude Include="Devices\DeviceLightpack.h" />
     <ClInclude Include="Devices\DeviceLogitech.h" />
     <ClInclude Include="Devices\DeviceRazer.h" />
+    <ClInclude Include="Devices\Proxies\CUESDKProxy.h" />
     <ClInclude Include="Devices\Proxies\DeviceLibraryProxy.h" />
     <ClInclude Include="Devices\Proxies\LightFX2Proxy.h" />
     <ClInclude Include="Games\Game.h" />
@@ -349,6 +350,7 @@
     <ClCompile Include="Devices\DeviceLightpack.cpp" />
     <ClCompile Include="Devices\DeviceLogitech.cpp" />
     <ClCompile Include="Devices\DeviceRazer.cpp" />
+    <ClCompile Include="Devices\Proxies\CUESDKProxy.cpp" />
     <ClCompile Include="Devices\Proxies\DeviceLibraryProxy.cpp" />
     <ClCompile Include="Devices\Proxies\LightFX2Proxy.cpp" />
     <ClCompile Include="Games\Game.cpp" />
