@@ -25,7 +25,7 @@ namespace lightfx {
     namespace devices {
 
         LFXE_API Device::~Device() {
-
+            this->Release();
         }
 
 

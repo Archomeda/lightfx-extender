@@ -1,4 +1,6 @@
 #include "CppUnitTest.h"
+
+// Project includes
 #include "../../src/Utils/Log.h"
 
 // Windows includes
