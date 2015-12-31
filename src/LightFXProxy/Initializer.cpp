@@ -116,7 +116,7 @@ string InitializeLightFXExtender() {
         // Get the asset download URL
         if (releaseJson.HasMember("assets") && releaseJson["assets"].IsArray()) {
             auto& assets = releaseJson["assets"];
-            regex re("LightFX-Extender_v(\\d+\\.\\d+\\.\\d+\\.\\d+)\\.zip");
+            regex re("LightFX-Extender-full_v(\\d+\\.\\d+\\.\\d+\\.\\d+)\\.zip");
             smatch match;
             for (SizeType i = 0; i < assets.Size(); ++i) {
                 if (assets[i].HasMember("name") && assets[i]["name"].IsString()) {
