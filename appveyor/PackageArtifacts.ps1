@@ -1,5 +1,5 @@
 if ($env:PLATFORM -eq "x86" -or $env:PLATFORM -eq "x64") {
-    7z a "artifacts\LightFX-Extender_$($env:PLATFORM)_v$($env:APPVEYOR_BUILD_VERSION).zip" "$($env:APPVEYOR_BUILD_FOLDER)\bin\Release\$($env:PLATFORM)\*.*"
+    7z a "artifacts\LightFX-Extender-$($env:PLATFORM)_v$($env:APPVEYOR_BUILD_VERSION).zip" "$($env:APPVEYOR_BUILD_FOLDER)\bin\Release\$($env:PLATFORM)\*.*"
 } elseif ($env:PLATFORM -eq "release") {
     New-Item -ItemType Directory -Force -Path artifacts\work\bin | Out-Null
     New-Item -ItemType Directory -Force -Path artifacts\work\x86 | Out-Null
