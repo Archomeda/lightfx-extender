@@ -8,6 +8,9 @@
 #include "../Common/ApiExports.h"
 
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 namespace lightfx {
     namespace devices {
 
@@ -42,3 +45,5 @@ namespace lightfx {
 
     }
 }
+
+#pragma warning(pop)

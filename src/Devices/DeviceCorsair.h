@@ -1,12 +1,10 @@
 #pragma once
 
-// Windows includes
-#include "Device.h"
-
 // 3rd party includes
 #include "CUESDK.h"
 
 // Project includes
+#include "Device.h"
 #include "Proxies/CUESDKProxy.h"
 
 // API exports
@@ -43,8 +41,6 @@ namespace lightfx {
             int rangeInMin = 0;
             int rangeInMax = 255;
             CorsairLedPositions* ledPositions;
-
-            const char* toString(CorsairError error);
         };
 
     }

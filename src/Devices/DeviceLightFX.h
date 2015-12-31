@@ -1,9 +1,7 @@
 #pragma once
 
-// Windows includes
-#include "Device.h"
-
 // Project includes
+#include "Device.h"
 #include "Proxies/LightFX2Proxy.h"
 
 // API exports
