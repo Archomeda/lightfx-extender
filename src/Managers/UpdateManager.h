@@ -12,6 +12,9 @@
 // API exports
 #include "../Common/ApiExports.h"
 
+// Forward declare mz_zip_archive from miniz.c
+typedef struct mz_zip_archive_tag mz_zip_archive;
+
 
 #pragma warning(push)
 #pragma warning(disable : 4251)
@@ -40,6 +43,7 @@ namespace lightfx {
             const std::wstring GitHub_ReleasesUrl = L"https://github.com/Archomeda/lightfx-extender/releases";
 
             std::vector<char> DownloadFromUrl(const std::wstring& url);
+            void InstallNewDll(mz_zip_archive* archive, const std::string& filename);
 
         private:
             void CheckForUpdate();

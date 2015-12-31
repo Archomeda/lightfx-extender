@@ -33,8 +33,10 @@
 
 #ifdef _WIN64
 #define PLATFORM "x64"
+#define CORSAIR_DLL_NAME "CUESDK.x64_2013.dll"
 #else
 #define PLATFORM "x86"
+#define CORSAIR_DLL_NAME "CUESDK_2013.dll"
 #endif
 
 using namespace std;
@@ -132,40 +134,44 @@ namespace lightfx {
                 return false;
             }
 
-            int file_index = mz_zip_reader_locate_file(&archive, "LightFX.dll", NULL, 0);
-            string tempFileName = wstring_to_string(GetDataStorageFolder() + L"/LightFX.dll");
-            if (!mz_zip_reader_extract_to_file(&archive, file_index, tempFileName.c_str(), 0)) {
-                LOG(LogLevel::Error, L"Could not extract LightFX.dll from the downloaded archive");
+            try {
+                this->InstallNewDll(&archive, "LightFX.dll");
+                this->InstallNewDll(&archive, CORSAIR_DLL_NAME);
+            } catch (const exception& e) {
+                LOG(LogLevel::Error, L"Error while installing new DLL: " + string_to_wstring(e.what()));
+                Log::LogLastWindowsErrorAsync();
                 mz_zip_reader_end(&archive);
                 return false;
             }
 
-            wstring dllFileName = GetDllName();
-            wstring newDllFileName = string_to_wstring(tempFileName);
-            LOG(LogLevel::Debug, L"Downloaded new LightFX.dll to " + newDllFileName);
-
-            if (FileExists(dllFileName + L".bak")) {
-                if (!DeleteFileW((dllFileName + L".bak").c_str())) {
-                    LOG(LogLevel::Error, L"Could not remove the back-upped DLL file from the previous version");
-                    Log::LogLastWindowsErrorAsync();
-                    return false;
-                }
-            }
-            if (MoveFileW(dllFileName.c_str(), (dllFileName + L".bak").c_str()) == FALSE) {
-                LOG(LogLevel::Error, L"Could not rename the DLL file");
-                Log::LogLastWindowsErrorAsync();
-                return false;
-            }
-            if (MoveFileW(newDllFileName.c_str(), dllFileName.c_str()) == FALSE) {
-                LOG(LogLevel::Error, L"Could not move the new DLL into its intended folder, LightFX Extender will not work unless you manually move " +
-                    newDllFileName + L" to " + dllFileName);
-                Log::LogLastWindowsErrorAsync();
-                return false;
-            }
-
+            mz_zip_reader_end(&archive);
             return true;
         }
 
+        LFXE_API void UpdateManager::InstallNewDll(mz_zip_archive* archive, const std::string& filename) {
+            int file_index = mz_zip_reader_locate_file(archive, filename.c_str(), NULL, 0);
+            string tempFileName = wstring_to_string(GetDataStorageFolder()) + "\\" + filename;
+            if (!mz_zip_reader_extract_to_file(archive, file_index, tempFileName.c_str(), 0)) {
+                throw exception(("Could not extract " + filename + " from the archive").c_str());
+            }
+
+            wstring dllDrive, dllDirectory;
+            GetDllName(&dllDrive, &dllDirectory, nullptr, nullptr);
+            wstring dllFileName = dllDrive + L"\\" + dllDirectory + string_to_wstring(filename);
+            wstring newDllFileName = string_to_wstring(tempFileName);
+
+            if (FileExists(dllFileName + L".bak")) {
+                if (!DeleteFileW((dllFileName + L".bak").c_str())) {
+                    throw exception(("Could not remove the back-upped file " + wstring_to_string(dllFileName) + ".bak").c_str());
+                }
+            }
+            if (MoveFileW(dllFileName.c_str(), (dllFileName + L".bak").c_str()) == FALSE) {
+                throw exception(("Could not rename the file " + wstring_to_string(dllFileName) + " to " + wstring_to_string(dllFileName) + ".bak").c_str());
+            }
+            if (MoveFileW(newDllFileName.c_str(), dllFileName.c_str()) == FALSE) {
+                throw exception(("Could not move the new file " + wstring_to_string(newDllFileName) + " to its intended folder " + wstring_to_string(dllFileName) + "; LightFX Extender will not work properly unless you manually move it.").c_str());
+            }
+        }
 
         LFXE_API vector<char> UpdateManager::DownloadFromUrl(const wstring& url) {
             vector<char> data = {};
