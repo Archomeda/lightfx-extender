@@ -107,6 +107,8 @@ namespace lightfx {
                         const char* str_error = toString(error);
                         wstring wstr(str_error, str_error + strlen(str_error));
                         LOG(LogLevel::Error, L"Handshake with Corsair failed: " + wstr);
+                        this->SetEnabled(false);
+                        return false;
                     }
                     else {
                         this->Reset();
