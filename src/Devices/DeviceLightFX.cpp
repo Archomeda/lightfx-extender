@@ -34,6 +34,7 @@ namespace lightfx {
                     this->library = unique_ptr<LightFX2Proxy>(new LightFX2Proxy(config->AlienwareDllName, config->AlienwareBackupDllName));
                     if (!this->library->Load()) {
                         LOG(LogLevel::Error, L"Failed to access the Alienware LightFX library");
+                        this->SetInitialized(false);
                         return false;
                     }
 
@@ -47,6 +48,7 @@ namespace lightfx {
                     if (result != LFX_SUCCESS) {
                         LOG(LogLevel::Error, L"Couldn't get device description from " + to_wstring(this->GetDeviceIndex()) + L": " + this->library->LfxResultToString(result));
                         LFX_SAFE_DELETE_ARRAY(devDesc);
+                        this->SetInitialized(false);
                         return false;
                     }
                     this->SetDeviceName(string_to_wstring(devDesc));
@@ -58,6 +60,7 @@ namespace lightfx {
                     result = this->library->LFX_GetNumLights(this->GetDeviceIndex(), &numLights);
                     if (result != LFX_SUCCESS) {
                         LOG(LogLevel::Error, L"Couldn't get the number of lights from " + to_wstring(this->GetDeviceIndex()) + L": " + this->library->LfxResultToString(result));
+                        this->SetInitialized(false);
                         return false;
                     }
                     this->SetNumberOfLights(numLights);
