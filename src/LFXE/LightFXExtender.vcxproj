@@ -369,13 +369,13 @@
     <ClCompile Include="Utils\String.cpp" />
     <ClCompile Include="Utils\Windows.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\lib\x64\CUESDK.x64_2013.dll">
-      <Link>..\..\lib\x64\CUESDK.x64_2013.dll</Link>
+  <ItemGroup Condition="'$(Platform)'=='Win32'">
+    <Content Include="$(SolutionDir)lib\x86\CUESDK_2013.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\lib\x86\CUESDK_2013.dll">
-      <Link>..\..\lib\x86\CUESDK_2013.dll</Link>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Platform)'=='x64'">
+    <Content Include="$(SolutionDir)lib\x64\CUESDK.x64_2013.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
