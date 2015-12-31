@@ -5,7 +5,7 @@
 
 // Project includes
 #include "ManagerWithChildrenMock.h"
-#include "../../src/Managers/ChildOfManager.h"
+#include "../../LFXE/Managers/ChildOfManager.h"
 
 
 namespace lightfx_tests {

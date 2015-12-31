@@ -7,8 +7,8 @@ param (
 Write-Host "Apply to appveyor.yml" -ForegroundColor "Yellow"
 ApplyVersionToAppVeyorYml "$version.{build}"
 
-Write-Host "Apply to src\VersionInfo.h" -ForegroundColor "Yellow"
+Write-Host "Apply to src\LFXE\VersionInfo.h" -ForegroundColor "Yellow"
 ApplyVersionToVersionInfoH "$version-dev"
 
-Write-Host "Apply to src\LightFXExtender.rc" -ForegroundColor "Yellow"
+Write-Host "Apply to src\LFXE\LightFXExtender.rc" -ForegroundColor "Yellow"
 ApplyVersionToResource "$version.0-dev"

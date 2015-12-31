@@ -1,5 +1,5 @@
 #include "CppUnitTest.h"
-#include "../../src/Utils/FileIO.h"
+#include "../../LFXE/Utils/FileIO.h"
 
 // Windows includes
 #include <ShlObj.h>

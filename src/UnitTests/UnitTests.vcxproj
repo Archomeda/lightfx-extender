@@ -157,16 +157,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\LightFXExtender.vcxproj">
-      <Project>{a8cb3988-1ada-4631-a7d3-11d7f68776a3}</Project>
-      <Private>true</Private>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Config\ConfigFileMock.h" />
     <ClInclude Include="Games\GameMock.h" />
     <ClInclude Include="Managers\ChildOfManagerMock.h" />
@@ -189,6 +179,11 @@
     <ClCompile Include="Utils\FileIOTest.cpp" />
     <ClCompile Include="Utils\LogTest.cpp" />
     <ClCompile Include="Utils\StringTest.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LFXE\LightFXExtender.vcxproj">
+      <Project>{a8cb3988-1ada-4631-a7d3-11d7f68776a3}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

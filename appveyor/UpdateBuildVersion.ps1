@@ -23,8 +23,8 @@ if ($version -ne $env:APPVEYOR_BUILD_VERSION) {
     Write-Host "  - AppVeyor build version is already up-to-date" -ForegroundColor "Yellow"
 }
 
-Write-Host "  - Apply to src\VersionInfo.h" -ForegroundColor "Yellow"
+Write-Host "  - Apply to src\LFXE\VersionInfo.h" -ForegroundColor "Yellow"
 ApplyVersionToVersionInfoH $version
 
-Write-Host "  - Apply to src\LightFXExtender.rc" -ForegroundColor "Yellow"
+Write-Host "  - Apply to src\LFXE\LightFXExtender.rc" -ForegroundColor "Yellow"
 ApplyVersionToResource $version

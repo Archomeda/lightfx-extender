@@ -1,5 +1,5 @@
 #include "CppUnitTest.h"
-#include "../../src/Managers/Version.h"
+#include "../../LFXE/Managers/Version.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

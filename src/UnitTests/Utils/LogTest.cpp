@@ -1,5 +1,5 @@
 #include "CppUnitTest.h"
-#include "../../src/Utils/Log.h"
+#include "../../LFXE/Utils/Log.h"
 
 // Windows includes
 #include <Shlwapi.h>

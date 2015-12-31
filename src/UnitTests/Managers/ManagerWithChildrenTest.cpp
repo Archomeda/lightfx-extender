@@ -1,8 +1,8 @@
 #include "CppUnitTest.h"
 #include "ManagerWithChildrenMock.h"
 #include "ChildOfManagerMock.h"
-#include "../../src/Managers/ManagerWithChildren.h"
-#include "../../src/LightFXExtender.h"
+#include "../../LFXE/Managers/ManagerWithChildren.h"
+#include "../../LFXE/LightFXExtender.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

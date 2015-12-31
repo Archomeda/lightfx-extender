@@ -1,4 +1,4 @@
-#include "../../src/Managers/TrayManager.h"
+#include "../../LFXE/Managers/TrayManager.h"
 #include "../Devices/DeviceMock.h"
 #include "CppUnitTest.h"
 

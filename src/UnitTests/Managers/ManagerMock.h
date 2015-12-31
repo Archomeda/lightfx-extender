@@ -4,7 +4,7 @@
 #include <string>
 
 // Project includes
-#include "../../src/Managers/Manager.h"
+#include "../../LFXE/Managers/Manager.h"
 
 
 namespace lightfx_tests {

@@ -1,6 +1,6 @@
 #include "CppUnitTest.h"
 #include "ManagerMock.h"
-#include "../../src/LightFXExtender.h"
+#include "../../LFXE/LightFXExtender.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

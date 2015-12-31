@@ -5,7 +5,7 @@ Function ApplyVersion($file, $regex, $replace, $encoding = "ASCII") {
 Function ApplyVersionToVersionInfoH($version) {
     $regex = '(#define CURRENT_VERSION ").+(")'
     $replace = "`${1}$version`${2}"
-    ApplyVersion -file "src\VersionInfo.h" -regex $regex -replace $replace
+    ApplyVersion -file "src\LFXE\VersionInfo.h" -regex $regex -replace $replace
 }
 
 Function ApplyVersionToAppVeyorYml($version) {
@@ -19,17 +19,17 @@ Function ApplyVersionToResource($version) {
     $version = $version.split("-")[0] -replace "\.",","
     $regex = "(FILEVERSION ).+"
     $replace = "`${1}$version"
-    ApplyVersion -file "src\LightFXExtender.rc" -regex $regex -replace $replace -encoding "Unicode"
+    ApplyVersion -file "src\LFXE\LightFXExtender.rc" -regex $regex -replace $replace -encoding "Unicode"
 
     $regex = "(PRODUCTVERSION ).+"
     $replace = "`${1}$version"
-    ApplyVersion -file "src\LightFXExtender.rc" -regex $regex -replace $replace -encoding "Unicode"
+    ApplyVersion -file "src\LFXE\LightFXExtender.rc" -regex $regex -replace $replace -encoding "Unicode"
 
     $regex = "(VALUE ""FileVersion"", "").+("")"
     $replace = "`${1}$versionText`${2}"
-    ApplyVersion -file "src\LightFXExtender.rc" -regex $regex -replace $replace -encoding "Unicode"
+    ApplyVersion -file "src\LFXE\LightFXExtender.rc" -regex $regex -replace $replace -encoding "Unicode"
 
     $regex = "(VALUE ""ProductVersion"", "").+("")"
     $replace = "`${1}$versionText`${2}"
-    ApplyVersion -file "src\LightFXExtender.rc" -regex $regex -replace $replace -encoding "Unicode"
+    ApplyVersion -file "src\LFXE\LightFXExtender.rc" -regex $regex -replace $replace -encoding "Unicode"
 }

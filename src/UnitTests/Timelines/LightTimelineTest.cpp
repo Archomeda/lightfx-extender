@@ -1,7 +1,7 @@
 #include "CppUnitTest.h"
 
 // Project includes
-#include "../src/timelines/LightTimeline.h"
+#include "../src/LFXE/Timelines/LightTimeline.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

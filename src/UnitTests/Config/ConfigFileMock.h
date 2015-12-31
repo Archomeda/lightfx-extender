@@ -4,7 +4,7 @@
 #include <string>
 
 // Project includes
-#include "../../src/Config/ConfigFile.h"
+#include "../../LFXE/Config/ConfigFile.h"
 
 
 namespace lightfx_tests {

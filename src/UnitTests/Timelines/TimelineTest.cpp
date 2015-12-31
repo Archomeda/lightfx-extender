@@ -4,7 +4,7 @@
 #include <algorithm>
 
 // Project includes
-#include "../src/timelines/Timeline.h"
+#include "../src/LFXE/Timelines/Timeline.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

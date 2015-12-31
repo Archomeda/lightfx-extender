@@ -4,7 +4,7 @@
 #include <string>
 
 // Project includes
-#include "../../src/Games/Game.h"
+#include "../../LFXE/Games/Game.h"
 
 
 namespace lightfx_tests {

@@ -1,7 +1,7 @@
 #include "CppUnitTest.h"
 #include "ChildOfManagerMock.h"
 #include "ManagerWithChildrenMock.h"
-#include "../../src/Managers/ChildOfManager.h"
+#include "../../LFXE/Managers/ChildOfManager.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
