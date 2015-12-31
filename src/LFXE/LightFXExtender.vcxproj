@@ -120,42 +120,42 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Tests|Win32'">
-    <TargetName>LightFX</TargetName>
+    <TargetName>LFXE</TargetName>
     <OutDir>$(SolutionDir)bin\$(Configuration)\x86\</OutDir>
     <IntDir>obj\$(Configuration)\x86\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Tests|x64'">
-    <TargetName>LightFX</TargetName>
+    <TargetName>LFXE64</TargetName>
     <OutDir>$(SolutionDir)bin\$(Configuration)\x64\</OutDir>
     <IntDir>obj\$(Configuration)\x64\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetName>LightFX</TargetName>
+    <TargetName>LFXE</TargetName>
     <OutDir>$(SolutionDir)bin\$(Configuration)\x86\</OutDir>
     <IntDir>obj\$(Configuration)\x86\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>LightFX</TargetName>
+    <TargetName>LFXE64</TargetName>
     <OutDir>$(SolutionDir)bin\$(Configuration)\x64\</OutDir>
     <IntDir>obj\$(Configuration)\x64\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Tests|Win32'">
-    <TargetName>LightFX</TargetName>
+    <TargetName>LFXE</TargetName>
     <OutDir>$(SolutionDir)bin\$(Configuration)\x86\</OutDir>
     <IntDir>obj\$(Configuration)\x86\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Tests|x64'">
-    <TargetName>LightFX</TargetName>
+    <TargetName>LFXE64</TargetName>
     <OutDir>$(SolutionDir)bin\$(Configuration)\x64\</OutDir>
     <IntDir>obj\$(Configuration)\x64\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>LightFX</TargetName>
+    <TargetName>LFXE</TargetName>
     <OutDir>$(SolutionDir)bin\$(Configuration)\x86\</OutDir>
     <IntDir>obj\$(Configuration)\x86\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>LightFX</TargetName>
+    <TargetName>LFXE64</TargetName>
     <OutDir>$(SolutionDir)bin\$(Configuration)\x64\</OutDir>
     <IntDir>obj\$(Configuration)\x64\</IntDir>
   </PropertyGroup>

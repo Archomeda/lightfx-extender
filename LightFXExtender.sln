@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LightFXExtender", "src\LightFXExtender.vcxproj", "{A8CB3988-1ADA-4631-A7D3-11D7F68776A3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LightFXExtender", "src\LFXE\LightFXExtender.vcxproj", "{A8CB3988-1ADA-4631-A7D3-11D7F68776A3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTests", "tests\UnitTests.vcxproj", "{E6703E60-834C-43A5-808A-B44108D867B8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTests", "src\UnitTests\UnitTests.vcxproj", "{E6703E60-834C-43A5-808A-B44108D867B8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LightFXProxy", "src\LightFXProxy\LightFXProxy.vcxproj", "{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,22 @@ Global
 		{E6703E60-834C-43A5-808A-B44108D867B8}.Release_Tests|x64.Build.0 = Release_Tests|x64
 		{E6703E60-834C-43A5-808A-B44108D867B8}.Release|Win32.ActiveCfg = Release_Tests|Win32
 		{E6703E60-834C-43A5-808A-B44108D867B8}.Release|x64.ActiveCfg = Release_Tests|x64
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Debug_Tests|Win32.ActiveCfg = Debug_Tests|Win32
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Debug_Tests|Win32.Build.0 = Debug_Tests|Win32
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Debug_Tests|x64.ActiveCfg = Debug_Tests|x64
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Debug_Tests|x64.Build.0 = Debug_Tests|x64
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Debug|Win32.Build.0 = Debug|Win32
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Debug|x64.ActiveCfg = Debug|x64
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Debug|x64.Build.0 = Debug|x64
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Release_Tests|Win32.ActiveCfg = Release_Tests|Win32
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Release_Tests|Win32.Build.0 = Release_Tests|Win32
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Release_Tests|x64.ActiveCfg = Release_Tests|x64
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Release_Tests|x64.Build.0 = Release_Tests|x64
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Release|Win32.ActiveCfg = Release|Win32
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Release|Win32.Build.0 = Release|Win32
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Release|x64.ActiveCfg = Release|x64
+		{7EF7A4D6-6AC0-4A70-98AA-E1CDF4DB7389}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
