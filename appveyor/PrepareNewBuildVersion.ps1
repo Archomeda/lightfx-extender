@@ -10,10 +10,10 @@ if (!$env:APPVEYOR_PULL_REQUEST_NUMBER) {
         Write-Host "  - Apply to appveyor.yml" -ForegroundColor "Yellow"
         ApplyVersionToAppVeyorYml "$newVersion.{build}"
 
-        Write-Host "  - Apply to src\VersionInfo.h" -ForegroundColor "Yellow"
+        Write-Host "  - Apply to src\LFXE\VersionInfo.h" -ForegroundColor "Yellow"
         ApplyVersionToVersionInfoH "$newVersion-dev"
 
-        Write-Host "  - Apply to src\LightFXExtender.rc" -ForegroundColor "Yellow"
+        Write-Host "  - Apply to src\LFXE\LightFXExtender.rc" -ForegroundColor "Yellow"
         ApplyVersionToResource "$newVersion.0-dev"
 
         Write-Host "  - Commit and push to GitHub repository" -ForegroundColor "Yellow"
@@ -23,7 +23,7 @@ if (!$env:APPVEYOR_PULL_REQUEST_NUMBER) {
         Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
         git remote add github "https://github.com/$($env:APPVEYOR_REPO_NAME).git"
         git checkout -q $env:APPVEYOR_REPO_BRANCH
-        git add "appveyor.yml" "src/VersionInfo.h" "src/LightFXExtender.rc"
+        git add "appveyor.yml" "src/LFXE/VersionInfo.h" "src/LFXE/LightFXExtender.rc"
         git commit -q -m "[AppVeyor] Prepare for version $newVersion [ci skip]"
         git push -q github master
     } else {
