@@ -184,6 +184,7 @@ string InitializeLightFXExtender() {
             // Additional x86 files, extract to relative folder
             if (!CreateDirectoryW((pathw + L"\\x86").c_str(), NULL) && GetLastError() != ERROR_ALREADY_EXISTS) {
                 // Failed to create directory
+                mz_zip_reader_end(&archive);
                 throw exception("Failed to create the x86 directory in the AppData storage directory.");
             }
             filename = path + filename;
@@ -191,6 +192,7 @@ string InitializeLightFXExtender() {
             // Additional x64 files, extract to relative folder
             if (!CreateDirectoryW((pathw + L"\\x64").c_str(), NULL) && GetLastError() != ERROR_ALREADY_EXISTS) {
                 // Failed to create directory
+                mz_zip_reader_end(&archive);
                 throw exception("Failed to create the x64 directory in the AppData storage directory.");
             }
             filename = path + filename;
@@ -206,5 +208,6 @@ string InitializeLightFXExtender() {
         }
     }
 
+    mz_zip_reader_end(&archive);
     return version;
 }

@@ -33,17 +33,13 @@ namespace lightfx {
             void CheckAsync();
 
             Version GetCurrentVersion();
-            std::pair<Version, std::wstring> GetLiveVersion();
+            std::pair<Version, std::wstring> GetLatestRelease();
 
-            std::wstring GetDownloadPageUrl();
             bool UpdateLightFX(const std::wstring& downloadUrl);
 
         protected:
-            const std::wstring GitHub_ApiReleasesUrl = L"https://api.github.com/repos/Archomeda/lightfx-extender/releases";
-            const std::wstring GitHub_ReleasesUrl = L"https://github.com/Archomeda/lightfx-extender/releases";
-
             std::vector<char> DownloadFromUrl(const std::wstring& url);
-            void InstallNewDll(mz_zip_archive* archive, const std::string& filename);
+            void InstallNewFile(mz_zip_archive* archive, const int id, const std::string& filename);
 
         private:
             void CheckForUpdate();
