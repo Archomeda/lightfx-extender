@@ -1,7 +1,8 @@
-#include "../../LFXE/Managers/TrayManager.h"
 #include "../Devices/DeviceMock.h"
 #include "CppUnitTest.h"
 
+// Project includes
+#include "../../LFXE/Managers/TrayManager.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace std;

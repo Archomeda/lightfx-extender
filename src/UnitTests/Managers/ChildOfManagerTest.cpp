@@ -1,6 +1,8 @@
-#include "CppUnitTest.h"
 #include "ChildOfManagerMock.h"
 #include "ManagerWithChildrenMock.h"
+#include "CppUnitTest.h"
+
+// Project includes
 #include "../../LFXE/Managers/ChildOfManager.h"
 
 

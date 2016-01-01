@@ -1,6 +1,8 @@
-#include "CppUnitTest.h"
 #include "ManagerWithChildrenMock.h"
 #include "ChildOfManagerMock.h"
+#include "CppUnitTest.h"
+
+// Project includes
 #include "../../LFXE/Managers/ManagerWithChildren.h"
 #include "../../LFXE/LightFXExtender.h"
 

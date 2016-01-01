@@ -306,7 +306,10 @@
     <ClInclude Include="Devices\DeviceLightpack.h" />
     <ClInclude Include="Devices\DeviceLogitech.h" />
     <ClInclude Include="Devices\DeviceRazer.h" />
-    <ClInclude Include="Devices\LightFX2.h" />
+    <ClInclude Include="Devices\Proxies\CUESDKProxy.h" />
+    <ClInclude Include="Devices\Proxies\DeviceLibraryProxy.h" />
+    <ClInclude Include="Devices\Proxies\LightFX2Proxy.h" />
+    <ClInclude Include="Devices\Proxies\RzChromaSDKProxy.h" />
     <ClInclude Include="Games\Game.h" />
     <ClInclude Include="Games\GameGw2.h" />
     <ClInclude Include="Games\MumbleLink.h" />
@@ -326,7 +329,6 @@
     <ClInclude Include="Timelines\LightTimelineItem.h" />
     <ClInclude Include="Timelines\Timeline.h" />
     <ClInclude Include="Utils\FileIO.h" />
-    <ClInclude Include="Utils\LightFX.h" />
     <ClInclude Include="Utils\Log.h" />
     <ClInclude Include="Utils\String.h" />
     <ClInclude Include="Utils\NotifyEvent.h" />
@@ -349,7 +351,10 @@
     <ClCompile Include="Devices\DeviceLightpack.cpp" />
     <ClCompile Include="Devices\DeviceLogitech.cpp" />
     <ClCompile Include="Devices\DeviceRazer.cpp" />
-    <ClCompile Include="Devices\LightFX2.cpp" />
+    <ClCompile Include="Devices\Proxies\CUESDKProxy.cpp" />
+    <ClCompile Include="Devices\Proxies\DeviceLibraryProxy.cpp" />
+    <ClCompile Include="Devices\Proxies\LightFX2Proxy.cpp" />
+    <ClCompile Include="Devices\Proxies\RzChromaSDKProxy.cpp" />
     <ClCompile Include="Games\Game.cpp" />
     <ClCompile Include="Games\GameGw2.cpp" />
     <ClCompile Include="LightFXExports.cpp" />
@@ -364,7 +369,6 @@
     <ClCompile Include="Timelines\LightTimelineItem.cpp" />
     <ClCompile Include="Timelines\Timeline.cpp" />
     <ClCompile Include="Utils\FileIO.cpp" />
-    <ClCompile Include="Utils\LightFX.cpp" />
     <ClCompile Include="Utils\Log.cpp" />
     <ClCompile Include="Utils\String.cpp" />
     <ClCompile Include="Utils\Windows.cpp" />

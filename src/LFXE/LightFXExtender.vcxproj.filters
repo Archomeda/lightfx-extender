@@ -102,9 +102,6 @@
     <ClInclude Include="Timelines\Timeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Devices\LightFX2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Devices\DeviceLightFX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -117,13 +114,22 @@
     <ClInclude Include="Utils\NotifyEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\LightFX.h">
+    <ClInclude Include="Devices\DeviceCorsair.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Devices\DeviceRazer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Devices\DeviceCorsair.h">
+    <ClInclude Include="Devices\Proxies\DeviceLibraryProxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Devices\Proxies\LightFX2Proxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Devices\Proxies\CUESDKProxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Devices\Proxies\RzChromaSDKProxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -201,22 +207,28 @@
     <ClCompile Include="Timelines\Timeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Devices\LightFX2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Devices\DeviceLightFX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Utils\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Utils\LightFX.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Devices\DeviceCorsair.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Devices\Proxies\DeviceLibraryProxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Devices\Proxies\LightFX2Proxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Devices\DeviceRazer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Devices\Proxies\CUESDKProxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Devices\Proxies\RzChromaSDKProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

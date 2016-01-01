@@ -1,7 +1,5 @@
-#include "CppUnitTest.h"
-
-// Project includes
 #include "GameMock.h"
+#include "CppUnitTest.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

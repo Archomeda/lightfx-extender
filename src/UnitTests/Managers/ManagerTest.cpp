@@ -1,5 +1,7 @@
-#include "CppUnitTest.h"
 #include "ManagerMock.h"
+#include "CppUnitTest.h"
+
+// Project includes
 #include "../../LFXE/LightFXExtender.h"
 
 
