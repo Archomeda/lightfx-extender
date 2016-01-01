@@ -54,7 +54,6 @@ namespace lightfx {
 
             
             auto corsair = make_shared<DeviceCorsair>();
-            corsair->SetRange(config->CorsairColorRangeOutMin, config->CorsairColorRangeOutMax, config->CorsairColorRangeInMin, config->CorsairColorRangeInMax);
             this->AddChild(L"Corsair", corsair);
             if (corsair->Initialize()) {
                 ++i;

@@ -27,13 +27,6 @@ using namespace lightfx::utils;
 namespace lightfx {
     namespace devices {
 
-        LFXE_API void DeviceCorsair::SetRange(const int outMin, const int outMax, const int inMin, const int inMax) {
-            this->rangeOutMin = outMin;
-            this->rangeOutMax = outMax;
-            this->rangeInMin = inMin;
-            this->rangeInMax = inMax;
-        }
-
         LFXE_API bool DeviceCorsair::Initialize() {
             if (!this->IsInitialized()) {
                 if (Device::Initialize()) {
@@ -94,8 +87,6 @@ namespace lightfx {
             double green = colors[0].green;
             double blue = colors[0].blue;
             double alpha = colors[0].brightness;
-
-            double divider = (this->rangeOutMax - this->rangeOutMin) / ((this->rangeInMax - this->rangeInMin) / 100.0) / 100.0;
 
             int updated_red = (int)(red * (alpha / 255.0));
             int updated_green = (int)(green * (alpha / 255.0));

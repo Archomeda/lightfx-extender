@@ -20,8 +20,6 @@ namespace lightfx {
         class LFXE_API DeviceCorsair : public Device {
 
         public:
-            void SetRange(const int outMin, const int outMax, const int inMin, const int inMax);
-
             virtual bool Initialize() override;
             virtual bool Release() override;
 
