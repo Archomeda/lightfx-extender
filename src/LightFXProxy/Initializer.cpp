@@ -20,7 +20,7 @@
 #define DLERROR_OPENURL 2
 #define DLERROR_READURL 3
 
-#define GITHUB_RELEASEURL_API L"https://api.github.com/repos/Archomeda/lightfx-extender/releases/latest"
+#define GITHUB_RELEASEURL_API L"https://api.github.com/repos/Archomeda/lightfx-extender/releases"
 
 using namespace std;
 using namespace rapidjson;
@@ -107,37 +107,53 @@ string InitializeLightFXExtender() {
     string releaseString(releaseData.begin(), releaseData.end());
     Document releaseJson;
     releaseJson.Parse<0>(releaseString.c_str());
-    if (releaseJson.IsObject()) {
-        // Get version
-        if (releaseJson.HasMember("tag_name") && releaseJson["tag_name"].IsString()) {
-            version = releaseJson["tag_name"].GetString();
-        }
+    if (releaseJson.IsArray()) {
+        // We get the information from the first available release 
+        // This is to capture a possible failure when later releases will have different filenames.
+        // If this happens, this will download the latest release possible, and then that version will download a newer release.
+        for (SizeType i = 0; i < releaseJson.Size(); ++i) {
+            // Check if this release is not a pre-release first
+            if (releaseJson[i].HasMember("prerelease") && releaseJson[i]["prerelease"].IsBool()) {
+                if (releaseJson[i]["prerelease"].GetBool()) {
+                    continue;
+                }
+            }
 
-        // Get the asset download URL
-        if (releaseJson.HasMember("assets") && releaseJson["assets"].IsArray()) {
-            auto& assets = releaseJson["assets"];
-            regex re("LightFX-Extender-full_v(\\d+\\.\\d+\\.\\d+\\.\\d+)\\.zip");
-            smatch match;
-            for (SizeType i = 0; i < assets.Size(); ++i) {
-                if (assets[i].HasMember("name") && assets[i]["name"].IsString()) {
-                    string assetName = assets[i]["name"].GetString();
-                    if (regex_search(assetName, match, re) && match.size() > 1) {
-                        if (assets[i].HasMember("browser_download_url") && assets[i]["browser_download_url"].IsString()) {
-                            downloadUrl = assets[i]["browser_download_url"].GetString();
-                            break;
+            // Get the version and asset download URL
+            bool isValid = false;
+            if (releaseJson[i].HasMember("assets") && releaseJson[i]["assets"].IsArray()) {
+                auto& assets = releaseJson[i]["assets"];
+                regex re("LightFX-Extender-full_v(\\d+\\.\\d+\\.\\d+\\.\\d+)\\.zip");
+                smatch match;
+                for (SizeType j = 0; j < assets.Size(); ++j) {
+                    if (assets[j].HasMember("name") && assets[j]["name"].IsString()) {
+                        string assetName = assets[j]["name"].GetString();
+                        if (regex_search(assetName, match, re) && match.size() > 1) {
+                            if (releaseJson[i].HasMember("tag_name") && releaseJson[i]["tag_name"].IsString()) {
+                                version = releaseJson[i]["tag_name"].GetString();
+                            }
+                            if (assets[j].HasMember("browser_download_url") && assets[j]["browser_download_url"].IsString()) {
+                                downloadUrl = assets[j]["browser_download_url"].GetString();
+                                isValid = true;
+                                break;
+                            }
                         }
                     }
                 }
+            }
+
+            if (isValid) {
+                break;
             }
         }
     }
 
     if (version.empty()) {
         // Failed to get the latest version
-        throw exception("There is no latest release of LightFX Extender.");
+        throw exception("There is no latest release available at this moment.");
     } else if (downloadUrl.empty()) {
         // Failed to get the GitHub asset download
-        throw exception(("The latest version (" + version + ") of LightFX Extender has no downloads available.").c_str());
+        throw exception(("The latest compatible version (" + version + ") has no downloads available.").c_str());
     }
 
     // Proceed to download the release

@@ -75,12 +75,10 @@ namespace lightfx {
                 // If this happens, this will download the latest release possible, and then that version will download a newer release.
                 for (SizeType i = 0; i < releaseJson.Size(); ++i) {
                     // Check if this release is not a pre-release first
-                    if (releaseJson[i].HasMember("tag_name") && releaseJson[i]["tag_name"].IsString()) {
-                        if (releaseJson[i].HasMember("prerelease") && releaseJson[i]["prerelease"].IsBool()) {
-                            if (releaseJson[i]["prerelease"].GetBool()) {
-                                //TODO: Skip pre-releases for now, include an optional configuration to download them first
-                                continue;
-                            }
+                    if (releaseJson[i].HasMember("prerelease") && releaseJson[i]["prerelease"].IsBool()) {
+                        if (releaseJson[i]["prerelease"].GetBool()) {
+                            //TODO: Skip pre-releases for now, include an optional configuration to download them first
+                            continue;
                         }
                     }
 
@@ -94,7 +92,9 @@ namespace lightfx {
                             if (assets[j].HasMember("name") && assets[j]["name"].IsString()) {
                                 string assetName = assets[j]["name"].GetString();
                                 if (regex_search(assetName, match, re) && match.size() > 1) {
-                                    version = Version::FromString(releaseJson["tag_name"].GetString());
+                                    if (releaseJson[i].HasMember("tag_name") && releaseJson[i]["tag_name"].IsString()) {
+                                        version = Version::FromString(releaseJson["tag_name"].GetString());
+                                    }
                                     if (assets[j].HasMember("browser_download_url") && assets[j]["browser_download_url"].IsString()) {
                                         downloadUrl = assets[j]["browser_download_url"].GetString();
                                         isValid = true;
