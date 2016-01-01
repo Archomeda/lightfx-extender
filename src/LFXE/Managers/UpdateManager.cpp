@@ -32,7 +32,6 @@
 #define LOG(logLevel, message) LOG_(logLevel, wstring(L"UpdateManager - ") + message)
 
 #define GITHUB_RELEASEURL_API L"https://api.github.com/repos/Archomeda/lightfx-extender/releases"
-#define GITHUB_RELEASEURL L"https://github.com/Archomeda/lightfx-extender/releases"
 
 
 using namespace std;
@@ -56,7 +55,7 @@ namespace lightfx {
             return Version::FromString(CURRENT_VERSION);
         }
 
-        LFXE_API pair<Version, wstring> UpdateManager::GetLatestRelease() {
+        LFXE_API Release UpdateManager::GetLatestRelease() {
             vector<char> releaseData;
             try {
                 releaseData = this->DownloadFromUrl(GITHUB_RELEASEURL_API);
@@ -66,6 +65,8 @@ namespace lightfx {
 
             Version version;
             string downloadUrl;
+            string releaseNotesUrl;
+
             string releaseString(releaseData.begin(), releaseData.end());
             Document releaseJson;
             releaseJson.Parse<0>(releaseString.c_str());
@@ -95,6 +96,9 @@ namespace lightfx {
                                     if (releaseJson[i].HasMember("tag_name") && releaseJson[i]["tag_name"].IsString()) {
                                         version = Version::FromString(releaseJson["tag_name"].GetString());
                                     }
+                                    if (releaseJson[i].HasMember("html_url") && releaseJson[i]["html_url"].IsString()) {
+                                        releaseNotesUrl = releaseJson["html_url"].GetString();
+                                    }
                                     if (assets[j].HasMember("browser_download_url") && assets[j]["browser_download_url"].IsString()) {
                                         downloadUrl = assets[j]["browser_download_url"].GetString();
                                         isValid = true;
@@ -111,7 +115,11 @@ namespace lightfx {
                 }
             }
 
-            return{ version, string_to_wstring(downloadUrl) };
+            Release rel;
+            rel.version = version;
+            rel.downloadUrl = string_to_wstring(downloadUrl);
+            rel.releaseNotesUrl = string_to_wstring(releaseNotesUrl);
+            return rel;
         }
 
         LFXE_API bool UpdateManager::UpdateLightFX(const wstring& downloadUrl) {
@@ -252,23 +260,22 @@ namespace lightfx {
             Version currentVersion = this->GetCurrentVersion();
             LOG(LogLevel::Debug, L"Checking for updates...");
 
-            auto live = this->GetLatestRelease();
-            Version liveVersion = live.first;
-            wstring downloadUrl = live.second;
-            if (liveVersion > currentVersion) {
-                wstring newVersionString = liveVersion.ToString();
+            auto release = this->GetLatestRelease();
+            if (release.version > currentVersion) {
+                wstring newVersionString = release.version.ToString();
                 LOG(LogLevel::Info, L"A newer version is available: " + newVersionString);
                 if (this->GetLightFXExtender()->GetConfigManager()->GetMainConfig()->AutoUpdatesEnabled) {
-                    if (this->UpdateLightFX(downloadUrl)) {
+                    if (this->UpdateLightFX(release.downloadUrl)) {
                         LOG(LogLevel::Info, L"LightFX Extender has been updated automatically to " + newVersionString);
                         LOG(LogLevel::Info, L"The changes will be applied the next time you run LightFX Extender");
+                        this->GetLightFXExtender()->GetTrayManager()->SetUpdateInstalledNotification(newVersionString, release.releaseNotesUrl);
                     } else {
-                        LOG(LogLevel::Warning, L"LightFX Extender could not be updated automatically, see " + GITHUB_RELEASEURL + L" for downloads");
-                        this->GetLightFXExtender()->GetTrayManager()->SetUpdateNotification(newVersionString, GITHUB_RELEASEURL);
+                        LOG(LogLevel::Warning, L"LightFX Extender could not be updated automatically, see " + release.releaseNotesUrl + L" for downloads");
+                        this->GetLightFXExtender()->GetTrayManager()->SetUpdateAvailableNotification(newVersionString, release.releaseNotesUrl);
                     }
                 } else {
-                    LOG(LogLevel::Info, L"Auto updates are disabled, see " + GITHUB_RELEASEURL + L" for downloads");
-                    this->GetLightFXExtender()->GetTrayManager()->SetUpdateNotification(newVersionString, GITHUB_RELEASEURL);
+                    LOG(LogLevel::Info, L"Auto updates are disabled, see " + release.releaseNotesUrl + L" for downloads");
+                    this->GetLightFXExtender()->GetTrayManager()->SetUpdateAvailableNotification(newVersionString, release.releaseNotesUrl);
                 }
             } else {
                 LOG(LogLevel::Debug, L"No update available");

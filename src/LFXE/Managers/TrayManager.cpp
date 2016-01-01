@@ -30,8 +30,12 @@
 #define MENU_CONFFOLDER_NAME L"Open &configuration folder"
 #define MENU_UPDATE_NAME L"&Download new version"
 
-#define TRAY_BALLOON_TITLE L"LightFX Extender"
-#define TRAY_BALLOON_UPDATE_TEXT L" is available.\nClick here to download it."
+#define TRAY_BALLOON_UPDATE_AVAILABLE_TITLE L"LightFX Extender"
+#define TRAY_BALLOON_UPDATE_AVAILABLE_TEXT1 L"Version "
+#define TRAY_BALLOON_UPDATE_AVAILABLE_TEXT2 L" is available.\nClick here to download it."
+#define TRAY_BALLOON_UPDATE_INSTALLED_TITLE L"LightFX Extender"
+#define TRAY_BALLOON_UPDATE_INSTALLED_TEXT1 L"LightFX Extender has been updated to version "
+#define TRAY_BALLOON_UPDATE_INSTALLED_TEXT2 L".\nClick here to view the release notes."
 
 #define LOG(logLevel, message) LOG_(logLevel, wstring(L"TrayManager - ") + message)
 
@@ -44,7 +48,7 @@ namespace lightfx {
     namespace managers {
 
         LFXE_API bool TrayManager::IsAdded() {
-            return nullptr;
+            return this->isTrayIconAdded;
         }
 
         LFXE_API void TrayManager::AddTrayIcon() {
@@ -71,18 +75,31 @@ namespace lightfx {
         }
 
 
-        LFXE_API bool TrayManager::HasUpdateNotification() {
+        LFXE_API void TrayManager::SetBalloonNotificationWithUrl(const wstring& title, const wstring& text, const wstring& url) {
+            if (!this->isTrayIconAdded) {
+                return;
+            }
+
+            this->balloonNotificationUrl = url;
+
+            this->trayIconData.dwInfoFlags = NIIF_INFO | 0x80;
+            StringCchCopyW(this->trayIconData.szInfoTitle, ARRAYSIZE(this->trayIconData.szInfoTitle), title.c_str());
+            StringCchCopyW(this->trayIconData.szInfo, ARRAYSIZE(this->trayIconData.szInfo), text.c_str());
+            Shell_NotifyIconW(NIM_MODIFY, &this->trayIconData);
+        }
+
+        LFXE_API bool TrayManager::HasUpdateAvailableNotification() {
             return !this->updateVersionString.empty() && !this->updateVersionUrl.empty();
         }
 
-        LFXE_API void TrayManager::SetUpdateNotification(const wstring& versionString, const wstring& downloadUrl) {
+        LFXE_API void TrayManager::SetUpdateAvailableNotification(const wstring& versionString, const wstring& downloadUrl) {
             this->updateVersionString = versionString;
             this->updateVersionUrl = downloadUrl;
+            this->SetBalloonNotificationWithUrl(TRAY_BALLOON_UPDATE_AVAILABLE_TITLE, TRAY_BALLOON_UPDATE_AVAILABLE_TEXT1 + versionString + TRAY_BALLOON_UPDATE_AVAILABLE_TEXT2, downloadUrl);
+        }
 
-            this->trayIconData.dwInfoFlags = NIIF_INFO | 0x80;
-            StringCchCopyW(this->trayIconData.szInfoTitle, ARRAYSIZE(this->trayIconData.szInfoTitle), TRAY_BALLOON_TITLE);
-            StringCchCopyW(this->trayIconData.szInfo, ARRAYSIZE(this->trayIconData.szInfo), (L"Version " + versionString + TRAY_BALLOON_UPDATE_TEXT).c_str());
-            Shell_NotifyIconW(NIM_MODIFY, &this->trayIconData);
+        LFXE_API void TrayManager::SetUpdateInstalledNotification(const wstring& versionString, const wstring& releaseNotesUrl) {
+            this->SetBalloonNotificationWithUrl(TRAY_BALLOON_UPDATE_INSTALLED_TITLE, TRAY_BALLOON_UPDATE_INSTALLED_TEXT1 + versionString + TRAY_BALLOON_UPDATE_INSTALLED_TEXT2, releaseNotesUrl);
         }
 
 
@@ -186,7 +203,7 @@ namespace lightfx {
                     InsertMenuW(hMenu, static_cast<UINT>(index), MF_SEPARATOR, 0, NULL);
                     ++index;
                     UINT updateUrlIndex = 0;
-                    if (this->updateVersionString != L"") {
+                    if (!this->updateVersionString.empty()) {
                         updateUrlIndex = static_cast<UINT>(index);
                         InsertMenuW(hMenu, updateUrlIndex, 0, updateUrlIndex, wstring(wstring(MENU_UPDATE_NAME) + L" (v" + this->updateVersionString + L")...").c_str());
                         ++index;
@@ -217,8 +234,8 @@ namespace lightfx {
                         }
                     }
                 } else if (lParam == NIN_BALLOONUSERCLICK) {
-                    if (this->updateVersionUrl != L"") {
-                        ShellExecuteW(NULL, L"open", this->updateVersionUrl.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+                    if (!this->balloonNotificationUrl.empty()) {
+                        ShellExecuteW(NULL, L"open", this->balloonNotificationUrl.c_str(), NULL, NULL, SW_SHOWDEFAULT);
                     }
                 }
             }

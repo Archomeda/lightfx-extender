@@ -24,6 +24,12 @@ namespace lightfx {
 
     namespace managers {
 
+        struct Release {
+            Version version;
+            std::wstring downloadUrl;
+            std::wstring releaseNotesUrl;
+        };
+
         class LFXE_API UpdateManager : public Manager < UpdateManager > {
 
         public:
@@ -33,7 +39,7 @@ namespace lightfx {
             void CheckAsync();
 
             Version GetCurrentVersion();
-            std::pair<Version, std::wstring> GetLatestRelease();
+            Release GetLatestRelease();
 
             bool UpdateLightFX(const std::wstring& downloadUrl);
 

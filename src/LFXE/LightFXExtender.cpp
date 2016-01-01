@@ -65,7 +65,6 @@ namespace lightfx {
 
         this->configManager->InitializeConfigs();
         Log::SetMinimumLogLevel(this->configManager->GetMainConfig()->MinimumLogLevel);
-        this->updateManager->CheckAsync();
         this->deviceManager->InitializeDevices();
         this->gameManager->InitializeGame(processFileName);
         this->deviceManager->StartUpdateDevicesWorker();
@@ -73,6 +72,8 @@ namespace lightfx {
         if (this->configManager->GetMainConfig()->TrayIconEnabled) {
             this->trayManager->AddTrayIcon();
         }
+
+        this->updateManager->CheckAsync();
     }
 
     LFXE_API void LightFXExtender::Stop() {

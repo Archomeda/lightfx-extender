@@ -15,15 +15,15 @@ namespace lightfx_tests {
         TEST_CLASS(TrayManagerTest) {
 public:
 
-    TEST_METHOD(HasNoUpdateNotification) {
+    TEST_METHOD(HasNoUpdateAvailableNotification) {
         auto manager = make_shared<TrayManager>();
-        Assert::IsFalse(manager->HasUpdateNotification());
+        Assert::IsFalse(manager->HasUpdateAvailableNotification());
     }
 
-    TEST_METHOD(SetUpdateNotification) {
+    TEST_METHOD(SetUpdateAvailableNotification) {
         auto manager = make_shared<TrayManager>();
-        manager->SetUpdateNotification(L"0.0", L"http://some.nice/download?url=here");
-        Assert::IsTrue(manager->HasUpdateNotification());
+        manager->SetUpdateAvailableNotification(L"0.0", L"http://some.nice/download?url=here");
+        Assert::IsTrue(manager->HasUpdateAvailableNotification());
     }
 
         };

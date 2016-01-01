@@ -35,12 +35,16 @@ namespace lightfx {
             void AddTrayIcon();
             void RemoveTrayIcon();
 
-            bool HasUpdateNotification();
-            void SetUpdateNotification(const std::wstring& versionString, const std::wstring& downloadUrl);
+            void SetBalloonNotificationWithUrl(const std::wstring& title, const std::wstring& text, const std::wstring& url);
+
+            bool HasUpdateAvailableNotification();
+            void SetUpdateAvailableNotification(const std::wstring& versionString, const std::wstring& downloadUrl);
+            void SetUpdateInstalledNotification(const std::wstring& versionString, const std::wstring& releaseNotesUrl);
 
         protected:
             std::wstring updateVersionString;
             std::wstring updateVersionUrl;
+            std::wstring balloonNotificationUrl;
 
             HINSTANCE hModuleInstance = {};
             WNDCLASSW trayIconWindowClass = {};
