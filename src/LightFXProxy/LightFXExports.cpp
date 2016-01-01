@@ -89,11 +89,17 @@ extern "C" {
         if (fileType == INVALID_FILE_ATTRIBUTES) {
             // Our library doesn't exist yet, initialize it
             try {
+                MessageBoxA(NULL, (string("Welcome to LightFX Extender!\r\n\r\n") +
+                    "LightFX Extender will now be configured for first time use. " +
+                    "For that, the latest version has to be downloaded. " +
+                    "Internet connection is required for this. " + 
+                    "The time it takes depends on your internet connection.\r\n\r\n" +
+                    "The game might freeze during this phase. Click OK to continue.").c_str(), "Initializing LightFX Extender", MB_OK | MB_ICONINFORMATION);
                 string version = InitializeLightFXExtender();
-                MessageBoxA(NULL, string("LightFX Extender " + version + " has been downloaded and successfully initialized for the first time. This message will only be shown once.\r\n\r\n" +
+                MessageBoxA(NULL, string("LightFX Extender " + version + " has been successfully initialized.\r\n\r\n" +
                     "Every time you start up a game that supports LightFX or AlienFX, LightFX Extender will check for updates automatically. " +
                     "You can disable this behavior in the configuration file.\r\n\r\n" +
-                    "Don't forget to check https://github.com/Archomeda/lightfx-extender/ for more information about LightFX Extender.\r\nEnjoy!").c_str(), "Initializing LightFX Extender", MB_OK | MB_ICONINFORMATION);
+                    "Don't forget to check https://github.com/Archomeda/lightfx-extender/ for more information about LightFX Extender. Enjoy!").c_str(), "Initializing LightFX Extender", MB_OK | MB_ICONINFORMATION);
             } catch (const exception& e) {
                 MessageBoxA(NULL, string("Failed to download LightFX Extender.\r\n" + string(e.what()) + "\r\n\r\nLightFX Extender will not work until this error has been resolved.").c_str(), "Initializing LightFX Extender", MB_OK | MB_ICONERROR);
             }
