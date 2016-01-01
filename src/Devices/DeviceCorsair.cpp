@@ -16,8 +16,6 @@
 #include "../Utils/Log.h"
 
 
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"Device ") + this->GetDeviceName() + L" - " + message)
-
 using namespace std;
 using namespace lightfx::devices::proxies;
 using namespace lightfx::managers;
@@ -33,7 +31,7 @@ namespace lightfx {
                     // Load the library first
                     this->library = unique_ptr<CUESDKProxy>(new CUESDKProxy);
                     if (!this->library->Load()) {
-                        LOG(LogLevel::Error, L"Failed to access the CUESDK library");
+                        LOG_ERROR(L"Failed to access the CUESDK library");
                         this->SetInitialized(false);
                         return false;
                     }
@@ -68,7 +66,7 @@ namespace lightfx {
                 if (Device::Enable()) {
                     this->library->CorsairPerformProtocolHandshake();
                     if (const auto error = this->library->CorsairGetLastError()) {
-                        LOG(LogLevel::Error, L"Handshake with Corsair failed: " + this->library->CorsairErrorToString(error));
+                        LOG_ERROR(L"Handshake with Corsair failed: " + this->library->CorsairErrorToString(error));
                     } else {
                         this->SetEnabled(false);
                         return false;
@@ -101,7 +99,7 @@ namespace lightfx {
                 }
             }
 
-            LOG(LogLevel::Debug, L"Update color to (" + to_wstring(updated_red) + L"," + to_wstring(updated_green) + L"," + to_wstring(updated_blue) + L")");
+            LOG_DEBUG(L"Update color to (" + to_wstring(updated_red) + L"," + to_wstring(updated_green) + L"," + to_wstring(updated_blue) + L")");
 
             return this->library->CorsairSetLedsColorsAsync(static_cast<unsigned int>(vec.size()), vec.data(), nullptr, nullptr);
         }

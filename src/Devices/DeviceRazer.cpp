@@ -12,8 +12,6 @@
 #include "../Utils/Log.h"
 
 
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"Device ") + this->GetDeviceName() + L" - " + message)
-
 using namespace std;
 using namespace lightfx::devices::proxies;
 using namespace lightfx::managers;
@@ -44,7 +42,7 @@ namespace lightfx {
                     // Load the library first
                     this->library = unique_ptr<RzChromaSDKProxy>(new RzChromaSDKProxy);
                     if (!this->library->Load()) {
-                        LOG(LogLevel::Error, L"Failed to access the RzChromaSDK library");
+                        LOG_ERROR(L"Failed to access the RzChromaSDK library");
                         this->SetInitialized(false);
                         return false;
                     }
@@ -98,13 +96,13 @@ namespace lightfx {
                         {
                             this->Reset();
                         } else {
-                            LOG(LogLevel::Error, L"No known Razer devices connected");
+                            LOG_ERROR(L"No known Razer devices connected");
                             this->library->RzUnInit();
                             this->SetEnabled(false);
                             return false;
                         }
                     } else {
-                        LOG(LogLevel::Error, L"Could not enable Razor device, initialization error: " + this->library->RzResultToString(result));
+                        LOG_ERROR(L"Could not enable Razor device, initialization error: " + this->library->RzResultToString(result));
                         this->SetEnabled(false);
                         return false;
                     }
@@ -120,7 +118,7 @@ namespace lightfx {
                 if (Device::Disable()) {
                     RZRESULT result = this->library->RzUnInit();
                     if (result != RZRESULT_SUCCESS) {
-                        LOG(LogLevel::Error, L"Could not disable Razor device, uninitialization error: " + this->library->RzResultToString(result));
+                        LOG_ERROR(L"Could not disable Razor device, uninitialization error: " + this->library->RzResultToString(result));
                         this->SetEnabled(true);
                         return false;
                     }
@@ -144,7 +142,7 @@ namespace lightfx {
 
             COLORREF Color = RGB(updated_red, updated_green, updated_blue);
 
-            LOG(LogLevel::Debug, L"Update color to (" + to_wstring(updated_red) + L"," + to_wstring(updated_green) + L"," + to_wstring(updated_blue) + L")");
+            LOG_DEBUG(L"Update color to (" + to_wstring(updated_red) + L"," + to_wstring(updated_green) + L"," + to_wstring(updated_blue) + L")");
 
             bool keyboardresult = true;
             bool mouseresult = true;

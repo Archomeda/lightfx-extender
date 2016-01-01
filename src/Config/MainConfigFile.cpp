@@ -56,6 +56,7 @@
 #define CONF_GAMES_GUILDWARS2_TEAMCOLORANIMATION L"TeamColorAnimation"
 #pragma endregion
 
+
 using namespace std;
 using namespace rapidjson;
 using namespace lightfx::managers;
@@ -92,11 +93,6 @@ namespace lightfx {
             this->LogitechColorRangeInMax = 100;
             this->LogitechRestoreLightsOnNullEnabled = false;
             this->LogitechG110WorkaroundEnabled = false;
-
-            this->CorsairColorRangeOutMin = 0;
-            this->CorsairColorRangeOutMax = 255;
-            this->CorsairColorRangeInMin = 0;
-            this->CorsairColorRangeInMax = 255;
 
             this->RazerUseWithKeyboard = true;
             this->RazerUseWithMouse = true;

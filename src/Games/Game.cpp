@@ -9,8 +9,6 @@
 #include "../Utils/Log.h"
 
 
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"Game ") + this->GetGameName() + L" - " + message)
-
 using namespace std;
 using namespace lightfx::managers;
 using namespace lightfx::utils;
@@ -25,7 +23,7 @@ namespace lightfx {
 
         LFXE_API bool Game::Initialize() {
             if (!this->isInitialized) {
-                LOG(LogLevel::Debug, L"Initializing");
+                LOG_DEBUG(L"Initializing " + this->GetGameName());
                 this->isInitialized = true;
             }
             return true;
@@ -33,7 +31,7 @@ namespace lightfx {
 
         LFXE_API bool Game::Release() {
             if (this->isInitialized) {
-                LOG(LogLevel::Debug, L"Releasing");
+                LOG_DEBUG(L"Releasing " + this->GetGameName());
                 this->isInitialized = false;
             }
             return true;

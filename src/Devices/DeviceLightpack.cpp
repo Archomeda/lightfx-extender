@@ -17,8 +17,6 @@
 #include "../Utils/String.h"
 
 
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"Device ") + this->GetDeviceName() + L" - " + message)
-
 using namespace std;
 using namespace lightfx::managers;
 using namespace lightfx::timelines;
@@ -41,7 +39,7 @@ namespace lightfx {
                     // Just do an initial pass to check how many LEDs there are available
                     if (this->ConnectAPI()) {
                         int countLeds = this->GetCountLeds();
-                        LOG(LogLevel::Debug, to_wstring(countLeds) + L" LEDs available");
+                        LOG_DEBUG(to_wstring(countLeds) + L" LEDs available");
                         this->SetNumberOfLights(countLeds);
                         auto leds = this->GetLeds();
                         LightpackScreen screen = this->GetScreenSize();
@@ -52,7 +50,7 @@ namespace lightfx {
                             int posX = int(((leds[i].x - screen.x) + (leds[i].width / 2)) / divider);
                             int posY = int(((screen.height - leds[i].y - screen.y) + (leds[i].height / 2)) / divider);
                             light.Position = { posX, posY, 0 };
-                            LOG(LogLevel::Debug, L"Get LED " + to_wstring(i) + L" pos: (" + to_wstring(posX) + L"," + to_wstring(posY) + L")");
+                            LOG_DEBUG(L"Get LED " + to_wstring(i) + L" pos: (" + to_wstring(posX) + L"," + to_wstring(posY) + L")");
                             this->SetLightData(i, light);
                         }
 
@@ -105,11 +103,11 @@ namespace lightfx {
 
 
         bool DeviceLightpack::ConnectAPI() {
-            LOG(LogLevel::Debug, L"ConnectAPI()");
+            LOG_DEBUG(L"Connecting with API");
 
             WSADATA wsaData;
             if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-                LOG(LogLevel::Error, L"WSAStartup failed");
+                LOG_ERROR(L"WSAStartup failed");
                 return false;
             }
 
@@ -121,21 +119,21 @@ namespace lightfx {
             hints.ai_protocol = IPPROTO_TCP;
 
             if (GetAddrInfoW(this->hostname.c_str(), this->port.c_str(), &hints, &result) != 0) {
-                LOG(LogLevel::Error, L"GetAddrInfoW failed");
+                LOG_ERROR(L"GetAddrInfoW failed");
                 WSACleanup();
                 return false;
             }
 
             this->lightpackSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
             if (this->lightpackSocket == INVALID_SOCKET) {
-                LOG(LogLevel::Error, L"Invalid socket");
+                LOG_ERROR(L"Invalid socket");
                 FreeAddrInfoW(result);
                 WSACleanup();
                 return false;
             }
 
             if (connect(this->lightpackSocket, result->ai_addr, (int)result->ai_addrlen) == SOCKET_ERROR) {
-                LOG(LogLevel::Error, L"Connection error");
+                LOG_ERROR(L"Connection error");
                 closesocket(this->lightpackSocket);
                 this->lightpackSocket = INVALID_SOCKET;
                 FreeAddrInfoW(result);
@@ -157,7 +155,7 @@ namespace lightfx {
         }
 
         bool DeviceLightpack::DisconnectAPI() {
-            LOG(LogLevel::Debug, L"DisconnectAPI()");
+            LOG_DEBUG(L"Disconnecting from API");
 
             this->Unlock();
 
@@ -174,7 +172,7 @@ namespace lightfx {
         }
 
         bool DeviceLightpack::SendAPI(const wstring& cmd) {
-            LOG(LogLevel::Debug, L"SendAPI(\"" + cmd + L"\")");
+            LOG_DEBUG(L"Send: " + cmd + L"");
 
             wstring s = cmd + L"\n";
             if (s.length() > (size_t)numeric_limits<int>::max()) {
@@ -203,7 +201,7 @@ namespace lightfx {
                 // Error
             }
 
-            LOG(LogLevel::Debug, L"ReceiveAPI(): " + wresult);
+            LOG_DEBUG(L"Receive: " + wresult);
             return wresult;
         }
 
@@ -316,7 +314,7 @@ namespace lightfx {
                 result.height = max(result.height, led.y + led.height);
             }
 
-            LOG(LogLevel::Debug, L"GetScreenSize(): (" + to_wstring(result.x) + L"," + to_wstring(result.y) + L"," + to_wstring(result.width) + L"," + to_wstring(result.height) + L")");
+            LOG_DEBUG(L"Screen size: (" + to_wstring(result.x) + L"," + to_wstring(result.y) + L"," + to_wstring(result.width) + L"," + to_wstring(result.height) + L")");
             return result;
 
             /*

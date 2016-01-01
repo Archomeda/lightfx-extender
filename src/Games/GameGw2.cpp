@@ -18,8 +18,6 @@
 #include "../Utils/Log.h"
 
 
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"Game ") + this->GetGameName() + L" - " + message)
-
 using namespace std;
 using namespace rapidjson;
 using namespace lightfx::devices;
@@ -89,20 +87,20 @@ namespace lightfx {
                 case 9: // Blue
                     startColor = { 29, 118, 169, 0 };
                     endColor = { 29, 118, 169, 255 };
-                    LOG(LogLevel::Debug, L"Mumble Link - Detected PvP/WvW blue team");
+                    LOG_DEBUG(L"Mumble Link - Detected PvP/WvW blue team");
                     break;
                 case 55: // Green
                     startColor = { 119, 192, 33, 0 };
                     endColor = { 119, 192, 33, 255 };
-                    LOG(LogLevel::Debug, L"Mumble Link - Detected PvP/WvW green team");
+                    LOG_DEBUG(L"Mumble Link - Detected PvP/WvW green team");
                     break;
                 case 376: // Red
                     startColor = { 203, 28, 36, 0 };
                     endColor = { 203, 28, 36, 255 };
-                    LOG(LogLevel::Debug, L"Mumble Link - Detected PvP/WvW red team");
+                    LOG_DEBUG(L"Mumble Link - Detected PvP/WvW red team");
                     break;
                 default: // Unknown
-                    LOG(LogLevel::Info, L"Mumble Link - Detected unknown team color: " + to_wstring(teamColorId) + L", skipping");
+                    LOG_INFO(L"Mumble Link - Detected unknown team color: " + to_wstring(teamColorId) + L", skipping");
                     return;
                 }
 
@@ -124,7 +122,7 @@ namespace lightfx {
                             if (j < resetColor.size()) {
                                 color = resetColor[j];
                             } else {
-                                LOG(LogLevel::Warning, L"No reset color defined for pulsing team color, using fallback color white");
+                                LOG_WARNING(L"No reset color defined for pulsing team color, using fallback color white");
                             }
                             timelines.push_back(LightTimeline::NewPulse(startColor, endColor, color, 200, 5, 100, 400));
                         }
@@ -143,7 +141,7 @@ namespace lightfx {
         }
 
         LFXE_API void GameGw2::MumbleLinkLoop() {
-            LOG(LogLevel::Debug, L"Mumble Link started");
+            LOG_DEBUG(L"Mumble Link started");
 
             while (this->mumbleLinkLoopRunning) {
                 if (this->lastTick != this->mumbleLinkedMem->uiTick) {
@@ -164,7 +162,7 @@ namespace lightfx {
                                 }
                             }
                         } catch (...) {
-                            LOG(LogLevel::Error, L"Error when parsing Mumble Link identity: " + wstring(identity));
+                            LOG_ERROR(L"Error when parsing Mumble Link identity: " + wstring(identity));
                         }
                     }
                 }

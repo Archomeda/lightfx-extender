@@ -54,14 +54,14 @@ namespace lightfx {
         Log::StartLoggerWorker();
 
         Log::RotateLog();
-        LOG_(LogLevel::Info, L"LightFX Extender v" + this->updateManager->GetCurrentVersion().ToString());
+        LOG_INFO(L"LightFX Extender v" + this->updateManager->GetCurrentVersion().ToString());
 
         wstring processFileName;
         wstring ext;
         wstring processPath = GetProcessName(nullptr, nullptr, &processFileName, &ext);
         processFileName = processFileName + ext;
 
-        LOG_(LogLevel::Info, L"Connected to " + processPath);
+        LOG_INFO(L"Connected to " + processPath);
 
         this->configManager->InitializeConfigs();
         Log::SetMinimumLogLevel(this->configManager->GetMainConfig()->MinimumLogLevel);

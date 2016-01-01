@@ -48,11 +48,6 @@ namespace lightfx {
             bool LogitechRestoreLightsOnNullEnabled = false;
             bool LogitechG110WorkaroundEnabled = false;
 
-            int CorsairColorRangeOutMin = 0;
-            int CorsairColorRangeOutMax = 255;
-            int CorsairColorRangeInMin = 0;
-            int CorsairColorRangeInMax = 255;
-
             bool RazerUseWithKeyboard = true;
             bool RazerUseWithMouse = true;
             bool RazerUseWithHeadset = true;

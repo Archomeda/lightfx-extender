@@ -11,7 +11,6 @@
 using namespace std;
 using namespace lightfx::utils;
 
-
 namespace lightfx {
     namespace devices {
         namespace proxies {

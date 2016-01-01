@@ -16,8 +16,6 @@
 #include "../Utils/Log.h"
 
 
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"Device ") + this->GetDeviceName() + L" - " + message)
-
 using namespace std;
 using namespace lightfx::managers;
 using namespace lightfx::timelines;
@@ -65,7 +63,7 @@ namespace lightfx {
                         this->Reset();
                         LogiLedSaveCurrentLighting();
                     } else {
-                        LOG(LogLevel::Error, L"Could not enable Logitech, make sure that Logitech Gaming Software is running and that it's at least at version 8.57.145");
+                        LOG_ERROR(L"Could not enable Logitech, make sure that Logitech Gaming Software is running and that it's at least at version 8.57.145");
                         this->SetEnabled(false);
                         return false;
                     }
@@ -113,7 +111,7 @@ namespace lightfx {
             green = (green - this->rangeOutMin) / divider * brightness + this->rangeInMin;
             blue = (blue - this->rangeOutMin) / divider * brightness + this->rangeInMin;
 
-            LOG(LogLevel::Debug, L"Update color to (" + to_wstring(red) + L"," + to_wstring(green) + L"," + to_wstring(blue) + L")");
+            LOG_DEBUG(L"Update color to (" + to_wstring(red) + L"," + to_wstring(green) + L"," + to_wstring(blue) + L")");
 
             return LogiLedSetLighting((int)red, (int)green, (int)blue);
         }
