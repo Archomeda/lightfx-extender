@@ -293,7 +293,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Initializer.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Windows.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LightFXProxy.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
