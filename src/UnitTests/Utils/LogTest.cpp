@@ -1,7 +1,5 @@
-#include "CppUnitTest.h"
-
-// Project includes
 #include "../../LFXE/Utils/Log.h"
+#include "CppUnitTest.h"
 
 // Windows includes
 #include <Shlwapi.h>

@@ -60,6 +60,9 @@
     <ClCompile Include="Utils\LogTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\RegistryTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\ConfigFileMock.h">

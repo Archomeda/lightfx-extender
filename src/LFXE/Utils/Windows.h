@@ -19,5 +19,7 @@ namespace lightfx {
         std::wstring GetDllName();
         std::wstring GetDllName(std::wstring* drive, std::wstring* dir, std::wstring* fname, std::wstring* ext);
 
+        bool IsProcessElevated();
+
     }
 }

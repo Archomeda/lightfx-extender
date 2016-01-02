@@ -23,6 +23,7 @@
 #include "ConfigManager.h"
 #include "TrayManager.h"
 #include "../Config/MainConfigFile.h"
+#include "../Exceptions/AccessDeniedException.h"
 #include "../Utils/FileIO.h"
 #include "../Utils/Log.h"
 #include "../Utils/String.h"
@@ -36,6 +37,7 @@
 
 using namespace std;
 using namespace rapidjson;
+using namespace lightfx::exceptions;
 using namespace lightfx::utils;
 
 namespace lightfx {
@@ -126,7 +128,7 @@ namespace lightfx {
             if (downloadUrl.empty()) {
                 return false;
             }
-            wstring pathw = GetDataStorageFolder();
+            wstring pathw = GetProgramFolder();
             string path = wstring_to_string(pathw);
 
             vector<char> releaseZip;
@@ -158,30 +160,38 @@ namespace lightfx {
                 string filename(buff.get());
                 if (filename.compare(0, 4, "bin/") == 0) {
                     // Bin file, extract to root
-                    filename = path + filename.substr(4);
-                } else if (filename.compare(0, 4, "x86/") == 0) {
-                    // Additional x86 files, extract to relative folder
-                    if (!CreateDirectoryW((pathw + L"\\x86").c_str(), NULL) && GetLastError() != ERROR_ALREADY_EXISTS) {
-                        LOG(LogLevel::Error, L"Failed to create the x86 directory in the AppData storage directory");
-                        mz_zip_reader_end(&archive);
-                        return false;
-                    }
-                    filename = path + filename;
-                } else if (filename.compare(0, 4, "x64/") == 0) {
-                    // Additional x64 files, extract to relative folder
-                    if (!CreateDirectoryW((pathw + L"\\x64").c_str(), NULL) && GetLastError() != ERROR_ALREADY_EXISTS) {
-                        LOG(LogLevel::Error, L"Failed to create the x64 directory in the AppData storage directory");
-                        mz_zip_reader_end(&archive);
-                        return false;
-                    }
-                    filename = path + filename;
+                    filename = filename.substr(4);
+                } else if (filename.compare(0, 4, "x86/") == 0 || filename.compare(0, 4, "x64/") == 0) {
+                    // Additional x86 or x64 files, extract to relative folder
+                    filename = filename;
                 } else {
                     // Other file, skip
                     continue;
                 }
 
+                // Split the folder part from the filename
+                size_t splitPos = filename.find_last_of("/\\");
+                string folder;
+                if (splitPos != string::npos) {
+                    folder = filename.substr(0, splitPos + 1);
+                    filename = filename.substr(splitPos + 1);
+                }
+
+                // Try installing the new file
                 try {
-                    this->InstallNewFile(&archive, i, filename);
+                    this->InstallNewFile(&archive, i, folder, filename);
+                } catch (const AccessDeniedException&) {
+                    if (!IsProcessElevated()) {
+                        // Process is not elevated, and therefore we assume that we don't have enough permissions
+                        //TODO: Try to run a separate elevated process and resume installing
+                        LOG(LogLevel::Error, L"Error while installing new file " + string_to_wstring(filename) + L": Access denied, process was not elevated");
+                        mz_zip_reader_end(&archive);
+                        return false;
+                    } else {
+                        LOG(LogLevel::Error, L"Error while installing new file " + string_to_wstring(filename) + L": Access denied");
+                        mz_zip_reader_end(&archive);
+                        return false;
+                    }
                 } catch (const exception& e) {
                     LOG(LogLevel::Error, L"Error while installing new file " + string_to_wstring(filename) + L": " + string_to_wstring(e.what()));
                     Log::LogLastWindowsErrorAsync();
@@ -194,27 +204,52 @@ namespace lightfx {
             return true;
         }
 
-        LFXE_API void UpdateManager::InstallNewFile(mz_zip_archive* archive, const int id, const std::string& filename) {
-            wstring targetFilename = GetDataStorageFolder() + L"\\" + string_to_wstring(filename);
+        LFXE_API void UpdateManager::InstallNewFile(mz_zip_archive* archive, const int id, const string& folder, const string& filename) {
+            wstring folderW = string_to_wstring(folder);
+            wstring filenameW = string_to_wstring(filename);
+            wstring targetFolder = GetProgramFolder() + L"\\" + folderW;
+            wstring targetFilename = targetFolder + filenameW;
             wstring backupFilename = targetFilename + L".bak";
-            wstring tempFilename = targetFilename + L".tmp";
+            wstring tempFolder = GetDataStorageFolder();
+            wstring tempFilename = tempFolder + L"\\" + filenameW + L".tmp";
 
-            if (!mz_zip_reader_extract_to_file(archive, id, wstring_to_string(tempFilename).c_str(), 0)) {
-                throw exception(("Failed to extract " + filename + " from the archive").c_str());
+            // Create required folders
+            if (!CreateDirIfNotExists(tempFolder)) {
+                throw exception(("Failed to create the temporary folder " + wstring_to_string(tempFolder)).c_str());
+            }
+            if (!CreateDirIfNotExists(targetFolder)) {
+                throw exception(("Failed to create the target folder " + wstring_to_string(targetFolder)).c_str());
             }
 
-            if (FileExists(backupFilename) && !DeleteFileW(backupFilename.c_str())) {
+            // Extract the file to a temporary location
+            if (!mz_zip_reader_extract_to_file(archive, id, wstring_to_string(tempFilename).c_str(), 0)) {
+                if (GetLastError() == ERROR_ACCESS_DENIED) {
+                    throw AccessDeniedException();
+                } else {
+                    throw exception(("Failed to extract " + filename + " from the archive").c_str());
+                }
+            }
+
+            // Remove the backed up file if it exists
+            if (!RemoveFile(backupFilename)) {
                 throw exception(("Failed to remove the backed up file " + wstring_to_string(backupFilename)).c_str());
             }
-            if (FileExists(targetFilename) && !DeleteFileW(targetFilename.c_str())) {
-                // Could not delete the target file, assume the file is in use and let's try to move it
-                if (!MoveFileW(targetFilename.c_str(), backupFilename.c_str())) {
-                    // Could not move the file either, fail
+
+            // Delete the existing target file if it exists
+            try {
+                if (!RemoveFile(targetFilename)) {
+                    throw exception(("Failed to remove the existing file " + wstring_to_string(targetFilename)).c_str());
+                }
+            } catch (const AccessDeniedException&) {
+                // Assume that this access denied exception is caused by the fact that the file is in use
+                // Let's try to move it
+                if (!RenameFile(targetFilename, backupFilename)) {
                     throw exception(("Failed to rename the file " + wstring_to_string(targetFilename) + " to " + wstring_to_string(backupFilename)).c_str());
                 }
             }
-            if (!MoveFileW(tempFilename.c_str(), targetFilename.c_str())) {
-                // Could not move the downloaded file to the target location
+
+            // Move the new file to its intended target
+            if (!RenameFile(tempFilename, targetFilename)) {
                 throw exception(("Failed to rename the new file " + wstring_to_string(tempFilename) + " to " + wstring_to_string(targetFilename) +
                     "; LightFX Extender will not work properly until you manually rename this file").c_str());
             }

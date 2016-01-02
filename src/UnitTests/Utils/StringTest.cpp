@@ -1,7 +1,5 @@
-#include "CppUnitTest.h"
-
-// Project includes
 #include "../../LFXE/Utils/String.h"
+#include "CppUnitTest.h"
 
 
 using namespace std;

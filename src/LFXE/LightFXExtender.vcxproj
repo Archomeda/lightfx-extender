@@ -310,6 +310,7 @@
     <ClInclude Include="Devices\Proxies\DeviceLibraryProxy.h" />
     <ClInclude Include="Devices\Proxies\LightFX2Proxy.h" />
     <ClInclude Include="Devices\Proxies\RzChromaSDKProxy.h" />
+    <ClInclude Include="Exceptions\AccessDeniedException.h" />
     <ClInclude Include="Games\Game.h" />
     <ClInclude Include="Games\GameGw2.h" />
     <ClInclude Include="Games\MumbleLink.h" />
@@ -330,6 +331,7 @@
     <ClInclude Include="Timelines\Timeline.h" />
     <ClInclude Include="Utils\FileIO.h" />
     <ClInclude Include="Utils\Log.h" />
+    <ClInclude Include="Utils\Registry.h" />
     <ClInclude Include="Utils\String.h" />
     <ClInclude Include="Utils\NotifyEvent.h" />
     <ClInclude Include="Utils\Timer.h" />
@@ -370,6 +372,7 @@
     <ClCompile Include="Timelines\Timeline.cpp" />
     <ClCompile Include="Utils\FileIO.cpp" />
     <ClCompile Include="Utils\Log.cpp" />
+    <ClCompile Include="Utils\Registry.cpp" />
     <ClCompile Include="Utils\String.cpp" />
     <ClCompile Include="Utils\Windows.cpp" />
   </ItemGroup>

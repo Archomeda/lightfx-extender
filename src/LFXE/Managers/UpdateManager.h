@@ -45,7 +45,7 @@ namespace lightfx {
 
         protected:
             std::vector<char> DownloadFromUrl(const std::wstring& url);
-            void InstallNewFile(mz_zip_archive* archive, const int id, const std::string& filename);
+            void InstallNewFile(mz_zip_archive* archive, const int id, const std::string& folder, const std::string& filename);
 
         private:
             void CheckForUpdate();

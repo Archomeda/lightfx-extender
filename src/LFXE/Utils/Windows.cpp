@@ -51,5 +51,23 @@ namespace lightfx {
             return GetModuleName(GetCurrentModule(), drive, dir, fname, ext);
         }
 
+        bool IsProcessElevated() {
+            HANDLE hToken;
+            if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
+                return false;
+            }
+
+            TOKEN_ELEVATION elevation;
+            DWORD dwSize;
+            if (!GetTokenInformation(hToken, TokenElevation, &elevation, sizeof(elevation), &dwSize)) {
+                CloseHandle(hToken);
+                return false;
+            }
+
+            bool isElevated = elevation.TokenIsElevated > 0;
+            CloseHandle(hToken);
+            return isElevated;
+        }
+
     }
 }

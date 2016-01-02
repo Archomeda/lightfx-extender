@@ -173,6 +173,7 @@
     <ClCompile Include="Managers\ManagerWithChildrenTest.cpp" />
     <ClCompile Include="Managers\TrayManagerTest.cpp" />
     <ClCompile Include="Managers\VersionTest.cpp" />
+    <ClCompile Include="Utils\RegistryTest.cpp" />
     <ClCompile Include="Timelines\TimelineTest.cpp" />
     <ClCompile Include="Timelines\LightTimelineItemTest.cpp" />
     <ClCompile Include="Timelines\LightTimelineTest.cpp" />
