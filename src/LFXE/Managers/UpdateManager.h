@@ -12,8 +12,9 @@
 // API exports
 #include "../Common/ApiExports.h"
 
-// Forward declare mz_zip_archive from miniz.c
+// Forward declare mz stuff from miniz.c
 typedef struct mz_zip_archive_tag mz_zip_archive;
+typedef unsigned int mz_uint;
 
 
 #pragma warning(push)
@@ -42,10 +43,11 @@ namespace lightfx {
             Release GetLatestRelease();
 
             bool UpdateLightFX(const std::wstring& downloadUrl);
+            static void InstallNewVersion(mz_zip_archive* const archive, mz_uint* const index);
 
         protected:
             std::vector<char> DownloadFromUrl(const std::wstring& url);
-            void InstallNewFile(mz_zip_archive* archive, const int id, const std::string& folder, const std::string& filename);
+            static void InstallNewFile(mz_zip_archive* const archive, const int id, const std::string& folder, const std::string& filename);
 
         private:
             void CheckForUpdate();

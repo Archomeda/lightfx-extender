@@ -172,6 +172,7 @@
       <AdditionalDependencies>$(SolutionDir)lib\x86\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
+      <ModuleDefinitionFile>LightFXExtender.$(PlatformTarget).def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Tests|x64'">
@@ -187,6 +188,7 @@
       <AdditionalDependencies>$(SolutionDir)lib\x64\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
+      <ModuleDefinitionFile>LightFXExtender.$(PlatformTarget).def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -202,6 +204,7 @@
       <AdditionalDependencies>$(SolutionDir)lib\x86\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
+      <ModuleDefinitionFile>LightFXExtender.$(PlatformTarget).def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -217,6 +220,7 @@
       <AdditionalDependencies>$(SolutionDir)lib\x64\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
+      <ModuleDefinitionFile>LightFXExtender.$(PlatformTarget).def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Tests|Win32'">
@@ -236,6 +240,7 @@
       <AdditionalDependencies>$(SolutionDir)lib\x86\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
+      <ModuleDefinitionFile>LightFXExtender.$(PlatformTarget).def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Tests|x64'">
@@ -255,6 +260,7 @@
       <AdditionalDependencies>$(SolutionDir)lib\x64\LogitechLEDLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
+      <ModuleDefinitionFile>LightFXExtender.$(PlatformTarget).def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -274,6 +280,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
+      <ModuleDefinitionFile>LightFXExtender.$(PlatformTarget).def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -293,6 +300,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(SolutionDir)\bin\obj\$(ConfigurationName)\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
+      <ModuleDefinitionFile>LightFXExtender.$(PlatformTarget).def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -311,6 +319,7 @@
     <ClInclude Include="Devices\Proxies\LightFX2Proxy.h" />
     <ClInclude Include="Devices\Proxies\RzChromaSDKProxy.h" />
     <ClInclude Include="Exceptions\AccessDeniedException.h" />
+    <ClInclude Include="Exceptions\MzFileStatException.h" />
     <ClInclude Include="Games\Game.h" />
     <ClInclude Include="Games\GameGw2.h" />
     <ClInclude Include="Games\MumbleLink.h" />
@@ -385,6 +394,10 @@
     <Content Include="$(SolutionDir)lib\x64\CUESDK.x64_2013.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LightFXExtender.x86.def" />
+    <None Include="LightFXExtender.x64.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

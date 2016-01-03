@@ -5,6 +5,7 @@
 #include "UpdateManager.h"
 
 // Standard includes
+#include <fstream>
 #include <regex>
 
 // Windows includes
@@ -24,6 +25,7 @@
 #include "TrayManager.h"
 #include "../Config/MainConfigFile.h"
 #include "../Exceptions/AccessDeniedException.h"
+#include "../Exceptions/MzFileStatException.h"
 #include "../Utils/FileIO.h"
 #include "../Utils/Log.h"
 #include "../Utils/String.h"
@@ -146,17 +148,71 @@ namespace lightfx {
                 return false;
             }
 
-            mz_zip_archive_file_stat filestat;
-            if (!mz_zip_reader_file_stat(&archive, 0, &filestat)) {
+            mz_uint index = 0;
+            try {
+                UpdateManager::InstallNewVersion(&archive, &index);
+            } catch (const MsFileStatException&) {
                 LOG(LogLevel::Error, L"Failed to read the downloaded archive");
                 mz_zip_reader_end(&archive);
                 return false;
+            } catch (const AccessDeniedException&) {
+                mz_zip_reader_end(&archive);
+                if (!IsProcessElevated()) {
+                    // Process is not elevated, and therefore we assume that we don't have enough permissions
+                    MessageBoxA(NULL, (string("There is an update available for LightFX Extender, but we need permissions to update the files.\r\n\r\n") +
+                        "After pressing OK, you will be asked to accept the permissions through the Windows elevation prompt. " +
+                        "Please accept in order to update LightFX Extender.").c_str(), "LightFX Extender", MB_OK | MB_ICONINFORMATION);
+
+                    // Save the archive to a temporary location
+                    wstring tempFilename = GetDataStorageFolder() + L"\\download.zip";
+                    ofstream ofs(tempFilename, ios::out | ios::binary);
+                    copy(releaseZip.begin(), releaseZip.end(), ostreambuf_iterator<char>(ofs));
+                    ofs.close();
+
+                    // Set up process information
+                    wstring dllName(GetDllName());
+                    wstring parameters(L"\"" + dllName + L"\",LFXE_UpdateInstallation " + to_wstring(index));
+                    SHELLEXECUTEINFOW sei = { sizeof(sei) };
+                    sei.lpVerb = L"runas";
+                    sei.lpFile = L"rundll32.exe";
+                    sei.lpParameters = parameters.c_str();
+                    sei.hwnd = NULL;
+                    sei.nShow = SW_SHOWDEFAULT;
+
+                    // Start process
+                    if (ShellExecuteExW(&sei)) {
+                        return true;
+                    } else {
+                        RemoveFile(tempFilename);
+                        LOG(LogLevel::Error, L"Error while updating LightFX Extender: Access denied, process could not be elevated");
+                        Log::LogLastWindowsErrorAsync();
+                        return false;
+                    }
+                } else {
+                    LOG(LogLevel::Error, L"Error while updating LightFX Extender: Access denied");
+                    return false;
+                }
+            } catch (const exception& e) {
+                mz_zip_reader_end(&archive);
+                LOG(LogLevel::Error, L"Error while updating LightFX Extender: " + string_to_wstring(e.what()));
+                Log::LogLastWindowsErrorAsync();
+                return false;
             }
 
-            mz_uint numFiles = mz_zip_reader_get_num_files(&archive);
-            for (mz_uint i = 0; i < numFiles; ++i) {
+            mz_zip_reader_end(&archive);
+            return true;
+        }
+
+        LFXE_API void UpdateManager::InstallNewVersion(mz_zip_archive* const archive, mz_uint* const index) {
+            mz_zip_archive_file_stat filestat;
+            if (!mz_zip_reader_file_stat(archive, 0, &filestat)) {
+                throw MsFileStatException();
+            }
+
+            mz_uint numFiles = mz_zip_reader_get_num_files(archive);
+            for (; *index < numFiles; ++*index) {
                 unique_ptr<char[]> buff(new char[1024]);
-                mz_zip_reader_get_filename(&archive, i, buff.get(), 1024);
+                mz_zip_reader_get_filename(archive, *index, buff.get(), 1024);
                 string filename(buff.get());
                 if (filename.compare(0, 4, "bin/") == 0) {
                     // Bin file, extract to root
@@ -178,80 +234,7 @@ namespace lightfx {
                 }
 
                 // Try installing the new file
-                try {
-                    this->InstallNewFile(&archive, i, folder, filename);
-                } catch (const AccessDeniedException&) {
-                    if (!IsProcessElevated()) {
-                        // Process is not elevated, and therefore we assume that we don't have enough permissions
-                        //TODO: Try to run a separate elevated process and resume installing
-                        LOG(LogLevel::Error, L"Error while installing new file " + string_to_wstring(filename) + L": Access denied, process was not elevated");
-                        mz_zip_reader_end(&archive);
-                        return false;
-                    } else {
-                        LOG(LogLevel::Error, L"Error while installing new file " + string_to_wstring(filename) + L": Access denied");
-                        mz_zip_reader_end(&archive);
-                        return false;
-                    }
-                } catch (const exception& e) {
-                    LOG(LogLevel::Error, L"Error while installing new file " + string_to_wstring(filename) + L": " + string_to_wstring(e.what()));
-                    Log::LogLastWindowsErrorAsync();
-                    mz_zip_reader_end(&archive);
-                    return false;
-                }
-            }
-
-            mz_zip_reader_end(&archive);
-            return true;
-        }
-
-        LFXE_API void UpdateManager::InstallNewFile(mz_zip_archive* archive, const int id, const string& folder, const string& filename) {
-            wstring folderW = string_to_wstring(folder);
-            wstring filenameW = string_to_wstring(filename);
-            wstring targetFolder = GetProgramFolder() + L"\\" + folderW;
-            wstring targetFilename = targetFolder + filenameW;
-            wstring backupFilename = targetFilename + L".bak";
-            wstring tempFolder = GetDataStorageFolder();
-            wstring tempFilename = tempFolder + L"\\" + filenameW + L".tmp";
-
-            // Create required folders
-            if (!CreateDirIfNotExists(tempFolder)) {
-                throw exception(("Failed to create the temporary folder " + wstring_to_string(tempFolder)).c_str());
-            }
-            if (!CreateDirIfNotExists(targetFolder)) {
-                throw exception(("Failed to create the target folder " + wstring_to_string(targetFolder)).c_str());
-            }
-
-            // Extract the file to a temporary location
-            if (!mz_zip_reader_extract_to_file(archive, id, wstring_to_string(tempFilename).c_str(), 0)) {
-                if (GetLastError() == ERROR_ACCESS_DENIED) {
-                    throw AccessDeniedException();
-                } else {
-                    throw exception(("Failed to extract " + filename + " from the archive").c_str());
-                }
-            }
-
-            // Remove the backed up file if it exists
-            if (!RemoveFile(backupFilename)) {
-                throw exception(("Failed to remove the backed up file " + wstring_to_string(backupFilename)).c_str());
-            }
-
-            // Delete the existing target file if it exists
-            try {
-                if (!RemoveFile(targetFilename)) {
-                    throw exception(("Failed to remove the existing file " + wstring_to_string(targetFilename)).c_str());
-                }
-            } catch (const AccessDeniedException&) {
-                // Assume that this access denied exception is caused by the fact that the file is in use
-                // Let's try to move it
-                if (!RenameFile(targetFilename, backupFilename)) {
-                    throw exception(("Failed to rename the file " + wstring_to_string(targetFilename) + " to " + wstring_to_string(backupFilename)).c_str());
-                }
-            }
-
-            // Move the new file to its intended target
-            if (!RenameFile(tempFilename, targetFilename)) {
-                throw exception(("Failed to rename the new file " + wstring_to_string(tempFilename) + " to " + wstring_to_string(targetFilename) +
-                    "; LightFX Extender will not work properly until you manually rename this file").c_str());
+                UpdateManager::InstallNewFile(archive, *index, folder, filename);
             }
         }
 
@@ -290,6 +273,64 @@ namespace lightfx {
             return data;
         }
 
+        LFXE_API void UpdateManager::InstallNewFile(mz_zip_archive* const archive, const int id, const string& folder, const string& filename) {
+            wstring folderW = string_to_wstring(folder);
+            wstring filenameW = string_to_wstring(filename);
+            wstring targetFolder = GetProgramFolder() + L"\\" + folderW;
+            wstring targetFilename = targetFolder + filenameW;
+            wstring backupFilename = targetFilename + L".bak";
+            wstring tempFolder = GetDataStorageFolder();
+            wstring tempFilename = tempFolder + L"\\" + filenameW + L".tmp";
+
+            // Create required folders
+            if (!CreateDirIfNotExists(tempFolder)) {
+                throw exception(("Failed to create the temporary folder " + wstring_to_string(tempFolder)).c_str());
+            }
+            if (!CreateDirIfNotExists(targetFolder)) {
+                throw exception(("Failed to create the target folder " + wstring_to_string(targetFolder)).c_str());
+            }
+
+            // Remove the backed up file if it exists
+            if (!RemoveFile(backupFilename)) {
+                throw exception(("Failed to remove the backed up file " + wstring_to_string(backupFilename)).c_str());
+            }
+
+            // Move the current file to the backup file
+            if (FileExists(targetFilename) && !RenameFile(targetFilename, backupFilename)) {
+                throw exception(("Failed to rename the file " + wstring_to_string(targetFilename) + " to " + wstring_to_string(backupFilename)).c_str());
+            }
+
+            // Try to remove the existing target file
+            try {
+                if (!RemoveFile(backupFilename)) {
+                    throw exception(("Failed to remove the existing file " + wstring_to_string(targetFilename)).c_str());
+                }
+            } catch (const AccessDeniedException&) {
+                // Access denied might also be caused by a file that's loaded as a DLL by an external application
+                // We can still update the file by renaming it to something different
+            }
+
+            // Remove the temporary file if it exists
+            if (!RemoveFile(tempFilename)) {
+                throw exception(("Failed to remove the previous temporary file " + wstring_to_string(tempFilename)).c_str());
+            }
+
+            // Extract the file to a temporary location
+            if (!mz_zip_reader_extract_to_file(archive, id, wstring_to_string(tempFilename).c_str(), 0)) {
+                if (GetLastError() == ERROR_ACCESS_DENIED) {
+                    throw AccessDeniedException();
+                } else {
+                    throw exception(("Failed to extract " + filename + " from the archive").c_str());
+                }
+            }
+
+            // Move the new file to its intended target
+            if (!RenameFile(tempFilename, targetFilename)) {
+                throw exception(("Failed to rename the new file " + wstring_to_string(tempFilename) + " to " + wstring_to_string(targetFilename) +
+                    "; LightFX Extender will not work properly until you manually rename this file").c_str());
+            }
+        }
+
 
         LFXE_API void UpdateManager::CheckForUpdate() {
             Version currentVersion = this->GetCurrentVersion();
@@ -319,3 +360,42 @@ namespace lightfx {
 
     }
 }
+
+
+// Custom RunDll export for installing files in an elevated process
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    void CALLBACK LFXE_UpdateInstallation(HWND hWnd, HINSTANCE hInstance, LPSTR lpszCmdLine, int nCmdShow) {
+        string args(lpszCmdLine);
+        int startIndex = stoi(args);
+        mz_uint index = startIndex;
+
+        wstring archiveFilename = GetDataStorageFolder() + L"\\download.zip";
+        mz_zip_archive archive;
+        memset(&archive, 0, sizeof(archive));
+        if (!mz_zip_reader_init_file(&archive, wstring_to_string(archiveFilename.c_str()).c_str(), 0)) {
+            return;
+        }
+
+        try {
+            lightfx::managers::UpdateManager::InstallNewVersion(&archive, &index);
+        } catch (const MsFileStatException&) {
+            mz_zip_reader_end(&archive);
+            return;
+        } catch (const AccessDeniedException&) {
+            mz_zip_reader_end(&archive);
+            return;
+        } catch (const exception&) {
+            mz_zip_reader_end(&archive);
+            return;
+        }
+
+        mz_zip_reader_end(&archive);
+        RemoveFile(archiveFilename);
+    }
+
+#ifdef __cplusplus
+}
+#endif

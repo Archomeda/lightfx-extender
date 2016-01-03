@@ -138,6 +138,9 @@
     <ClInclude Include="Exceptions\AccessDeniedException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Exceptions\MzFileStatException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LightFXExtender.rc">
@@ -240,5 +243,13 @@
     <ClCompile Include="Utils\Registry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LightFXExtender.x64.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="LightFXExtender.x86.def">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
