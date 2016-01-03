@@ -36,8 +36,8 @@ Source: "../artifacts/work/bin/CUESDK_2013.dll"; DestDir: "{app}"; Flags: ignore
 Source: "../artifacts/work/bin/CUESDK.x64_2013.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../artifacts/work/x86/LightFX.dll"; DestDir: "{app}/x86"; Flags: ignoreversion
 Source: "../artifacts/work/x64/LightFX.dll"; DestDir: "{app}/x64"; Flags: ignoreversion
-Source: "../artifacts/work/x86/LightFX.dll"; DestDir: {code:GameDir}; Check: Game32Check
-Source: "../artifacts/work/x64/LightFX.dll"; DestDir: {code:GameDir}; Check: Game64Check
+Source: "../artifacts/work/x86/LightFX.dll"; DestDir: {code:GameDir}; Check: Game32Check; Flags: ignoreversion
+Source: "../artifacts/work/x64/LightFX.dll"; DestDir: {code:GameDir}; Check: Game64Check; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
