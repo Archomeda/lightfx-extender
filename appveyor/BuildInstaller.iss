@@ -30,14 +30,14 @@ ArchitecturesInstallIn64BitMode=x64
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "artifacts/work/bin/LFXE.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "artifacts/work/bin/LFXE.x64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "artifacts/work/bin/CUESDK_2013.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "artifacts/work/bin/CUESDK.x64_2013.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "artifacts/work/x86/LightFX.dll"; DestDir: "{app}/x86"; Flags: ignoreversion
-Source: "artifacts/work/x64/LightFX.dll"; DestDir: "{app}/x64"; Flags: ignoreversion
-Source: "artifacts/work/x86/LightFX.dll"; DestDir: {code:GameDir}; Check: Game32Check
-Source: "artifacts/work/x64/LightFX.dll"; DestDir: {code:GameDir}; Check: Game64Check
+Source: "../artifacts/work/bin/LFXE.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "../artifacts/work/bin/LFXE.x64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "../artifacts/work/bin/CUESDK_2013.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "../artifacts/work/bin/CUESDK.x64_2013.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "../artifacts/work/x86/LightFX.dll"; DestDir: "{app}/x86"; Flags: ignoreversion
+Source: "../artifacts/work/x64/LightFX.dll"; DestDir: "{app}/x64"; Flags: ignoreversion
+Source: "../artifacts/work/x86/LightFX.dll"; DestDir: {code:GameDir}; Check: Game32Check
+Source: "../artifacts/work/x64/LightFX.dll"; DestDir: {code:GameDir}; Check: Game64Check
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
@@ -104,7 +104,7 @@ begin
     GamePagePlatformText.Enabled := GamePageEnableCheckBox.Checked;
     GamePagePlatformCheckListBox.Enabled := GamePageEnableCheckBox.Checked;
 end;
-                                    
+
 procedure InitializeWizard;
 begin
     GamePage := CreateInputDirPage(wpSelectDir,
@@ -122,7 +122,7 @@ begin
     GamePageEnableCheckBox.Parent := GamePage.Surface;
     GamePageEnableCheckBox.Checked := GetPreviousData('GameEnable', '0') = '1';
     GamePageEnableCheckBox.OnClick := @GamePageEnableCheckBoxClickEvent;
-    
+
     GamePage.SubCaptionLabel.Top := GamePage.SubCaptionLabel.Top + GamePageEnableCheckBox.Height + ScaleY(12);
     GamePage.SubCaptionLabel.Enabled := GamePageEnableCheckBox.Checked;
     GamePage.Buttons[0].Top := GamePage.Buttons[0].Top + GamePageEnableCheckBox.Height + ScaleY(12);
@@ -208,7 +208,7 @@ begin
     SetPreviousData(PreviousDataKey, 'GameDir', GamePage.Values[0]);
     SetPreviousData(PreviousDataKey, 'Game32', IntToStr(Ord(GamePagePlatformCheckListBox.Checked[0])));
     SetPreviousData(PreviousDataKey, 'Game64', IntToStr(Ord(GamePagePlatformCheckListBox.Checked[1])));
-end; 
+end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
