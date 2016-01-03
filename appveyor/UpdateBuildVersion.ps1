@@ -28,3 +28,6 @@ ApplyVersionToVersionInfoH $version
 
 Write-Host "  - Apply to src\LFXE\LightFXExtender.rc" -ForegroundColor "Yellow"
 ApplyVersionToResource $version
+
+Write-Host "  - Apply to appveyor\BuildInstaller.iss" -ForegroundColor "Yellow"
+ApplyVersionToInstaller $version

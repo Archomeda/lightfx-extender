@@ -4,11 +4,14 @@ param (
 
 . ./appveyor/ApplyVersion.ps1
 
-Write-Host "Apply to appveyor.yml" -ForegroundColor "Yellow"
-ApplyVersionToAppVeyorYml "$version.{build}"
-
 Write-Host "Apply to src\LFXE\VersionInfo.h" -ForegroundColor "Yellow"
 ApplyVersionToVersionInfoH "$version-dev"
 
 Write-Host "Apply to src\LFXE\LightFXExtender.rc" -ForegroundColor "Yellow"
 ApplyVersionToResource "$version.0-dev"
+
+Write-Host "Apply to appveyor\BuildInstaller.iss" -ForegroundColor "Yellow"
+ApplyVersionToInstaller "$version-dev"
+
+Write-Host "Apply to appveyor.yml" -ForegroundColor "Yellow"
+ApplyVersionToAppVeyorYml "$version.{build}"

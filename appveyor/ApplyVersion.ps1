@@ -8,12 +8,6 @@ Function ApplyVersionToVersionInfoH($version) {
     ApplyVersion -file "src\LFXE\VersionInfo.h" -regex $regex -replace $replace
 }
 
-Function ApplyVersionToAppVeyorYml($version) {
-    $regex = "(version: ).+"
-    $replace = "`${1}$version"
-    ApplyVersion -file "appveyor.yml" -regex $regex -replace $replace
-}
-
 Function ApplyVersionToResource($version) {
     $versionText = $version
     $version = $version.split("-")[0] -replace "\.",","
@@ -32,4 +26,16 @@ Function ApplyVersionToResource($version) {
     $regex = "(VALUE ""ProductVersion"", "").+("")"
     $replace = "`${1}$versionText`${2}"
     ApplyVersion -file "src\LFXE\LightFXExtender.rc" -regex $regex -replace $replace -encoding "Unicode"
+}
+
+Function ApplyVersionToInstaller($version) {
+    $regex = '(#define MyAppVersion ").+(")'
+    $replace = "`${1}$version`${2}"
+    ApplyVersion -file "appveyor\BuildInstaller.iss" -regex $regex -replace $replace
+}
+
+Function ApplyVersionToAppVeyorYml($version) {
+    $regex = "(version: ).+"
+    $replace = "`${1}$version"
+    ApplyVersion -file "appveyor.yml" -regex $regex -replace $replace
 }

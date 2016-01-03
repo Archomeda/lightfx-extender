@@ -8,14 +8,17 @@ if (!$env:APPVEYOR_PULL_REQUEST_NUMBER) {
             $newVersion = $match.Matches[0].Groups[1].Value + "." + $match.Matches[0].Groups[2].Value + "." + ([convert]::ToInt32($match.Matches[0].Groups[3].Value, 10) + 1)
             Write-Host "Prepare for next version automatically: $newVersion" -ForegroundColor "Yellow"
 
-            Write-Host "  - Apply to appveyor.yml" -ForegroundColor "Yellow"
-            ApplyVersionToAppVeyorYml "$newVersion.{build}"
-
             Write-Host "  - Apply to src\LFXE\VersionInfo.h" -ForegroundColor "Yellow"
             ApplyVersionToVersionInfoH "$newVersion-dev"
 
             Write-Host "  - Apply to src\LFXE\LightFXExtender.rc" -ForegroundColor "Yellow"
             ApplyVersionToResource "$newVersion.0-dev"
+
+            Write-Host "  - Apply to appveyor\BuildInstaller.iss" -ForegroundColor "Yellow"
+            ApplyVersionToInstaller "$newVersion-dev"
+
+            Write-Host "  - Apply to appveyor.yml" -ForegroundColor "Yellow"
+            ApplyVersionToAppVeyorYml "$newVersion.{build}"
 
             Write-Host "  - Commit and push to GitHub repository" -ForegroundColor "Yellow"
             git config --global credential.helper store

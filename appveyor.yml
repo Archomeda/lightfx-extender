@@ -13,6 +13,9 @@ matrix:
   fast_finish: true
 
 
+install:
+  - ps: appveyor\InstallDependencies.ps1
+
 before_build:
   - ps: appveyor\UpdateBuildVersion.ps1
 

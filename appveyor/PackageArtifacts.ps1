@@ -13,5 +13,6 @@ if ($env:PLATFORM -eq "x86" -or $env:PLATFORM -eq "x64") {
     7z a -r "artifacts\LightFX-Extender-x86_v$($env:APPVEYOR_BUILD_VERSION).zip" "$($env:APPVEYOR_BUILD_FOLDER)\artifacts\work\x86\*.*"
     7z a -r "artifacts\LightFX-Extender-x64_v$($env:APPVEYOR_BUILD_VERSION).zip" "$($env:APPVEYOR_BUILD_FOLDER)\artifacts\work\x64\*.*"
     7z a -r "artifacts\LightFX-Extender-full_v$($env:APPVEYOR_BUILD_VERSION).zip" "$($env:APPVEYOR_BUILD_FOLDER)\artifacts\work\*.*"
+    ISCC appveyor\BuildInstaller.iss
     Remove-Item -Recurse -Force artifacts\work
 }
