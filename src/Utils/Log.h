@@ -8,9 +8,15 @@
 #include "../Common/ApiExports.h"
 
 
-#define LOG_(logLevel, message) {                                       \
+#define LOG(logLevel, message) {                                        \
     if (::lightfx::utils::Log::GetMinimumLogLevel() <= logLevel) {      \
-        ::lightfx::utils::Log::LogLineAsync(logLevel, message); } }
+        ::lightfx::utils::Log::LogLineAsync(logLevel, __FILE__, __LINE__, __FUNCTION__, message); } }
+
+#define LOG_DEBUG(message) LOG(::lightfx::utils::LogLevel::Debug, message)
+#define LOG_INFO(message) LOG(::lightfx::utils::LogLevel::Info, message)
+#define LOG_WARNING(message) LOG(::lightfx::utils::LogLevel::Warning, message)
+#define LOG_ERROR(message) LOG(::lightfx::utils::LogLevel::Error, message)
+#define LOG_WINERROR() ::lightfx::utils::Log::LogLastWindowsErrorAsync(__FILE__, __LINE__, __FUNCTION__)
 
 #pragma warning(push)
 #pragma warning(disable : 4251)
@@ -26,16 +32,25 @@ namespace lightfx {
             Off = 99
         };
 
+        struct LFXE_API LogMessage {
+            LogLevel level;
+            std::wstring file;
+            int line;
+            std::wstring function;
+            std::wstring message;
+            std::chrono::milliseconds time;
+        };
+
         class LFXE_API Log {
 
         public:
             static void StartLoggerWorker();
             static void StopLoggerWorker();
 
-            static void LogLine(const LogLevel logLevel, const std::wstring& line);
-            static void LogLastWindowsError();
-            static void LogLineAsync(const LogLevel logLevel, const std::wstring& line);
-            static void LogLastWindowsErrorAsync();
+            static void LogLine(const LogLevel logLevel, const std::string& file, const int line, const std::string& function, const std::wstring& message);
+            static void LogLastWindowsError(const std::string& file, const int line, const std::string& function);
+            static void LogLineAsync(const LogLevel logLevel, const std::string& file, const int line, const std::string& function, const std::wstring& message);
+            static void LogLastWindowsErrorAsync(const std::string& file, const int line, const std::string& function);
 
             static void RotateLog();
 
@@ -50,7 +65,7 @@ namespace lightfx {
             static void LoggerWorker();
 
             static std::wofstream OpenStream();
-            static std::wstring GetLine(const LogLevel logLevel, const std::wstring& line, std::chrono::milliseconds logTime);
+            static std::wstring GetLine(const LogMessage& message);
             static void WriteBacklog();
 
         };

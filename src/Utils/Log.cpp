@@ -23,18 +23,13 @@
 #include "../LightFXExtender.h"
 #include "FileIO.h"
 #include "NotifyEvent.h"
+#include "String.h"
 
 
 using namespace std;
 
 namespace lightfx {
     namespace utils {
-
-        struct LogMessage {
-            LogLevel level;
-            wstring message;
-            chrono::milliseconds time;
-        };
 
         wstring logFileName = L"LightFXExtender.log";
         wstring logDirectory = GetDataStorageFolder();
@@ -79,7 +74,7 @@ namespace lightfx {
             //Get the error message, if any.
             DWORD errorMessageID = GetLastError();
             if (errorMessageID == 0) {
-                LOG_(LogLevel::Debug, L"No Windows error found");
+                LOG_DEBUG(L"No Windows error found");
             }
 
             LPWSTR messageBuffer = nullptr;
@@ -94,11 +89,19 @@ namespace lightfx {
             return L"Windows error: " + message;
         }
 
-        LFXE_API void Log::LogLine(const LogLevel logLevel, const wstring& line) {
+        LFXE_API void Log::LogLine(const LogLevel logLevel, const string& file, const int line, const string& function, const wstring& message) {
             if (minimumLogLevel > logLevel) {
                 return;
             }
-            wstring logLine = GetLine(logLevel, line, chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()));
+            LogMessage log = {
+                logLevel,
+                string_to_wstring(file),
+                line,
+                string_to_wstring(function),
+                message,
+                chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch())
+            };
+            wstring logLine = GetLine(log);
 
             try {
                 logMutex.lock();
@@ -111,35 +114,38 @@ namespace lightfx {
             }
         }
 
-        LFXE_API void Log::LogLastWindowsError() {
+        LFXE_API void Log::LogLastWindowsError(const string& file, const int line, const string& function) {
             if (minimumLogLevel > LogLevel::Error) {
                 return;
             }
-            LogLine(LogLevel::Error, GetLastWindowsError());
+            LogLine(LogLevel::Error, file, line, function, GetLastWindowsError());
         }
 
-        LFXE_API void Log::LogLineAsync(const LogLevel logLevel, const wstring& line) {
+        LFXE_API void Log::LogLineAsync(const LogLevel logLevel, const string& file, const int line, const string& function, const wstring& message) {
             if (minimumLogLevel > logLevel) {
                 return;
             }
-            LogMessage message = {
+            LogMessage log = {
                 logLevel,
+                string_to_wstring(file),
                 line,
+                string_to_wstring(function),
+                message,
                 chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch())
             };
 
             {
                 lock_guard<mutex> lock(logQueueMutex);
-                logQueue.emplace(message);
+                logQueue.emplace(log);
             }
             notifyEvent.Notify();
         }
 
-        LFXE_API void Log::LogLastWindowsErrorAsync() {
+        LFXE_API void Log::LogLastWindowsErrorAsync(const string& file, const int line, const string& function) {
             if (minimumLogLevel > LogLevel::Error) {
                 return;
             }
-            LogLineAsync(LogLevel::Error, GetLastWindowsError());
+            LogLineAsync(LogLevel::Error, file, line, function, GetLastWindowsError());
         }
 
 
@@ -211,20 +217,20 @@ namespace lightfx {
             return logStream;
         }
 
-        LFXE_API wstring Log::GetLine(const LogLevel logLevel, const wstring& line, chrono::milliseconds logTime) {
+        LFXE_API wstring Log::GetLine(const LogMessage& message) {
             // Get a nice date/time prefix first
             wchar_t buff[20];
-            time_t t = chrono::duration_cast<chrono::seconds>(logTime).count();
+            time_t t = chrono::duration_cast<chrono::seconds>(message.time).count();
             tm lt;
             localtime_s(&lt, &t);
             wcsftime(buff, 20, L"%Y-%m-%d %H:%M:%S", &lt);
             wstring timePrefix(buff);
-            swprintf_s(buff, 4, L"%03ld", logTime.count() % 1000);
+            swprintf_s(buff, 4, L"%03ld", message.time.count() % 1000);
             timePrefix += L"." + wstring(buff);
 
             // Determine the log level prefix
             wstring logLevelPrefix;
-            switch (logLevel) {
+            switch (message.level) {
             case LogLevel::Debug:
                 logLevelPrefix = L"[DEBUG]";
                 break;
@@ -239,7 +245,7 @@ namespace lightfx {
                 break;
             }
 
-            return timePrefix + L" - " + logLevelPrefix + L" " + line;
+            return timePrefix + L" - " + logLevelPrefix + L" " + message.file + L":" + to_wstring(message.line) + L" (" + message.function + L") - " + message.message;
         }
 
         LFXE_API void Log::WriteBacklog() {
@@ -259,7 +265,7 @@ namespace lightfx {
                         }
                     }
 
-                    wstring logLine = GetLine(message.level, message.message, message.time);
+                    wstring logLine = GetLine(message);
                     logStream << logLine << endl;
                 }
 

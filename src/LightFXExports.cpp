@@ -18,8 +18,6 @@
 #include "Utils/String.h"
 
 
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"LightFXExports - ") + message)
-
 using namespace std;
 using namespace lightfx;
 using namespace lightfx::devices;
@@ -73,7 +71,7 @@ extern "C" {
             return lightFXExtender->GetDeviceManager()->GetChildrenCount() > 0 ? LFX_SUCCESS : LFX_ERROR_NODEVS;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_Initialize: " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_Initialize: " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -85,7 +83,7 @@ extern "C" {
             return LFX_SUCCESS;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_Release: " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_Release: " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -109,7 +107,7 @@ extern "C" {
             return LFX_SUCCESS;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_Reset: " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_Reset: " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -130,7 +128,7 @@ extern "C" {
             return LFX_SUCCESS;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_Update: " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_Update: " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -159,7 +157,7 @@ extern "C" {
             return LFX_SUCCESS;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_GetNumDevices: " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_GetNumDevices: " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -188,7 +186,7 @@ extern "C" {
             return LFX_SUCCESS;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_GetDeviceDescription (devIndex=" + to_wstring(devIndex) + L"): " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_GetDeviceDescription (devIndex=" + to_wstring(devIndex) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -214,7 +212,7 @@ extern "C" {
             return LFX_SUCCESS;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_GetNumLights (devIndex=" + to_wstring(devIndex) + L"): " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_GetNumLights (devIndex=" + to_wstring(devIndex) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -246,7 +244,7 @@ extern "C" {
             return LFX_SUCCESS;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_GetLightDescription (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L"): " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_GetLightDescription (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -273,7 +271,7 @@ extern "C" {
             return LFX_SUCCESS;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_GetLightLocation (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L"): " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_GetLightLocation (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -300,7 +298,7 @@ extern "C" {
             return LFX_SUCCESS;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_GetLightColor (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L"): " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_GetLightColor (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -331,7 +329,7 @@ extern "C" {
             return LFX_SUCCESS;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_GetLightColor (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L"): " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_GetLightColor (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -355,7 +353,7 @@ extern "C" {
             return LFX_SUCCESS;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_Light (locationMask=" + to_wstring(locationMask) + L"): " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_Light (locationMask=" + to_wstring(locationMask) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -382,7 +380,7 @@ extern "C" {
             return LFX_SetLightActionColorEx(devIndex, lightIndex, actionType, &startColor, primaryCol);
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_SetLightActionColor (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L", actionType=" + to_wstring(actionType) + L"): " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_SetLightActionColor (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L", actionType=" + to_wstring(actionType) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -425,7 +423,7 @@ extern "C" {
             return LFX_SUCCESS;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_SetLightActionColorEx (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L", actionType=" + to_wstring(actionType) + L"): " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_SetLightActionColorEx (devIndex=" + to_wstring(devIndex) + L", lightIndex=" + to_wstring(lightIndex) + L", actionType=" + to_wstring(actionType) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -458,7 +456,7 @@ extern "C" {
             return result;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_ActionColor (locationMask=" + to_wstring(locationMask) + L", actionType=" + to_wstring(actionType) + L"): " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_ActionColor (locationMask=" + to_wstring(locationMask) + L", actionType=" + to_wstring(actionType) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }
@@ -492,7 +490,7 @@ extern "C" {
             return result;
 
         } catch (const exception& ex) {
-            LOG(LogLevel::Error, L"Exception in LFX_ActionColorEx (locationMask=" + to_wstring(locationMask) + L", actionType=" + to_wstring(actionType) + L"): " + string_to_wstring(ex.what()));
+            LOG_ERROR(L"Exception in LFX_ActionColorEx (locationMask=" + to_wstring(locationMask) + L", actionType=" + to_wstring(actionType) + L"): " + string_to_wstring(ex.what()));
             return LFX_FAILURE;
         }
     }

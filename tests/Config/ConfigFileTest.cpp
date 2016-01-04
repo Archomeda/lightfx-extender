@@ -1,5 +1,5 @@
-#include "CppUnitTest.h"
 #include "ConfigFileMock.h"
+#include "CppUnitTest.h"
 
 // Standard includes
 #include <string>

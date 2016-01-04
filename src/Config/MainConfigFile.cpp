@@ -34,11 +34,6 @@
 #define CONF_DEVICES_LOGITECH_G110WORKAROUND L"G110WorkaroundEnabled"
 
 #define CONF_DEVICES_CORSAIR L"Corsair"
-#define CONF_DEVICES_CORSAIR_COLORRANGE L"ColorRange"
-#define CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN L"LightFXMin"
-#define CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX L"LightFXMax"
-#define CONF_DEVICES_CORSAIR_COLORRANGE_INMIN L"CorsairMin"
-#define CONF_DEVICES_CORSAIR_COLORRANGE_INMAX L"CorsairMax"
 
 #define CONF_DEVICES_RAZER L"Razer"
 #define CONF_DEVICES_RAZER_HARDWARE L"Hardware"
@@ -60,6 +55,7 @@
 #define CONF_GAMES_GUILDWARS2_TEAMCOLORENABLED L"TeamColorEnabled"
 #define CONF_GAMES_GUILDWARS2_TEAMCOLORANIMATION L"TeamColorAnimation"
 #pragma endregion
+
 
 using namespace std;
 using namespace rapidjson;
@@ -97,11 +93,6 @@ namespace lightfx {
             this->LogitechColorRangeInMax = 100;
             this->LogitechRestoreLightsOnNullEnabled = false;
             this->LogitechG110WorkaroundEnabled = false;
-
-            this->CorsairColorRangeOutMin = 0;
-            this->CorsairColorRangeOutMax = 255;
-            this->CorsairColorRangeInMin = 0;
-            this->CorsairColorRangeInMax = 255;
 
             this->RazerUseWithKeyboard = true;
             this->RazerUseWithMouse = true;
@@ -210,18 +201,11 @@ namespace lightfx {
 
             obj.AddMember(CONF_DEVICES_LOGITECH, objLogitech, allocator);
 
-            // Logitech
-            WValue objCorsair(kObjectType);
+            // Corsair
+            //! No settings currently, so we skip it
+            //WValue objCorsair(kObjectType);
 
-            // Logitech color range
-            WValue objCorsairColorRange(kObjectType);
-            objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN, this->CorsairColorRangeOutMin, allocator);
-            objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX, this->CorsairColorRangeOutMax, allocator);
-            objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMIN, this->CorsairColorRangeInMin, allocator);
-            objCorsairColorRange.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMAX, this->CorsairColorRangeInMax, allocator);
-            objCorsair.AddMember(CONF_DEVICES_CORSAIR_COLORRANGE, objCorsairColorRange, allocator);
-
-            obj.AddMember(CONF_DEVICES_CORSAIR, objCorsair, allocator);
+            //obj.AddMember(CONF_DEVICES_CORSAIR, objCorsair, allocator);
 
             // Razer
             WValue objRazer(kObjectType);
@@ -371,25 +355,10 @@ namespace lightfx {
                 }
 
                 // Corsair
-                if (objDevices.HasMember(CONF_DEVICES_CORSAIR) && objDevices[CONF_DEVICES_CORSAIR].IsObject()) {
-                    const WValue& objCorsair = objDevices[CONF_DEVICES_CORSAIR];
-                    // Corsair color range
-                    if (objCorsair.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE) && objCorsair[CONF_DEVICES_CORSAIR_COLORRANGE].IsObject()) {
-                        const WValue& colorRange = objCorsair[CONF_DEVICES_CORSAIR_COLORRANGE];
-                        if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN].IsInt()) {
-                            this->CorsairColorRangeOutMin = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMIN].GetInt();
-                        }
-                        if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX].IsInt()) {
-                            this->CorsairColorRangeOutMax = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_OUTMAX].GetInt();
-                        }
-                        if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMIN) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMIN].IsInt()) {
-                            this->CorsairColorRangeInMin = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMIN].GetInt();
-                        }
-                        if (colorRange.HasMember(CONF_DEVICES_CORSAIR_COLORRANGE_INMAX) && colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMAX].IsInt()) {
-                            this->CorsairColorRangeInMax = colorRange[CONF_DEVICES_CORSAIR_COLORRANGE_INMAX].GetInt();
-                        }
-                    }
-                }
+                //! No settings currently, so we skip it
+                //if (objDevices.HasMember(CONF_DEVICES_CORSAIR) && objDevices[CONF_DEVICES_CORSAIR].IsObject()) {
+                //    const WValue& objCorsair = objDevices[CONF_DEVICES_CORSAIR];
+                //}
 
                 // Razer
                 if (objDevices.HasMember(CONF_DEVICES_RAZER) && objDevices[CONF_DEVICES_RAZER].IsObject()) {

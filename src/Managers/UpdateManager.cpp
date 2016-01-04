@@ -28,14 +28,14 @@
 #include "../Utils/String.h"
 #include "../Utils/Windows.h"
 
-
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"UpdateManager - ") + message)
-
 #ifdef _WIN64
 #define PLATFORM "x64"
+#define CORSAIR_DLL_NAME "CUESDK.x64_2013.dll"
 #else
 #define PLATFORM "x86"
+#define CORSAIR_DLL_NAME "CUESDK_2013.dll"
 #endif
+
 
 using namespace std;
 using namespace rapidjson;
@@ -121,63 +121,67 @@ namespace lightfx {
             mz_zip_archive archive;
             memset(&archive, 0, sizeof(archive));
             if (!mz_zip_reader_init_mem(&archive, &newVersionZip[0], newVersionZip.size(), 0)) {
-                LOG(LogLevel::Error, L"Could not open the downloaded archive");
+                LOG_ERROR(L"Could not open the downloaded archive");
                 return false;
             }
 
             mz_zip_archive_file_stat filestat;
             if (!mz_zip_reader_file_stat(&archive, 0, &filestat)) {
-                LOG(LogLevel::Error, L"Could not read the downloaded archive");
+                LOG_ERROR(L"Could not read the downloaded archive");
                 mz_zip_reader_end(&archive);
                 return false;
             }
 
-            int file_index = mz_zip_reader_locate_file(&archive, "LightFX.dll", NULL, 0);
-            string tempFileName = wstring_to_string(GetDataStorageFolder() + L"/LightFX.dll");
-            if (!mz_zip_reader_extract_to_file(&archive, file_index, tempFileName.c_str(), 0)) {
-                LOG(LogLevel::Error, L"Could not extract LightFX.dll from the downloaded archive");
+            try {
+                this->InstallNewDll(&archive, "LightFX.dll");
+                this->InstallNewDll(&archive, CORSAIR_DLL_NAME);
+            } catch (const exception& e) {
+                LOG_ERROR(L"Error while installing new DLL: " + string_to_wstring(e.what()));
+                LOG_WINERROR();
                 mz_zip_reader_end(&archive);
                 return false;
             }
 
-            wstring dllFileName = GetDllName();
-            wstring newDllFileName = string_to_wstring(tempFileName);
-            LOG(LogLevel::Debug, L"Downloaded new LightFX.dll to " + newDllFileName);
-
-            if (FileExists(dllFileName + L".bak")) {
-                if (!DeleteFileW((dllFileName + L".bak").c_str())) {
-                    LOG(LogLevel::Error, L"Could not remove the back-upped DLL file from the previous version");
-                    Log::LogLastWindowsErrorAsync();
-                    return false;
-                }
-            }
-            if (MoveFileW(dllFileName.c_str(), (dllFileName + L".bak").c_str()) == FALSE) {
-                LOG(LogLevel::Error, L"Could not rename the DLL file");
-                Log::LogLastWindowsErrorAsync();
-                return false;
-            }
-            if (MoveFileW(newDllFileName.c_str(), dllFileName.c_str()) == FALSE) {
-                LOG(LogLevel::Error, L"Could not move the new DLL into its intended folder, LightFX Extender will not work unless you manually move " +
-                    newDllFileName + L" to " + dllFileName);
-                Log::LogLastWindowsErrorAsync();
-                return false;
-            }
-
+            mz_zip_reader_end(&archive);
             return true;
         }
 
+        LFXE_API void UpdateManager::InstallNewDll(mz_zip_archive* archive, const std::string& filename) {
+            int file_index = mz_zip_reader_locate_file(archive, filename.c_str(), NULL, 0);
+            string tempFileName = wstring_to_string(GetDataStorageFolder()) + "\\" + filename;
+            if (!mz_zip_reader_extract_to_file(archive, file_index, tempFileName.c_str(), 0)) {
+                throw exception(("Could not extract " + filename + " from the archive").c_str());
+            }
+
+            wstring dllDrive, dllDirectory;
+            GetDllName(&dllDrive, &dllDirectory, nullptr, nullptr);
+            wstring dllFileName = dllDrive + dllDirectory + string_to_wstring(filename);
+            wstring newDllFileName = string_to_wstring(tempFileName);
+
+            if (FileExists(dllFileName + L".bak")) {
+                if (!DeleteFileW((dllFileName + L".bak").c_str())) {
+                    throw exception(("Could not remove the back-upped file " + wstring_to_string(dllFileName) + ".bak").c_str());
+                }
+            }
+            if (MoveFileW(dllFileName.c_str(), (dllFileName + L".bak").c_str()) == FALSE) {
+                throw exception(("Could not rename the file " + wstring_to_string(dllFileName) + " to " + wstring_to_string(dllFileName) + ".bak").c_str());
+            }
+            if (MoveFileW(newDllFileName.c_str(), dllFileName.c_str()) == FALSE) {
+                throw exception(("Could not move the new file " + wstring_to_string(newDllFileName) + " to its intended folder " + wstring_to_string(dllFileName) + "; LightFX Extender will not work properly unless you manually move it.").c_str());
+            }
+        }
 
         LFXE_API vector<char> UpdateManager::DownloadFromUrl(const wstring& url) {
             vector<char> data = {};
             HINTERNET hSession = InternetOpenW(L"LightFX Extender Update Manager", 0, NULL, NULL, 0);
             if (hSession == NULL) {
-                LOG(LogLevel::Error, L"Failed to open session");
+                LOG_ERROR(L"Failed to open session");
                 return data;
             }
 
             HINTERNET hOpenUrl = InternetOpenUrlW(hSession, url.c_str(), NULL, 0, 1, 1);
             if (hOpenUrl == NULL) {
-                LOG(LogLevel::Error, L"Failed to open URL");
+                LOG_ERROR(L"Failed to open URL");
                 InternetCloseHandle(hOpenUrl);
                 return data;
             }
@@ -191,7 +195,7 @@ namespace lightfx {
                     }
                     data.insert(data.end(), buffer, buffer + bytesRead);
                 } else {
-                    LOG(LogLevel::Error, L"Failed to read from URL");
+                    LOG_ERROR(L"Failed to read from URL");
                     delete[] buffer;
                     InternetCloseHandle(hOpenUrl);
                     InternetCloseHandle(hSession);
@@ -208,31 +212,31 @@ namespace lightfx {
 
         LFXE_API void UpdateManager::CheckForUpdate() {
             Version currentVersion = this->GetCurrentVersion();
-            LOG(LogLevel::Debug, L"Checking for updates...");
+            LOG_DEBUG(L"Checking for updates...");
 
             auto live = this->GetLiveVersion();
             Version liveVersion = live.first;
             wstring downloadUrl = live.second;
             if (liveVersion > currentVersion) {
                 wstring newVersionString = liveVersion.ToString();
-                LOG(LogLevel::Info, L"A newer version is available: " + newVersionString);
+                LOG_INFO(L"A newer version is available: " + newVersionString);
                 if (this->GetLightFXExtender()->GetConfigManager()->GetMainConfig()->AutoUpdatesEnabled) {
                     if (this->UpdateLightFX(downloadUrl)) {
-                        LOG(LogLevel::Info, L"LightFX Extender has been updated automatically to " + newVersionString);
-                        LOG(LogLevel::Info, L"The changes will be applied the next time you run LightFX Extender");
-                        LOG(LogLevel::Info, L"If, for some reason, the newer version will not start, please restore LightFX.dll.bak to LightFX.dll (and disable auto updates in the config and wait for a fix if this keeps on happening)");
+                        LOG_INFO(L"LightFX Extender has been updated automatically to " + newVersionString);
+                        LOG_INFO(L"The changes will be applied the next time you run LightFX Extender");
+                        LOG_INFO(L"If, for some reason, the newer version will not start, please restore LightFX.dll.bak to LightFX.dll (and disable auto updates in the config and wait for a fix if this keeps on happening)");
                     } else {
                         wstring newVersionUrl = this->GetDownloadPageUrl();
-                        LOG(LogLevel::Warning, L"LightFX Extender could not be updated automatically, see " + newVersionUrl + L" for downloads");
+                        LOG_INFO(L"LightFX Extender could not be updated automatically, see " + newVersionUrl + L" for downloads");
                         this->GetLightFXExtender()->GetTrayManager()->SetUpdateNotification(newVersionString, newVersionUrl);
                     }
                 } else {
                     wstring newVersionUrl = this->GetDownloadPageUrl();
-                    LOG(LogLevel::Info, L"Auto updates are disabled, see " + newVersionUrl + L" for downloads");
+                    LOG_INFO(L"Auto updates are disabled, see " + newVersionUrl + L" for downloads");
                     this->GetLightFXExtender()->GetTrayManager()->SetUpdateNotification(newVersionString, newVersionUrl);
                 }
             } else {
-                LOG(LogLevel::Debug, L"No update available");
+                LOG_INFO(L"No update available");
             }
         }
 
