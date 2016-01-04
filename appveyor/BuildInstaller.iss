@@ -43,6 +43,7 @@ Source: "../artifacts/work/x64/LightFX.dll"; DestDir: {code:GameDir}; Check: Gam
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\LightFX Extender"; Flags: uninsdeletekeyifempty
 Root: HKLM; Subkey: "SOFTWARE\LightFX Extender"; Flags: uninsdeletekey; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"
+Root: HKLM; Subkey: "SOFTWARE\LightFX Extender"; Flags: uninsdeletekey; ValueType: string; ValueName: "AppId"; ValueData: "{#SetupSetting('AppId')}"
 
 [UninstallDelete]
 Type: files; Name: "{app}\LFXE.dll.bak"

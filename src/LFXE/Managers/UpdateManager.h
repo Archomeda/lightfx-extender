@@ -14,7 +14,6 @@
 
 // Forward declare mz stuff from miniz.c
 typedef struct mz_zip_archive_tag mz_zip_archive;
-typedef unsigned int mz_uint;
 
 
 #pragma warning(push)
@@ -42,12 +41,15 @@ namespace lightfx {
             Version GetCurrentVersion();
             Release GetLatestRelease();
 
-            bool UpdateLightFX(const std::wstring& downloadUrl);
-            static void InstallNewVersion(mz_zip_archive* const archive, mz_uint* const index);
+            bool UpdateLightFX(const std::wstring& downloadUrl, const Version& version);
+            static void InstallNewVersion(const std::wstring& archiveFilename, const Version& version);
+            static void InstallNewVersion(const std::vector<char>& archiveData, const Version& version);
 
         protected:
             std::vector<char> DownloadFromUrl(const std::wstring& url);
+            static void InstallNewVersion(mz_zip_archive* const archive, const Version& version);
             static void InstallNewFile(mz_zip_archive* const archive, const int id, const std::string& folder, const std::string& filename);
+            static bool UpdateVersionRegistry(const Version& version);
 
         private:
             void CheckForUpdate();

@@ -320,6 +320,7 @@
     <ClInclude Include="Devices\Proxies\RzChromaSDKProxy.h" />
     <ClInclude Include="Exceptions\AccessDeniedException.h" />
     <ClInclude Include="Exceptions\MzFileStatException.h" />
+    <ClInclude Include="Exceptions\MzReaderInitException.h" />
     <ClInclude Include="Games\Game.h" />
     <ClInclude Include="Games\GameGw2.h" />
     <ClInclude Include="Games\MumbleLink.h" />

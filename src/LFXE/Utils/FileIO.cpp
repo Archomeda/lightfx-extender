@@ -14,7 +14,6 @@
 #include "../Exceptions/AccessDeniedException.h"
 
 #define STORAGEFOLDER L"LightFX Extender"
-#define REGKEY L"SOFTWARE\\LightFX Extender"
 
 
 using namespace std;
@@ -112,7 +111,7 @@ namespace lightfx {
         }
 
         LFXE_API wstring GetProgramFolder() {
-            return GetRegKeyString(HKEY_LOCAL_MACHINE, REGKEY, L"InstallPath", GetDataStorageFolder(), KEY_WOW64_64KEY);
+            return GetRegKeyString(HKEY_LOCAL_MACHINE, REGKEY_LFXE, L"InstallPath", GetDataStorageFolder(), KEY_WOW64_64KEY);
         }
 
         LFXE_API wstring GetSystemFolder() {

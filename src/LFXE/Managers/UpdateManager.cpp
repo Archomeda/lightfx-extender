@@ -26,8 +26,10 @@
 #include "../Config/MainConfigFile.h"
 #include "../Exceptions/AccessDeniedException.h"
 #include "../Exceptions/MzFileStatException.h"
+#include "../Exceptions/MzReaderInitException.h"
 #include "../Utils/FileIO.h"
 #include "../Utils/Log.h"
+#include "../Utils/Registry.h"
 #include "../Utils/String.h"
 #include "../Utils/Windows.h"
 
@@ -126,7 +128,7 @@ namespace lightfx {
             return rel;
         }
 
-        LFXE_API bool UpdateManager::UpdateLightFX(const wstring& downloadUrl) {
+        LFXE_API bool UpdateManager::UpdateLightFX(const wstring& downloadUrl, const Version& version) {
             if (downloadUrl.empty()) {
                 return false;
             }
@@ -141,25 +143,12 @@ namespace lightfx {
                 return false;
             }
 
-            mz_zip_archive archive;
-            memset(&archive, 0, sizeof(archive));
-            if (!mz_zip_reader_init_mem(&archive, &releaseZip[0], releaseZip.size(), 0)) {
-                LOG(LogLevel::Error, L"Failed to open the downloaded archive");
-                return false;
-            }
-
-            mz_uint index = 0;
-            try {
-                UpdateManager::InstallNewVersion(&archive, &index);
-            } catch (const MsFileStatException&) {
-                LOG(LogLevel::Error, L"Failed to read the downloaded archive");
-                mz_zip_reader_end(&archive);
-                return false;
-            } catch (const AccessDeniedException&) {
-                mz_zip_reader_end(&archive);
-                if (!IsProcessElevated()) {
-                    // Process is not elevated, and therefore we assume that we don't have enough permissions
-                    MessageBoxA(NULL, (string("There is an update available for LightFX Extender, but we need permissions to update the files.\r\n\r\n") +
+            // If LightFX Extender was installed through the installer, we need elevated access
+            if (!IsProcessElevated()) {
+                // Elevate
+                wstring id = GetRegKeyString(HKEY_LOCAL_MACHINE, REGKEY_LFXE, L"AppId", L"", KEY_WOW64_64KEY);
+                if (!id.empty()) {
+                    MessageBoxA(NULL, (string("There is an update available for LightFX Extender, but we need permissions in order to update.\r\n\r\n") +
                         "After pressing OK, you will be asked to accept the permissions through the Windows elevation prompt. " +
                         "Please accept in order to update LightFX Extender.").c_str(), "LightFX Extender", MB_OK | MB_ICONINFORMATION);
 
@@ -171,7 +160,7 @@ namespace lightfx {
 
                     // Set up process information
                     wstring dllName(GetDllName());
-                    wstring parameters(L"\"" + dllName + L"\",LFXE_UpdateInstallation " + to_wstring(index));
+                    wstring parameters(L"\"" + dllName + L"\",LFXE_UpdateInstallation " + version.ToString());
                     SHELLEXECUTEINFOW sei = { sizeof(sei) };
                     sei.lpVerb = L"runas";
                     sei.lpFile = L"rundll32.exe";
@@ -188,54 +177,25 @@ namespace lightfx {
                         Log::LogLastWindowsErrorAsync();
                         return false;
                     }
-                } else {
+                }
+            } else {
+                // We are elevated, continue with installing
+                try {
+                    this->InstallNewVersion(releaseZip, version);
+                } catch (const MsFileStatException&) {
+                    LOG(LogLevel::Error, L"Error while updating LightFX Extender: Failed to read the downloaded archive");
+                    return false;
+                } catch (const AccessDeniedException&) {
                     LOG(LogLevel::Error, L"Error while updating LightFX Extender: Access denied");
                     return false;
+                } catch (const exception& e) {
+                    LOG(LogLevel::Error, L"Error while updating LightFX Extender: " + string_to_wstring(e.what()));
+                    Log::LogLastWindowsErrorAsync();
+                    return false;
                 }
-            } catch (const exception& e) {
-                mz_zip_reader_end(&archive);
-                LOG(LogLevel::Error, L"Error while updating LightFX Extender: " + string_to_wstring(e.what()));
-                Log::LogLastWindowsErrorAsync();
-                return false;
             }
 
-            mz_zip_reader_end(&archive);
             return true;
-        }
-
-        LFXE_API void UpdateManager::InstallNewVersion(mz_zip_archive* const archive, mz_uint* const index) {
-            mz_zip_archive_file_stat filestat;
-            if (!mz_zip_reader_file_stat(archive, 0, &filestat)) {
-                throw MsFileStatException();
-            }
-
-            mz_uint numFiles = mz_zip_reader_get_num_files(archive);
-            for (; *index < numFiles; ++*index) {
-                unique_ptr<char[]> buff(new char[1024]);
-                mz_zip_reader_get_filename(archive, *index, buff.get(), 1024);
-                string filename(buff.get());
-                if (filename.compare(0, 4, "bin/") == 0) {
-                    // Bin file, extract to root
-                    filename = filename.substr(4);
-                } else if (filename.compare(0, 4, "x86/") == 0 || filename.compare(0, 4, "x64/") == 0) {
-                    // Additional x86 or x64 files, extract to relative folder
-                    filename = filename;
-                } else {
-                    // Other file, skip
-                    continue;
-                }
-
-                // Split the folder part from the filename
-                size_t splitPos = filename.find_last_of("/\\");
-                string folder;
-                if (splitPos != string::npos) {
-                    folder = filename.substr(0, splitPos + 1);
-                    filename = filename.substr(splitPos + 1);
-                }
-
-                // Try installing the new file
-                UpdateManager::InstallNewFile(archive, *index, folder, filename);
-            }
         }
 
         LFXE_API vector<char> UpdateManager::DownloadFromUrl(const wstring& url) {
@@ -271,6 +231,73 @@ namespace lightfx {
             InternetCloseHandle(hSession);
 
             return data;
+        }
+
+        LFXE_API void UpdateManager::InstallNewVersion(const wstring& archiveFilename, const Version& version) {
+            mz_zip_archive archive;
+            try {
+                memset(&archive, 0, sizeof(archive));
+                if (!mz_zip_reader_init_file(&archive, wstring_to_string(archiveFilename.c_str()).c_str(), 0)) {
+                    throw MzReaderInitException();
+                }
+                UpdateManager::InstallNewVersion(&archive, version);
+                UpdateManager::UpdateVersionRegistry(version);
+            } catch (...) {
+                mz_zip_reader_end(&archive);
+                throw;
+            }
+            mz_zip_reader_end(&archive);
+        }
+
+        LFXE_API void UpdateManager::InstallNewVersion(const vector<char>& archiveData, const Version& version) {
+            mz_zip_archive archive;
+            try {
+                memset(&archive, 0, sizeof(archive));
+                if (!mz_zip_reader_init_mem(&archive, &archiveData[0], archiveData.size(), 0)) {
+                    throw MzReaderInitException();
+                }
+                UpdateManager::InstallNewVersion(&archive, version);
+                UpdateManager::UpdateVersionRegistry(version);
+            } catch (...) {
+                mz_zip_reader_end(&archive);
+                throw;
+            }
+            mz_zip_reader_end(&archive);
+        }
+
+        LFXE_API void UpdateManager::InstallNewVersion(mz_zip_archive* const archive, const Version& version) {
+            mz_zip_archive_file_stat filestat;
+            if (!mz_zip_reader_file_stat(archive, 0, &filestat)) {
+                throw MsFileStatException();
+            }
+
+            mz_uint numFiles = mz_zip_reader_get_num_files(archive);
+            for (mz_uint i = 0; i < numFiles; ++i) {
+                unique_ptr<char[]> buff(new char[1024]);
+                mz_zip_reader_get_filename(archive, i, buff.get(), 1024);
+                string filename(buff.get());
+                if (filename.compare(0, 4, "bin/") == 0) {
+                    // Bin file, extract to root
+                    filename = filename.substr(4);
+                } else if (filename.compare(0, 4, "x86/") == 0 || filename.compare(0, 4, "x64/") == 0) {
+                    // Additional x86 or x64 files, extract to relative folder
+                    filename = filename;
+                } else {
+                    // Other file, skip
+                    continue;
+                }
+
+                // Split the folder part from the filename
+                size_t splitPos = filename.find_last_of("/\\");
+                string folder;
+                if (splitPos != string::npos) {
+                    folder = filename.substr(0, splitPos + 1);
+                    filename = filename.substr(splitPos + 1);
+                }
+
+                // Try installing the new file
+                UpdateManager::InstallNewFile(archive, i, folder, filename);
+            }
         }
 
         LFXE_API void UpdateManager::InstallNewFile(mz_zip_archive* const archive, const int id, const string& folder, const string& filename) {
@@ -331,6 +358,16 @@ namespace lightfx {
             }
         }
 
+        LFXE_API bool UpdateManager::UpdateVersionRegistry(const Version& version) {
+            wstring id = GetRegKeyString(HKEY_LOCAL_MACHINE, REGKEY_LFXE, L"AppId", L"", KEY_WOW64_64KEY);
+            if (!id.empty()) {
+                wstring subKey = wstring(REGKEY_UNINSTALL) + L"\\" + id + L"_is1";
+                return SetRegKeyString(HKEY_LOCAL_MACHINE, subKey, L"DisplayVersion", version.ToString(), KEY_WOW64_64KEY) &&
+                    SetRegKeyDword(HKEY_LOCAL_MACHINE, subKey, L"MajorVersion", version.GetMajor(), KEY_WOW64_64KEY) &&
+                    SetRegKeyDword(HKEY_LOCAL_MACHINE, subKey, L"MinorVersion", version.GetMinor(), KEY_WOW64_64KEY);
+            }
+            return false;
+        }
 
         LFXE_API void UpdateManager::CheckForUpdate() {
             Version currentVersion = this->GetCurrentVersion();
@@ -341,7 +378,7 @@ namespace lightfx {
                 wstring newVersionString = release.version.ToString();
                 LOG(LogLevel::Info, L"A newer version is available: " + newVersionString);
                 if (this->GetLightFXExtender()->GetConfigManager()->GetMainConfig()->AutoUpdatesEnabled) {
-                    if (this->UpdateLightFX(release.downloadUrl)) {
+                    if (this->UpdateLightFX(release.downloadUrl, release.version)) {
                         LOG(LogLevel::Info, L"LightFX Extender has been updated automatically to " + newVersionString);
                         LOG(LogLevel::Info, L"The changes will be applied the next time you run LightFX Extender");
                         this->GetLightFXExtender()->GetTrayManager()->SetUpdateInstalledNotification(newVersionString, release.releaseNotesUrl);
@@ -368,32 +405,15 @@ extern "C" {
 #endif
 
     void CALLBACK LFXE_UpdateInstallation(HWND hWnd, HINSTANCE hInstance, LPSTR lpszCmdLine, int nCmdShow) {
-        string args(lpszCmdLine);
-        int startIndex = stoi(args);
-        mz_uint index = startIndex;
-
+        lightfx::managers::Version version = lightfx::managers::Version::FromString(lpszCmdLine);
         wstring archiveFilename = GetDataStorageFolder() + L"\\download.zip";
-        mz_zip_archive archive;
-        memset(&archive, 0, sizeof(archive));
-        if (!mz_zip_reader_init_file(&archive, wstring_to_string(archiveFilename.c_str()).c_str(), 0)) {
-            return;
-        }
 
         try {
-            lightfx::managers::UpdateManager::InstallNewVersion(&archive, &index);
-        } catch (const MsFileStatException&) {
-            mz_zip_reader_end(&archive);
-            return;
-        } catch (const AccessDeniedException&) {
-            mz_zip_reader_end(&archive);
-            return;
-        } catch (const exception&) {
-            mz_zip_reader_end(&archive);
+            lightfx::managers::UpdateManager::InstallNewVersion(archiveFilename, version);
+            RemoveFile(archiveFilename);
+        } catch (...) {
             return;
         }
-
-        mz_zip_reader_end(&archive);
-        RemoveFile(archiveFilename);
     }
 
 #ifdef __cplusplus

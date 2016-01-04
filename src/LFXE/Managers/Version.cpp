@@ -14,7 +14,7 @@ using namespace lightfx::utils;
 namespace lightfx {
     namespace managers {
 
-        LFXE_API wstring Version::ToString() {
+        LFXE_API wstring Version::ToString() const {
             wstring version = to_wstring(this->GetMajor()) + L"." + to_wstring(this->GetMinor()) + L"." + to_wstring(this->GetSubMinor()) + L"." + to_wstring(this->GetBuild());
             if (this->GetDescription() != L"") {
                 version += L"-" + this->GetDescription();

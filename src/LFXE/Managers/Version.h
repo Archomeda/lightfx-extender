@@ -32,13 +32,13 @@ namespace lightfx {
                 return Version(str);
             }
 
-            unsigned int GetMajor() { return this->majorVer; }
-            unsigned int GetMinor() { return this->minorVer; }
-            unsigned int GetSubMinor() { return this->subMinorVer; }
-            unsigned int GetBuild() { return this->buildVer; }
-            std::wstring GetDescription() { return this->description; }
+            unsigned int GetMajor() const { return this->majorVer; }
+            unsigned int GetMinor() const { return this->minorVer; }
+            unsigned int GetSubMinor() const { return this->subMinorVer; }
+            unsigned int GetBuild() const { return this->buildVer; }
+            std::wstring GetDescription() const { return this->description; }
 
-            std::wstring ToString();
+            std::wstring ToString() const;
 
             friend inline bool operator==(const Version& a, const Version& b) {
                 return a.majorVer == b.majorVer && a.minorVer == b.minorVer && a.subMinorVer == b.subMinorVer && a.buildVer == b.buildVer;

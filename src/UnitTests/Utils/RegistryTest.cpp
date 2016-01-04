@@ -15,6 +15,19 @@ namespace lightfx_tests {
         TEST_CLASS(RegistryTest) {
 public:
 
+    TEST_METHOD(GetRegKeyDwordWindowsDoesExist) {
+        // This assumes that the system runs Windows where we can query the current Windows version
+        unsigned long defaultDword = 1;
+        unsigned long result = GetRegKeyDword(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", L"CurrentMajorVersionNumber", defaultDword);
+        Assert::AreNotEqual(defaultDword, result);
+    }
+
+    TEST_METHOD(GetRegKeyDwordWindowsDoesNotExist) {
+        unsigned long defaultDword = 1;
+        unsigned long result = GetRegKeyDword(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion2", L"CurrentMajorVersionNumber", defaultDword);
+        Assert::AreEqual(defaultDword, result);
+    }
+
     TEST_METHOD(GetRegKeyStringWindowsDoesExist) {
         // This assumes that the system runs Windows where we can query the current Windows version
         wstring defaultString = L"SomethingDefault";
