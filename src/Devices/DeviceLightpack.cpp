@@ -56,6 +56,8 @@ namespace lightfx {
 
                         this->Reset();
                         this->DisconnectAPI();
+                    } else {
+                        return false;
                     }
                 } else {
                     return false;
