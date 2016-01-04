@@ -22,8 +22,6 @@
 #include "../Utils/String.h"
 
 
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"Config ") + this->GetCurrentFileName() + L" - " + message)
-
 using namespace std;
 using namespace lightfx::managers;
 using namespace lightfx::utils;
@@ -61,13 +59,13 @@ namespace lightfx {
                     this->Deserialize(data);
 
                     this->configLoaded = true;
-                    LOG(LogLevel::Info, L"Loaded configuration");
+                    LOG_INFO(L"Loaded configuration " + fileName);
                 } else {
                     this->configLoaded = false;
-                    LOG(LogLevel::Info, L"No configuration found, using defaults");
+                    LOG_INFO(L"Configuration " + fileName + L" not found, using defaults");
                 }
             } catch (exception& e) {
-                LOG(LogLevel::Warning, L"Exception while loading configuration: " + string_to_wstring(e.what()));
+                LOG_WARNING(L"Exception while loading configuration " + fileName + L", using defaults instead: " + string_to_wstring(e.what()));
                 this->configLoaded = false;
             }
         }
@@ -96,9 +94,9 @@ namespace lightfx {
                 configStream << data;
                 configStream.close();
 
-                LOG(LogLevel::Debug, L"Saved configuration");
+                LOG_DEBUG(L"Saved configuration " + fileName);
             } catch (exception& e) {
-                LOG(LogLevel::Warning, L"Exception while saving configuration: " + string_to_wstring(e.what()));
+                LOG_WARNING(L"Exception while saving configuration " + fileName + L", settings not saved: " + string_to_wstring(e.what()));
             }
         }
 

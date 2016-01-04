@@ -38,7 +38,7 @@ public:
         Log::SetLogDirectory(L"./");
         Log::SetMinimumLogLevel(LogLevel::Debug);
 
-        Log::LogLine(LogLevel::Info, L"Test log line");
+        Log::LogLine(LogLevel::Info, __FILE__, __LINE__, __FUNCTION__, L"Test log line");
 
         BOOL exists = PathFileExistsW(Log::GetLogFileName().c_str());
         DeleteFileW(Log::GetLogFileName().c_str());
@@ -50,7 +50,7 @@ public:
         Log::SetLogDirectory(L"./");
         Log::SetMinimumLogLevel(LogLevel::Debug);
 
-        Log::LogLastWindowsError();
+        Log::LogLastWindowsError(__FILE__, __LINE__, __FUNCTION__);
 
         BOOL exists = PathFileExistsW(Log::GetLogFileName().c_str());
         DeleteFileW(Log::GetLogFileName().c_str());

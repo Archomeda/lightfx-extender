@@ -10,8 +10,6 @@
 #include "../Utils/Log.h"
 
 
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"ConfigManager - ") + message)
-
 using namespace std;
 using namespace lightfx::config;
 using namespace lightfx::utils;
@@ -24,7 +22,7 @@ namespace lightfx {
             this->AddChild(L"MainConfig", configFile);
             configFile->Load();
 
-            LOG(LogLevel::Info, L"Config files loaded");
+            LOG_INFO(L"Config files loaded");
 
             return true;
         }

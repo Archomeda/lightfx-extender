@@ -7,7 +7,6 @@
 
 using namespace std;
 
-
 namespace lightfx {
     namespace devices {
         namespace proxies {

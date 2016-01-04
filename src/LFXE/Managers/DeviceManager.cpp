@@ -18,8 +18,6 @@
 #include "../Utils/String.h"
 
 
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"DeviceManager - ") + message)
-
 using namespace std;
 using namespace lightfx::config;
 using namespace lightfx::devices;
@@ -30,7 +28,7 @@ namespace lightfx {
     namespace managers {
 
         LFXE_API size_t DeviceManager::InitializeDevices() {
-            LOG(LogLevel::Debug, L"Initializing devices");
+            LOG_DEBUG(L"Initializing devices");
             size_t i = 0;
 
             auto config = this->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
@@ -69,7 +67,7 @@ namespace lightfx {
             // Load native LightFX devices
             this->lightFXLibrary = unique_ptr<LightFX2Proxy>(new LightFX2Proxy(config->AlienwareDllName, config->AlienwareBackupDllName));
             if (this->lightFXLibrary->Load()) {
-                LOG(LogLevel::Debug, L"Alienware LightFX library found");
+                LOG_DEBUG(L"Alienware LightFX library found");
                 LFX_RESULT result;
 
                 result = this->lightFXLibrary->LFX_Initialize();
@@ -77,7 +75,7 @@ namespace lightfx {
                     unsigned int numDevices = 0;
                     result = this->lightFXLibrary->LFX_GetNumDevices(&numDevices);
                     if (result == LFX_SUCCESS) {
-                        LOG(LogLevel::Debug, to_wstring(numDevices) + L" LightFX devices found");
+                        LOG_DEBUG(to_wstring(numDevices) + L" LightFX devices found");
 
                         for (unsigned int j = 0; j < numDevices; ++j) {
                             auto lightFX = make_shared<DeviceLightFX>();
@@ -97,23 +95,23 @@ namespace lightfx {
                                 }
                                 lightFX->SetDeviceName(deviceName);
                             } else {
-                                LOG(LogLevel::Error, L"Failed to get the device name of LightFX device " + to_wstring(j));
+                                LOG_ERROR(L"Failed to get the device name of LightFX device " + to_wstring(j));
                             }
                             LFX_SAFE_DELETE_ARRAY(devDesc);
                         }
 
                         //TODO: Periodically check for changes (e.g. when a device gets connected or disconnected)
                     } else {
-                        LOG(LogLevel::Error, L"Failed to check the number of LightFX devices: " + this->lightFXLibrary->LfxResultToString(result));
+                        LOG_ERROR(L"Failed to check the number of LightFX devices: " + this->lightFXLibrary->LfxResultToString(result));
                     }
                 } else {
-                    LOG(LogLevel::Error, L"Failed to initialize LightFX: " + this->lightFXLibrary->LfxResultToString(result));
+                    LOG_ERROR(L"Failed to initialize LightFX: " + this->lightFXLibrary->LfxResultToString(result));
                 }
             } else {
-                LOG(LogLevel::Debug, L"Alienware LightFX library not found");
+                LOG_DEBUG(L"Alienware LightFX library not found");
             }
 
-            LOG(LogLevel::Info, L"Successfully initialized " + to_wstring(i) + L" devices");
+            LOG_INFO(L"Successfully initialized " + to_wstring(i) + L" devices");
 
             // Enable devices where needed
             if (config->AutoDeviceDetection)
@@ -122,16 +120,16 @@ namespace lightfx {
                     auto device = this->GetChildByIndex(i);
 
                     if (device == nullptr) {
-                        LOG(LogLevel::Warning, L"Device " + device->GetDeviceName() + L" is configured in settings, but was not found in the system");
+                        LOG_WARNING(L"Device " + device->GetDeviceName() + L" is configured in settings, but was not found in the system");
                         continue;
                     }
                     if (!device->IsInitialized()) {
-                        LOG(LogLevel::Warning, L"Device " + device->GetDeviceName() + L" cannot be enabled, because was not initialized");
+                        LOG_WARNING(L"Device " + device->GetDeviceName() + L" cannot be enabled, because was not initialized");
                         continue;
                     }
 
                     bool auto_result = device->Enable();
-                    LOG(LogLevel::Warning, L"Device " + device->GetDeviceName() + L" was automatically set to " + (auto_result ? L"ON" : L"OFF"));
+                    LOG_WARNING(L"Device " + device->GetDeviceName() + L" was automatically set to " + (auto_result ? L"ON" : L"OFF"));
                 }
             }
             else
@@ -140,11 +138,11 @@ namespace lightfx {
                     if (device.second) {
                         auto dev = this->GetChild(device.first);
                         if (dev == nullptr) {
-                            LOG(LogLevel::Warning, L"Device " + device.first + L" is configured in settings, but was not found in the system");
+                            LOG_WARNING(L"Device " + device.first + L" is configured in settings, but was not found in the system");
                             continue;
                         }
                         if (!dev->IsInitialized()) {
-                            LOG(LogLevel::Warning, L"Device " + device.first + L" cannot be enabled, because was not initialized");
+                            LOG_WARNING(L"Device " + device.first + L" cannot be enabled, because was not initialized");
                             continue;
                         }
                         dev->Enable();
@@ -155,7 +153,7 @@ namespace lightfx {
         }
 
         LFXE_API size_t DeviceManager::UninitializeDevices() {
-            LOG(LogLevel::Debug, L"Uninitializing devices");
+            LOG_DEBUG(L"Uninitializing devices");
             size_t i = 0;
 
             // Unload devices
@@ -171,16 +169,16 @@ namespace lightfx {
                 LFX_RESULT result = this->lightFXLibrary->LFX_Release();
                 if (result == LFX_SUCCESS) {
                     if (this->lightFXLibrary->Unload()) {
-                        LOG(LogLevel::Debug, L"Alienware LightFX library unloaded");
+                        LOG_DEBUG(L"Alienware LightFX library unloaded");
                     } else {
-                        LOG(LogLevel::Error, L"Could not unload Alienware LightFX library");
+                        LOG_ERROR(L"Could not unload Alienware LightFX library");
                     }
                 } else {
-                    LOG(LogLevel::Error, L"Failed to release LightFX: " + to_wstring(result));
+                    LOG_ERROR(L"Failed to release LightFX: " + to_wstring(result));
                 }
             }
 
-            LOG(LogLevel::Info, L"Successfully uninitialized " + to_wstring(i) + L" devices");
+            LOG_INFO(L"Successfully uninitialized " + to_wstring(i) + L" devices");
             return i;
         }
    

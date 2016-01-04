@@ -37,7 +37,6 @@
 #define TRAY_BALLOON_UPDATE_INSTALLED_TEXT1 L"LightFX Extender has been updated to version "
 #define TRAY_BALLOON_UPDATE_INSTALLED_TEXT2 L".\nClick here to view the release notes."
 
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"TrayManager - ") + message)
 
 using namespace std;
 using namespace lightfx::config;
@@ -68,9 +67,9 @@ namespace lightfx {
             this->trayIconThread.join();
 
             if (!this->isTrayIconAdded) {
-                LOG(LogLevel::Debug, L"Tray icon removed");
+                LOG_DEBUG(L"Tray icon removed");
             } else {
-                LOG(LogLevel::Debug, L"Failed to remove tray icon");
+                LOG_DEBUG(L"Failed to remove tray icon");
             }
         }
 
@@ -138,9 +137,9 @@ namespace lightfx {
 
             this->isTrayIconAdded = Shell_NotifyIconW(NIM_ADD, &this->trayIconData) == TRUE;
             if (this->isTrayIconAdded) {
-                LOG(LogLevel::Debug, L"Tray icon added");
+                LOG_DEBUG(L"Tray icon added");
             } else {
-                LOG(LogLevel::Debug, L"Failed to add tray icon");
+                LOG_DEBUG(L"Failed to add tray icon");
             }
 
 
@@ -150,7 +149,7 @@ namespace lightfx {
             while ((hasMsg = GetMessage(&msg, NULL, 0, 0)) != 0) {
                 if (hasMsg == -1) {
                     // Error
-                    LOG(LogLevel::Error, L"Error in processing tray icon message loop");
+                    LOG_ERROR(L"Error in processing tray icon message loop");
                     break;
                 } else {
                     TranslateMessage(&msg);

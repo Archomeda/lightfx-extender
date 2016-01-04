@@ -14,8 +14,6 @@
 #include "../Utils/Log.h"
 
 
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"Device ") + this->GetDeviceName() + L" - " + message)
-
 using namespace std;
 using namespace lightfx::managers;
 using namespace lightfx::timelines;
@@ -40,7 +38,7 @@ namespace lightfx {
 
         LFXE_API bool Device::Enable() {
             if (!this->isEnabled) {
-                LOG(LogLevel::Debug, L"Enabling");
+                LOG_DEBUG(L"Enabling " + this->GetDeviceName());
                 this->isEnabled = true;
             }
             return true;
@@ -48,7 +46,7 @@ namespace lightfx {
 
         LFXE_API bool Device::Disable() {
             if (this->isEnabled) {
-                LOG(LogLevel::Debug, L"Disabling");
+                LOG_DEBUG(L"Disabling " + this->GetDeviceName());
                 this->isEnabled = false;
             }
             return true;
@@ -57,7 +55,7 @@ namespace lightfx {
 
         LFXE_API bool Device::Initialize() {
             if (!this->isInitialized) {
-                LOG(LogLevel::Debug, L"Initializing");
+                LOG_DEBUG(L"Initializing " + this->GetDeviceName());
                 this->Reset();
                 this->isInitialized = true;
             }
@@ -67,7 +65,7 @@ namespace lightfx {
         LFXE_API bool Device::Release() {
             if (this->isInitialized) {
                 this->Disable();
-                LOG(LogLevel::Debug, L"Releasing");
+                LOG_DEBUG(L"Releasing " + this->GetDeviceName());
                 this->isInitialized = false;
             }
             return true;
@@ -82,7 +80,7 @@ namespace lightfx {
                         this->ActiveTimeline = this->TimelineQueue.front();
                         this->TimelineQueue.pop();
                         this->timelineStart = timeTick;
-                        LOG(LogLevel::Debug, L"Performing timeline " + this->ActiveTimeline.ToString());
+                        LOG_DEBUG(L"Performing timeline on " + this->GetDeviceName() + L": " + this->ActiveTimeline.ToString());
                     } else {
                         return true;
                     }
@@ -92,7 +90,7 @@ namespace lightfx {
                 unsigned long timelineTick = (timeTick - this->timelineStart).count();                
                 vector<LightColor> newColor = this->ActiveTimeline.GetColorAtTime(timelineTick);
                 if (newColor.size() == 0) {
-                    LOG(LogLevel::Warning, L"Timeline has no colors set! Ignoring update");
+                    LOG_WARNING(L"Timeline has no colors set! Ignoring update for " + this->GetDeviceName());
                     return true;
                 }
                 bool needsUpdate = this->lightColor.size() != newColor.size();

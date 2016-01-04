@@ -34,8 +34,6 @@
 #include "../Utils/Windows.h"
 
 
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"UpdateManager - ") + message)
-
 #define GITHUB_RELEASEURL_API L"https://api.github.com/repos/Archomeda/lightfx-extender/releases"
 
 
@@ -66,7 +64,7 @@ namespace lightfx {
             try {
                 releaseData = this->DownloadFromUrl(GITHUB_RELEASEURL_API);
             } catch (const exception& e) {
-                LOG(LogLevel::Error, L"Error while downloading latest release info: " + string_to_wstring(e.what()));
+                LOG_ERROR(L"Error while downloading latest release info: " + string_to_wstring(e.what()));
             }
 
             Version version;
@@ -139,7 +137,7 @@ namespace lightfx {
             try {
                 releaseZip = this->DownloadFromUrl(downloadUrl);
             } catch (const exception& e) {
-                LOG(LogLevel::Error, L"Error while downloading latest release archive: " + string_to_wstring(e.what()));
+                LOG_ERROR(L"Error while downloading latest release archive: " + string_to_wstring(e.what()));
                 return false;
             }
 
@@ -173,8 +171,8 @@ namespace lightfx {
                         return true;
                     } else {
                         RemoveFile(tempFilename);
-                        LOG(LogLevel::Error, L"Error while updating LightFX Extender: Access denied, process could not be elevated");
-                        Log::LogLastWindowsErrorAsync();
+                        LOG_ERROR(L"Error while updating LightFX Extender: Access denied, process could not be elevated");
+                        LOG_WINERROR();
                         return false;
                     }
                 }
@@ -183,14 +181,14 @@ namespace lightfx {
                 try {
                     this->InstallNewVersion(releaseZip, version);
                 } catch (const MsFileStatException&) {
-                    LOG(LogLevel::Error, L"Error while updating LightFX Extender: Failed to read the downloaded archive");
+                    LOG_ERROR(L"Error while updating LightFX Extender: Failed to read the downloaded archive");
                     return false;
                 } catch (const AccessDeniedException&) {
-                    LOG(LogLevel::Error, L"Error while updating LightFX Extender: Access denied");
+                    LOG_ERROR(L"Error while updating LightFX Extender: Access denied");
                     return false;
                 } catch (const exception& e) {
-                    LOG(LogLevel::Error, L"Error while updating LightFX Extender: " + string_to_wstring(e.what()));
-                    Log::LogLastWindowsErrorAsync();
+                    LOG_ERROR(L"Error while updating LightFX Extender: " + string_to_wstring(e.what()));
+                    LOG_WINERROR();
                     return false;
                 }
             }
@@ -371,27 +369,27 @@ namespace lightfx {
 
         LFXE_API void UpdateManager::CheckForUpdate() {
             Version currentVersion = this->GetCurrentVersion();
-            LOG(LogLevel::Debug, L"Checking for updates...");
+            LOG_DEBUG(L"Checking for updates...");
 
             auto release = this->GetLatestRelease();
             if (release.version > currentVersion) {
                 wstring newVersionString = release.version.ToString();
-                LOG(LogLevel::Info, L"A newer version is available: " + newVersionString);
+                LOG_INFO(L"A newer version is available: " + newVersionString);
                 if (this->GetLightFXExtender()->GetConfigManager()->GetMainConfig()->AutoUpdatesEnabled) {
                     if (this->UpdateLightFX(release.downloadUrl, release.version)) {
-                        LOG(LogLevel::Info, L"LightFX Extender has been updated automatically to " + newVersionString);
-                        LOG(LogLevel::Info, L"The changes will be applied the next time you run LightFX Extender");
+                        LOG_INFO(L"LightFX Extender has been updated automatically to " + newVersionString);
+                        LOG_INFO(L"The changes will be applied the next time you run LightFX Extender");
                         this->GetLightFXExtender()->GetTrayManager()->SetUpdateInstalledNotification(newVersionString, release.releaseNotesUrl);
                     } else {
-                        LOG(LogLevel::Warning, L"LightFX Extender could not be updated automatically, see " + release.releaseNotesUrl + L" for downloads");
+                        LOG_WARNING(L"LightFX Extender could not be updated automatically, see " + release.releaseNotesUrl + L" for downloads");
                         this->GetLightFXExtender()->GetTrayManager()->SetUpdateAvailableNotification(newVersionString, release.releaseNotesUrl);
                     }
                 } else {
-                    LOG(LogLevel::Info, L"Auto updates are disabled, see " + release.releaseNotesUrl + L" for downloads");
+                    LOG_INFO(L"Auto updates are disabled, see " + release.releaseNotesUrl + L" for downloads");
                     this->GetLightFXExtender()->GetTrayManager()->SetUpdateAvailableNotification(newVersionString, release.releaseNotesUrl);
                 }
             } else {
-                LOG(LogLevel::Debug, L"No update available");
+                LOG_DEBUG(L"No update available");
             }
         }
 

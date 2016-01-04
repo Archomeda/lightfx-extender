@@ -15,8 +15,6 @@
 #include "../Utils/String.h"
 
 
-#define LOG(logLevel, message) LOG_(logLevel, wstring(L"LightFX Device ") + this->GetDeviceName() + L" - " + message)
-
 using namespace std;
 using namespace lightfx::devices::proxies;
 using namespace lightfx::managers;
@@ -33,7 +31,7 @@ namespace lightfx {
                     auto config = this->GetManager()->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
                     this->library = unique_ptr<LightFX2Proxy>(new LightFX2Proxy(config->AlienwareDllName, config->AlienwareBackupDllName));
                     if (!this->library->Load()) {
-                        LOG(LogLevel::Error, L"Failed to access the Alienware LightFX library");
+                        LOG_ERROR(L"Failed to access the Alienware LightFX library");
                         this->SetInitialized(false);
                         return false;
                     }
@@ -46,7 +44,7 @@ namespace lightfx {
                     unsigned char devType = 0;
                     result = this->library->LFX_GetDeviceDescription(this->GetDeviceIndex(), devDesc, LFX_MAX_STRING_SIZE, &devType);
                     if (result != LFX_SUCCESS) {
-                        LOG(LogLevel::Error, L"Couldn't get device description from " + to_wstring(this->GetDeviceIndex()) + L": " + this->library->LfxResultToString(result));
+                        LOG_ERROR(L"Couldn't get device description from " + to_wstring(this->GetDeviceIndex()) + L": " + this->library->LfxResultToString(result));
                         LFX_SAFE_DELETE_ARRAY(devDesc);
                         this->SetInitialized(false);
                         return false;
@@ -59,12 +57,12 @@ namespace lightfx {
                     unsigned int numLights = 0;
                     result = this->library->LFX_GetNumLights(this->GetDeviceIndex(), &numLights);
                     if (result != LFX_SUCCESS) {
-                        LOG(LogLevel::Error, L"Couldn't get the number of lights from " + to_wstring(this->GetDeviceIndex()) + L": " + this->library->LfxResultToString(result));
+                        LOG_ERROR(L"Couldn't get the number of lights from " + to_wstring(this->GetDeviceIndex()) + L": " + this->library->LfxResultToString(result));
                         this->SetInitialized(false);
                         return false;
                     }
                     this->SetNumberOfLights(numLights);
-                    LOG(LogLevel::Debug, to_wstring(numLights) + L" lights available");
+                    LOG_DEBUG(to_wstring(numLights) + L" lights available");
 
                     // Set up lights
                     for (unsigned int i = 0; i < numLights; ++i) {
@@ -76,13 +74,13 @@ namespace lightfx {
                         if (result == LFX_SUCCESS) {
                             lightData.Name = string_to_wstring(lightDesc);
                         } else {
-                            LOG(LogLevel::Warning, L"Couldn't get light description " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + this->library->LfxResultToString(result) + L" (using default)");
+                            LOG_WARNING(L"Couldn't get light description " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + this->library->LfxResultToString(result) + L" (using default)");
                         }
                         LFX_SAFE_DELETE_ARRAY(lightDesc);
                         if (lightData.Name == L"") {
                             lightData.Name = to_wstring(i);
                         }
-                        LOG(LogLevel::Debug, L"Light " + to_wstring(i) + L" name: " + lightData.Name);
+                        LOG_DEBUG(L"Light " + to_wstring(i) + L" name: " + lightData.Name);
 
                         // Location
                         LFX_POSITION lightLoc;
@@ -90,10 +88,10 @@ namespace lightfx {
                         if (result == LFX_SUCCESS) {
                             lightData.Position = { lightLoc.x, lightLoc.y, lightLoc.z };
                         } else {
-                            LOG(LogLevel::Warning, L"Couldn't get light location " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + this->library->LfxResultToString(result) + L" (using default)");
+                            LOG_WARNING(L"Couldn't get light location " + to_wstring(i) + L" from " + to_wstring(this->GetDeviceIndex()) + L": " + this->library->LfxResultToString(result) + L" (using default)");
                             lightData.Position = { 0, 0, 0 };
                         }
-                        LOG(LogLevel::Debug, L"Light " + to_wstring(i) + L" pos: (" + to_wstring(lightData.Position.x) + L", " + to_wstring(lightData.Position.y) + L", " + to_wstring(lightData.Position.z) + L")");
+                        LOG_DEBUG(L"Light " + to_wstring(i) + L" pos: (" + to_wstring(lightData.Position.x) + L", " + to_wstring(lightData.Position.y) + L", " + to_wstring(lightData.Position.z) + L")");
 
                         this->SetLightData(i, lightData);
                     }
@@ -151,17 +149,17 @@ namespace lightfx {
             LFX_RESULT result;
             for (unsigned int i = 0; i < numLights; ++i) {
                 LFX_COLOR color = { colors[i].red, colors[i].green, colors[i].blue, colors[i].brightness };
-                LOG(LogLevel::Debug, L"Update color of light " + this->GetLightData(i).Name + L" (" + to_wstring(i) + L") to (" + to_wstring(colors[i].red) + L"," + to_wstring(colors[i].green) + L"," + to_wstring(colors[i].blue) + L")");
+                LOG_DEBUG(L"Update color of light " + this->GetLightData(i).Name + L" (" + to_wstring(i) + L") to (" + to_wstring(colors[i].red) + L"," + to_wstring(colors[i].green) + L"," + to_wstring(colors[i].blue) + L")");
                 result = this->library->LFX_SetLightColor(this->GetDeviceIndex(), i, &color);
                 if (result != LFX_SUCCESS) {
-                    LOG(LogLevel::Warning, L"SetLightColor() failed: " + this->library->LfxResultToString(result));
+                    LOG_WARNING(L"SetLightColor() failed: " + this->library->LfxResultToString(result));
                     return false;
                 }
             }
 
             result = this->library->LFX_Update();
             if (result != LFX_SUCCESS) {
-                LOG(LogLevel::Warning, L"Update() failed: " + this->library->LfxResultToString(result));
+                LOG_WARNING(L"Update() failed: " + this->library->LfxResultToString(result));
             }
             return result == LFX_SUCCESS;
         }
