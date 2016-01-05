@@ -340,6 +340,8 @@
     <ResourceCompile Include="LightFXExtender.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\resources\lights_active.ico" />
+    <Image Include="..\resources\lights_inactive.ico" />
     <Image Include="tray.ico" />
   </ItemGroup>
   <ItemGroup>

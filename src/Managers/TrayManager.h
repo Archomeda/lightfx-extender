@@ -51,6 +51,8 @@ namespace lightfx {
             bool isTrayIconRemoving = false;
             std::thread trayIconThread;
 
+            unsigned int GetCurrentIconIndex();
+            void UpdateIcon(const bool callShellModify = true);
             void AddTrayIconThreaded();
 
             static LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

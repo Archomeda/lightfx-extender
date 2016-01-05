@@ -85,6 +85,28 @@ namespace lightfx {
         }
 
 
+        unsigned int TrayManager::GetCurrentIconIndex() {
+            bool active = false;
+            auto deviceManager = this->GetLightFXExtender()->GetDeviceManager();
+            for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
+                auto device = deviceManager->GetChildByIndex(i);
+                if (device->IsInitialized() && device->IsEnabled()) {
+                    active = true;
+                    break;
+                }
+            }
+            return active ? IDI_TRAYICON1 : IDI_TRAYICON2;
+        }
+
+        void TrayManager::UpdateIcon(const bool callShellModify) {
+            if (!this->GetLightFXExtender()->GetConfigManager()->GetMainConfig()->TrayIconUseGameIcon) {
+                this->trayIconData.hIcon = (HICON)LoadImageW(this->hModuleInstance, MAKEINTRESOURCEW(this->GetCurrentIconIndex()), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0);
+                if (callShellModify) {
+                    Shell_NotifyIconW(NIM_MODIFY, &this->trayIconData);
+                }
+            }
+        }
+
         void TrayManager::AddTrayIconThreaded() {
             this->hModuleInstance = GetCurrentModule();
             this->trayIconWindowClass.lpfnWndProc = &TrayManager::WndProc;
@@ -107,15 +129,13 @@ namespace lightfx {
             this->trayIconData.uVersion = NOTIFYICON_VERSION_4;
             this->trayIconData.uCallbackMessage = WM_TRAYICON;
 
-            // Not sure if taking the icon from an EXE file is desired by some companies,
-            // as it can cause confusion to users who might think it's officially supported by those companies.
-            // Therefore, it is an advanced option which is disabled by default
+            // Check whether the executable icon or the default icon should be used
             if (this->GetLightFXExtender()->GetConfigManager()->GetMainConfig()->TrayIconUseGameIcon) {
                 this->trayIconData.hIcon = ExtractIconW(GetModuleHandle(NULL), filename.c_str(), 0);
             }
             if (this->trayIconData.hIcon == NULL) {
-                // Fall back to our default (somewhat crappy) icon if the executable icon cannot be found or is not configured to be used
-                this->trayIconData.hIcon = (HICON)LoadImageW(this->hModuleInstance, MAKEINTRESOURCEW(IDI_TRAYICON), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0);
+                // Fall back to our default icon if the executable icon cannot be found or is not configured to be used
+                this->UpdateIcon(false);
             }
 
             this->isTrayIconAdded = Shell_NotifyIconW(NIM_ADD, &this->trayIconData) == TRUE;
@@ -215,6 +235,8 @@ namespace lightfx {
                             }
                         }
                     }
+
+                    this->UpdateIcon();
                 } else if (lParam == NIN_BALLOONUSERCLICK) {
                     if (this->updateVersionUrl != L"") {
                         ShellExecuteW(NULL, L"open", this->updateVersionUrl.c_str(), NULL, NULL, SW_SHOWDEFAULT);
