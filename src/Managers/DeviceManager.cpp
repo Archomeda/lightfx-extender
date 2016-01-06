@@ -10,7 +10,6 @@
 #include "../Config/MainConfigFile.h"
 #include "../Devices/DeviceLightFX.h"
 #include "../Devices/DeviceLightpack.h"
-#include "../Devices/DeviceLogitech.h"
 #include "../Devices/DeviceCorsair.h"
 #include "../Devices/DeviceRazer.h"
 #include "../Utils/FileIO.h"
@@ -41,16 +40,6 @@ namespace lightfx {
             }
 
 
-            auto logitech = make_shared<DeviceLogitech>();
-            logitech->SetRange(config->LogitechColorRangeOutMin, config->LogitechColorRangeOutMax, config->LogitechColorRangeInMin, config->LogitechColorRangeInMax);
-            this->AddChild(L"Logitech", logitech);
-            logitech->SetRestoreLightsOnNullEnabled(config->LogitechRestoreLightsOnNullEnabled);
-            logitech->SetG110WorkaroundEnabled(config->LogitechG110WorkaroundEnabled);
-            if (logitech->Initialize()) {
-                ++i;
-            }
-
-            
             auto corsair = make_shared<DeviceCorsair>();
             this->AddChild(L"Corsair", corsair);
             if (corsair->Initialize()) {

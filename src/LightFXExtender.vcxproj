@@ -304,7 +304,6 @@
     <ClInclude Include="Devices\DeviceCorsair.h" />
     <ClInclude Include="Devices\DeviceLightFX.h" />
     <ClInclude Include="Devices\DeviceLightpack.h" />
-    <ClInclude Include="Devices\DeviceLogitech.h" />
     <ClInclude Include="Devices\DeviceRazer.h" />
     <ClInclude Include="Devices\Proxies\CUESDKProxy.h" />
     <ClInclude Include="Devices\Proxies\DeviceLibraryProxy.h" />
@@ -313,6 +312,12 @@
     <ClInclude Include="Games\Game.h" />
     <ClInclude Include="Games\GameGw2.h" />
     <ClInclude Include="Games\MumbleLink.h" />
+    <ClInclude Include="Managers\VendorManager.h" />
+    <ClInclude Include="Vendors\VendorDevice.h" />
+    <ClInclude Include="Vendors\VendorBase.h" />
+    <ClInclude Include="Vendors\VendorLogitech.h" />
+    <ClInclude Include="Vendors\Libraries\LibraryBase.h" />
+    <ClInclude Include="Vendors\Libraries\LibraryLogitech.h" />
     <ClInclude Include="LightFXExtender.h" />
     <ClInclude Include="Managers\ChildOfManager.h" />
     <ClInclude Include="Managers\ConfigManager.h" />
@@ -322,7 +327,7 @@
     <ClInclude Include="Managers\ManagerWithChildren.h" />
     <ClInclude Include="Managers\TrayManager.h" />
     <ClInclude Include="Managers\UpdateManager.h" />
-    <ClInclude Include="Managers\Version.h" />
+    <ClInclude Include="Version.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Timelines\LightColor.h" />
     <ClInclude Include="Timelines\LightTimeline.h" />
@@ -349,7 +354,6 @@
     <ClCompile Include="Devices\DeviceCorsair.cpp" />
     <ClCompile Include="Devices\DeviceLightFX.cpp" />
     <ClCompile Include="Devices\DeviceLightpack.cpp" />
-    <ClCompile Include="Devices\DeviceLogitech.cpp" />
     <ClCompile Include="Devices\DeviceRazer.cpp" />
     <ClCompile Include="Devices\Proxies\CUESDKProxy.cpp" />
     <ClCompile Include="Devices\Proxies\DeviceLibraryProxy.cpp" />
@@ -357,6 +361,10 @@
     <ClCompile Include="Devices\Proxies\RzChromaSDKProxy.cpp" />
     <ClCompile Include="Games\Game.cpp" />
     <ClCompile Include="Games\GameGw2.cpp" />
+    <ClCompile Include="Managers\VendorManager.cpp" />
+    <ClCompile Include="Vendors\VendorDevice.cpp" />
+    <ClCompile Include="Vendors\VendorLogitech.cpp" />
+    <ClCompile Include="Vendors\Libraries\LibraryLogitech.cpp" />
     <ClCompile Include="LightFXExports.cpp" />
     <ClCompile Include="LightFXExtender.cpp" />
     <ClCompile Include="Managers\ConfigManager.cpp" />
@@ -364,7 +372,7 @@
     <ClCompile Include="Managers\GameManager.cpp" />
     <ClCompile Include="Managers\TrayManager.cpp" />
     <ClCompile Include="Managers\UpdateManager.cpp" />
-    <ClCompile Include="Managers\Version.cpp" />
+    <ClCompile Include="Version.cpp" />
     <ClCompile Include="Timelines\LightTimeline.cpp" />
     <ClCompile Include="Timelines\LightTimelineItem.cpp" />
     <ClCompile Include="Timelines\Timeline.cpp" />

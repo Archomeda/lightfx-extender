@@ -26,10 +26,10 @@ namespace lightfx {
 
             void AddItem(const LightTimelineItem& item);
 
-            unsigned long GetTotalDuration();
-            LightColor GetColorAtTime(const unsigned long time);
+            unsigned long GetTotalDuration() const;
+            LightColor GetColorAtTime(const unsigned long time) const;
 
-            std::wstring ToString();
+            std::wstring ToString() const;
 
             static LightTimeline NewInstant(const LightColor& color);
             static LightTimeline NewMorph(const LightColor& startColor, const LightColor& endColor, const unsigned long morphTime, const long startDelay = 0);

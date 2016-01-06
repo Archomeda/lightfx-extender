@@ -15,47 +15,54 @@ namespace lightfx {
             this->totalDuration += this->items.back().GetStartDelay() + this->items.back().GetDuration();
         }
 
-        LFXE_API unsigned long LightTimeline::GetTotalDuration() {
+        LFXE_API unsigned long LightTimeline::GetTotalDuration() const {
             return this->totalDuration;
         }
 
-        LFXE_API LightColor LightTimeline::GetColorAtTime(const unsigned long time) {
+        LFXE_API LightColor LightTimeline::GetColorAtTime(const unsigned long time) const {
             if (this->items.size() == 0) {
                 return LightColor();
             }
 
+            LightTimelineItem currentItem = this->items[0];
             unsigned long timeStart = 0;
-            long timeLeft = time - this->items[0].GetStartDelay();
+            long timeLeft = time - currentItem.GetStartDelay();
             size_t currentIndex = 0;
             while (timeLeft > 0 && currentIndex < this->items.size()) {
-                timeLeft -= this->items[currentIndex].GetDuration();
+                currentItem = this->items[currentIndex];
+                timeLeft -= currentItem.GetDuration();
                 if (timeLeft > 0) {
-                    timeStart += this->items[currentIndex].GetDuration();
+                    timeStart += currentItem.GetDuration();
                     if (currentIndex > 0) {
-                        timeStart += this->items[currentIndex].GetStartDelay();
+                        timeStart += currentItem.GetStartDelay();
                     }
 
                     ++currentIndex;
+                    currentItem = this->items[currentIndex];
                     if (currentIndex < this->items.size()) {
-                        timeLeft -= this->items[currentIndex].GetStartDelay();
+                        timeLeft -= currentItem.GetStartDelay();
                     }
                 }
             }
 
+            LightTimelineItem prevItem = {};
+            if (currentIndex > 0) {
+                LightTimelineItem prevItem = this->items[currentIndex - 1];
+            }
             if (currentIndex < this->items.size()) {
-                long timeRelative = time - timeStart - this->items[currentIndex].GetStartDelay();
+                long timeRelative = time - timeStart - currentItem.GetStartDelay();
                 if (timeRelative < 0) {
-                    return this->items[currentIndex - 1].GetColor();
+                    return prevItem.GetColor();
                 } else if (timeRelative == 0) {
-                    if (this->items[currentIndex].GetDuration() == 0) {
-                        return this->items[currentIndex].GetColor();
+                    if (currentItem.GetDuration() == 0) {
+                        return currentItem.GetColor();
                     } else {
-                        return this->items[currentIndex - 1].GetColor();
+                        return prevItem.GetColor();
                     }
                 } else {
-                    LightColor colorStart = this->items[currentIndex - 1].GetColor();
-                    LightColor colorEnd = this->items[currentIndex].GetColor();
-                    double progress = (double)timeRelative / this->items[currentIndex].GetDuration();
+                    LightColor colorStart = prevItem.GetColor();
+                    LightColor colorEnd = currentItem.GetColor();
+                    double progress = (double)timeRelative / currentItem.GetDuration();
 
                     return LightColor(
                         int(colorStart.red + progress * (colorEnd.red - colorStart.red)),
@@ -65,17 +72,18 @@ namespace lightfx {
                         );
                 }
             } else {
-                return this->items[currentIndex - 1].GetColor();
+                return prevItem.GetColor();
             }
         }
 
-        LFXE_API wstring LightTimeline::ToString() {
+        LFXE_API wstring LightTimeline::ToString() const {
             wstring result;
             for (size_t i = 0; i < this->items.size(); ++i) {
                 if (i != 0) {
                     result += L"->";
                 }
-                result += L"(" + this->items[i].ToString() + L")";
+                LightTimelineItem item = this->items.at(i);
+                result += L"(" + item.ToString() + L")";
             }
             return result;
         }

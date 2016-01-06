@@ -13,11 +13,15 @@ using namespace std;
 namespace lightfx {
     namespace timelines {
 
-        LFXE_API LightTimeline Timeline::GetTimeline(const size_t lightIndex) {
+        LFXE_API bool Timeline::IsValid() const {
+            return this->timeline.size() > 0;
+        }
+
+        LFXE_API LightTimeline Timeline::GetTimeline(const size_t lightIndex) const {
             return this->timeline[lightIndex];
         }
 
-        LFXE_API vector<LightTimeline> Timeline::GetTimeline() {
+        LFXE_API vector<LightTimeline> Timeline::GetTimeline() const {
             return this->timeline;
         }
 
@@ -34,7 +38,7 @@ namespace lightfx {
         }
 
 
-        LFXE_API unsigned long Timeline::GetTotalDuration() {
+        LFXE_API unsigned long Timeline::GetTotalDuration() const {
             unsigned long duration = 0;
             for (size_t i = 0; i < this->timeline.size(); ++i) {
                 duration = max(duration, this->timeline[i].GetTotalDuration());
@@ -42,11 +46,11 @@ namespace lightfx {
             return duration;
         }
 
-        LFXE_API unsigned long Timeline::GetTotalDuration(const size_t lightIndex) {
+        LFXE_API unsigned long Timeline::GetTotalDuration(const size_t lightIndex) const {
             return this->timeline[lightIndex].GetTotalDuration();
         }
 
-        LFXE_API vector<LightColor> Timeline::GetColorAtTime(const unsigned long time) {
+        LFXE_API vector<LightColor> Timeline::GetColorAtTime(const unsigned long time) const {
             vector<LightColor> colors = {};
             for (size_t i = 0; i < this->timeline.size(); ++i) {
                 colors.push_back(this->timeline[i].GetColorAtTime(time));
@@ -54,11 +58,11 @@ namespace lightfx {
             return colors;
         }
 
-        LFXE_API LightColor Timeline::GetColorAtTime(const size_t lightIndex, const unsigned long time) {
+        LFXE_API LightColor Timeline::GetColorAtTime(const size_t lightIndex, const unsigned long time) const {
             return this->timeline[lightIndex].GetColorAtTime(time);
         }
 
-        LFXE_API wstring Timeline::ToString() {
+        LFXE_API wstring Timeline::ToString() const {
             wstring result;
             for (size_t i = 0; i < this->timeline.size(); ++i) {
                 if (i != 0) {

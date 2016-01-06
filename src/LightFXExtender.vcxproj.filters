@@ -54,9 +54,6 @@
     <ClInclude Include="Games\Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Managers\Version.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Utils\String.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -76,9 +73,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Windows.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Devices\DeviceLogitech.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Devices\DeviceLightpack.h">
@@ -132,6 +126,27 @@
     <ClInclude Include="Devices\Proxies\RzChromaSDKProxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendors\Libraries\LibraryBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendors\Libraries\LibraryLogitech.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendors\VendorBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendors\VendorLogitech.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendors\VendorDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\VendorManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LightFXExtender.rc">
@@ -162,9 +177,6 @@
     <ClCompile Include="Managers\UpdateManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Managers\Version.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Games\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -184,9 +196,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Utils\Windows.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Devices\DeviceLogitech.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Devices\DeviceLightpack.cpp">
@@ -229,6 +238,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Devices\Proxies\RzChromaSDKProxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Version.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendors\Libraries\LibraryLogitech.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendors\VendorLogitech.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendors\VendorDevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\VendorManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

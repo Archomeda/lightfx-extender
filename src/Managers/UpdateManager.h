@@ -7,7 +7,7 @@
 
 // Project includes
 #include "Manager.h"
-#include "Version.h"
+#include "../Version.h"
 
 // API exports
 #include "../Common/ApiExports.h"

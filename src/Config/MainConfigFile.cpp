@@ -6,7 +6,7 @@
 
 // Project includes
 #include "../LightFXExtender.h"
-#include "../Managers/DeviceManager.h"
+#include "../Managers/VendorManager.h"
 
 #pragma region Configuration keys
 #define CONF_AUTOUPDATESENABLED L"AutoUpdatesEnabled"
@@ -156,10 +156,12 @@ namespace lightfx {
             // Enabled devices
             WValue objEnabledDevices(kObjectType);
             map<wstring, bool> devices = map<wstring, bool>(this->EnabledDevices);
-            auto deviceManager = this->GetManager()->GetLightFXExtender()->GetDeviceManager();
-            for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
-                auto device = deviceManager->GetChildByIndex(i);
-                devices[device->GetDeviceName()] = device->IsEnabled();
+            auto vendorManager = this->GetManager()->GetLightFXExtender()->GetVendorManager();
+            for (auto vendor : vendorManager->GetVendors()) {
+                for (auto device : vendor->GetDevices()) {
+                    wstring name = vendor->GetVendorName() + L" - " + device.second->GetDeviceName();
+                    devices[name] = device.second->IsEnabled();
+                }
             }
             for (auto device : devices) {
                 objEnabledDevices.AddMember(WValue(device.first.c_str(), allocator).Move(), WValue(device.second), allocator);

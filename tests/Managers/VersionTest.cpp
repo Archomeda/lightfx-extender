@@ -1,11 +1,11 @@
 #include "CppUnitTest.h"
 
 // Project includes
-#include "../../src/Managers/Version.h"
+#include "../../src/Version.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-using namespace lightfx::managers;
+using namespace lightfx;
 
 namespace lightfx_tests {
     namespace managers {

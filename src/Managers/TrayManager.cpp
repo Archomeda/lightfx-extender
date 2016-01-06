@@ -13,9 +13,10 @@
 // Project includes
 #include "../LightFXExtender.h"
 #include "ConfigManager.h"
-#include "DeviceManager.h"
 #include "UpdateManager.h"
+#include "VendorManager.h"
 #include "../Config/MainConfigFile.h"
+#include "../Vendors/VendorDevice.h"
 #include "../Utils/FileIO.h"
 #include "../Utils/Log.h"
 #include "../Utils/Windows.h"
@@ -37,6 +38,7 @@
 using namespace std;
 using namespace lightfx::config;
 using namespace lightfx::devices;
+using namespace lightfx::vendors;
 using namespace lightfx::utils;
 
 namespace lightfx {
@@ -173,15 +175,40 @@ namespace lightfx {
             if (wParam == TRAYID) {
                 if (lParam == WM_RBUTTONUP) {
                     HMENU hMenu = CreatePopupMenu();
+                    vector<HMENU> hSubMenus = {};
+                    map<UINT, shared_ptr<VendorDevice>> deviceMap = {};
+                    auto vendorManager = this->GetLightFXExtender()->GetVendorManager();
+                    auto vendors = vendorManager->GetVendors();
 
+                    // Add devices
                     size_t index;
-                    auto deviceManager = this->GetLightFXExtender()->GetDeviceManager();
-                    for (index = 1; index <= deviceManager->GetChildrenCount(); ++index) {
-                        auto device = deviceManager->GetChildByIndex(index - 1);
-                        if (device->IsInitialized()) {
-                            InsertMenuW(hMenu, static_cast<UINT>(index), device->IsEnabled() ? MF_CHECKED : MF_UNCHECKED, static_cast<UINT>(index), device->GetDeviceName().c_str());
+                    for (index = 1; index <= vendors.size(); ++index) {
+                        auto vendor = vendors[index - 1];
+                        if (vendor->IsLibraryAvailable()) {
+                            HMENU hSubMenu = CreatePopupMenu();
+                            hSubMenus.push_back(hSubMenu);
+                            size_t subIndex = 1;
+                            for (auto pair : vendor->GetDevices()) {
+                                auto device = pair.second;
+                                UINT id = static_cast<UINT>(index * 100 + subIndex);
+                                AppendMenuW(hSubMenu,
+                                    device->IsEnabled() ? MF_CHECKED : MF_UNCHECKED,
+                                    id,
+                                    device->GetDeviceName().c_str()
+                                );
+                                deviceMap.emplace(id, device);
+                                ++subIndex;
+                            }
+                            InsertMenuW(hMenu,
+                                static_cast<UINT>(index),
+                                MF_POPUP,
+                                (UINT_PTR)hSubMenu,
+                                vendor->GetVendorName().c_str()
+                            );
                         }
                     }
+
+                    // Add other stuff
                     InsertMenuW(hMenu, static_cast<UINT>(index), MF_SEPARATOR, 0, NULL);
                     ++index;
                     UINT updateUrlIndex = 0;
@@ -198,22 +225,40 @@ namespace lightfx {
                     SetForegroundWindow(this->hTrayIconWindow);
                     UINT result = TrackPopupMenu(hMenu, TPM_RETURNCMD, cursor.x, cursor.y, 0, this->hTrayIconWindow, NULL);
                     DestroyMenu(hMenu);
+                    for (HMENU hSubMenu : hSubMenus) {
+                        DestroyMenu(hSubMenu);
+                    }
 
                     if (result == confDirIndex) {
                         ShellExecuteW(NULL, L"explore", GetDataStorageFolder().c_str(), NULL, NULL, SW_SHOWNORMAL);
                     } else if (updateUrlIndex > 0 && result == updateUrlIndex) {
                         ShellExecuteW(NULL, L"open", this->updateVersionUrl.c_str(), NULL, NULL, SW_SHOWDEFAULT);
-                    } else if (result > 0 && result <= deviceManager->GetChildrenCount()) {
-                        auto device = deviceManager->GetChildByIndex(result - 1);
-                        if (device->IsEnabled()) {
-                            if (!device->Disable()) {
-                                MessageBoxW(NULL, wstring(L"Failed to disable " + device->GetDeviceName() + L".\r\nCheck the log to see if there are more details.").c_str(), L"LightFX Extender", MB_OK | MB_ICONERROR);
+                    } else if (result > 100) {
+                        if (deviceMap.find(result) != deviceMap.end()) {
+                            auto device = deviceMap[result];
+                            wstring deviceName = device->GetVendor()->GetVendorName() + L" - " + device->GetDeviceName();
+                            if (device->IsEnabled()) {
+                                LOG_INFO(L"Disabling hardware " + deviceName + L"...");
+                                if (device->Disable()) {
+                                    LOG_INFO(L"Disabled hardware " + deviceName);
+                                } else {
+                                    LOG_WARNING(L"Could not disable hardware " + deviceName);
+                                    MessageBoxW(NULL, wstring(L"Failed to disable " + deviceName + L".\r\nCheck the log to see if there are more details.").c_str(), L"LightFX Extender", MB_OK | MB_ICONERROR);
+                                }
+                            } else {
+                                LOG_INFO(L"Enabling hardware " + deviceName + L"...");
+                                if (device->Enable()) {
+                                    LOG_INFO(L"Enabled hardware " + deviceName);
+                                } else {
+                                    LOG_WARNING(L"Could not enable hardware " + deviceName);
+                                    MessageBoxW(NULL, wstring(L"Failed to enable " + deviceName + L".\r\nCheck the log to see if there are more details.").c_str(), L"LightFX Extender", MB_OK | MB_ICONERROR);
+                                }
                             }
                         } else {
-                            if (!device->Enable()) {
-                                MessageBoxW(NULL, wstring(L"Failed to enable " + device->GetDeviceName() + L".\r\nCheck the log to see if there are more details.").c_str(), L"LightFX Extender", MB_OK | MB_ICONERROR);
-                            }
+                            LOG_WARNING(L"Got result " + to_wstring(result) + L" from tray icon but couldn't find a device attached to that id");
                         }
+                    } else {
+                        LOG_WARNING(L"Got invalid result " + to_wstring(result) + L" from tray icon");
                     }
                 } else if (lParam == NIN_BALLOONUSERCLICK) {
                     if (this->updateVersionUrl != L"") {

@@ -6,10 +6,10 @@
 
 // Project includes
 #include "Managers/ConfigManager.h"
-#include "Managers/DeviceManager.h"
 #include "Managers/GameManager.h"
 #include "Managers/TrayManager.h"
 #include "Managers/UpdateManager.h"
+#include "Managers/VendorManager.h"
 #include "Config/MainConfigFile.h"
 #include "Utils/Log.h"
 #include "Utils/Windows.h"
@@ -25,22 +25,22 @@ namespace lightfx {
     LFXE_API void LightFXExtender::Initialize() {
         if (!this->isInitialized) {
             shared_ptr<ConfigManager> configMgr = make_shared<ConfigManager>();
-            shared_ptr<DeviceManager> deviceMgr = make_shared<DeviceManager>();
             shared_ptr<GameManager> gameMgr = make_shared<GameManager>();
             shared_ptr<TrayManager> trayMgr = make_shared<TrayManager>();
             shared_ptr<UpdateManager> updateMgr = make_shared<UpdateManager>();
+            shared_ptr<VendorManager> vendorMgr = make_shared<VendorManager>();
 
             configMgr->SetLightFXExtender(shared_from_this());
-            deviceMgr->SetLightFXExtender(shared_from_this());
             gameMgr->SetLightFXExtender(shared_from_this());
             trayMgr->SetLightFXExtender(shared_from_this());
             updateMgr->SetLightFXExtender(shared_from_this());
+            vendorMgr->SetLightFXExtender(shared_from_this());
 
             this->configManager = configMgr;
-            this->deviceManager = deviceMgr;
             this->gameManager = gameMgr;
             this->trayManager = trayMgr;
             this->updateManager = updateMgr;
+            this->vendorManager = vendorMgr;
 
             this->isInitialized = true;
         }
@@ -66,9 +66,9 @@ namespace lightfx {
         this->configManager->InitializeConfigs();
         Log::SetMinimumLogLevel(this->configManager->GetMainConfig()->MinimumLogLevel);
         this->updateManager->CheckAsync();
-        this->deviceManager->InitializeDevices();
+        this->vendorManager->InitializeHardware();
         this->gameManager->InitializeGame(processFileName);
-        this->deviceManager->StartUpdateDevicesWorker();
+        this->vendorManager->StartUpdateWorker();
 
         if (this->configManager->GetMainConfig()->TrayIconEnabled) {
             this->trayManager->AddTrayIcon();
@@ -83,8 +83,8 @@ namespace lightfx {
         this->configManager->GetMainConfig()->Save();
 
         this->gameManager->UninitializeGames();
-        this->deviceManager->StopUpdateDevicesWorker();
-        this->deviceManager->UninitializeDevices();
+        this->vendorManager->StopUpdateWorker();
+        this->vendorManager->ReleaseHardware();
 
         Log::StopLoggerWorker();
     }

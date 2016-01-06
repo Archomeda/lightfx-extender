@@ -14,16 +14,16 @@
 #include "../LightFXExtender.h"
 #include "../Config/MainConfigFile.h"
 #include "../Managers/ConfigManager.h"
-#include "../Managers/DeviceManager.h"
+#include "../Managers/VendorManager.h"
 #include "../Utils/Log.h"
 
 
 using namespace std;
 using namespace rapidjson;
-using namespace lightfx::devices;
 using namespace lightfx::managers;
 using namespace lightfx::timelines;
 using namespace lightfx::utils;
+using namespace lightfx::vendors;
 
 namespace lightfx {
     namespace games {
@@ -104,14 +104,15 @@ namespace lightfx {
                     return;
                 }
 
-                auto deviceManager = this->GetManager()->GetLightFXExtender()->GetDeviceManager();
-                for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
-                    auto device = deviceManager->GetChildByIndex(i);
+                auto vendorManager = this->GetManager()->GetLightFXExtender()->GetVendorManager();
+                for (size_t i = 0; i < vendorManager->GetChildrenCount(); ++i) {
+                    auto device = vendorManager->GetChildByIndex(i);
                     if (!device->IsEnabled()) {
                         continue;
                     }
 
-                    vector<LightColor> resetColor = device->GetRecentTimeline().GetColorAtTime(device->GetRecentTimeline().GetTotalDuration());
+                    Timeline activeTimeline = device->GetActiveTimeline();
+                    vector<LightColor> resetColor = activeTimeline.GetColorAtTime(activeTimeline.GetTotalDuration());
 
                     Timeline timeline;
                     auto config = this->GetManager()->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
@@ -130,9 +131,9 @@ namespace lightfx {
                     } else if (config->GuildWars2TeamColorAnimation == L"Walk") {
                         timeline = Timeline::NewWalk(device->GetNumberOfLights(), startColor, endColor, resetColor, 1000, 4, 100);
                     }
-                    device->QueueTimeline(timeline);
+                    device->SetQueuedTimeline(timeline);
                 }
-                deviceManager->UpdateDeviceLights(false);
+                vendorManager->UpdateLights();
 
                 this->lastTeamColorLightUpdate = currentTick;
             }

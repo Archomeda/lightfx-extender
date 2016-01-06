@@ -25,18 +25,20 @@ namespace lightfx {
             Timeline(const size_t numLights, const LightTimeline& timeline) : timeline(numLights, timeline) {}
             Timeline(const std::vector<LightTimeline>& timeline) : timeline(timeline) {}
 
-            LightTimeline GetTimeline(const size_t lightIndex);
-            std::vector<LightTimeline> GetTimeline();
+            bool IsValid() const;
+
+            LightTimeline GetTimeline(const size_t lightIndex) const;
+            std::vector<LightTimeline> GetTimeline() const;
 
             void SetTimeline(const size_t lightIndex, const LightTimeline& timeline);
             void SetTimeline(const std::vector<LightTimeline> timeline);
 
-            unsigned long GetTotalDuration();
-            unsigned long GetTotalDuration(const size_t lightIndex);
-            std::vector<LightColor> GetColorAtTime(const unsigned long time);
-            LightColor GetColorAtTime(const size_t lightIndex, const unsigned long time);
+            unsigned long GetTotalDuration() const;
+            unsigned long GetTotalDuration(const size_t lightIndex) const;
+            std::vector<LightColor> GetColorAtTime(const unsigned long time) const;
+            LightColor GetColorAtTime(const size_t lightIndex, const unsigned long time) const;
 
-            std::wstring ToString();
+            std::wstring ToString() const;
 
             static Timeline NewWalk(const size_t numLights, const LightColor& baseColor, const LightColor& pulseColor, const std::vector<LightColor>& resetColor, const unsigned long walkTime, const unsigned long walkAmount, const long startDelay = 0);
 

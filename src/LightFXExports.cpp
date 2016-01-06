@@ -11,24 +11,25 @@
 #include "LFX2.h"
 
 // Project includes
-#include "lightFXExtender.h"
-#include "Managers/DeviceManager.h"
+#include "LightFXExtender.h"
 #include "Managers/UpdateManager.h"
+#include "Managers/VendorManager.h"
 #include "Utils/Log.h"
 #include "Utils/String.h"
+#include "Vendors/VendorBase.h"
 
 
 using namespace std;
 using namespace lightfx;
-using namespace lightfx::devices;
 using namespace lightfx::managers;
 using namespace lightfx::timelines;
 using namespace lightfx::utils;
+using namespace lightfx::vendors;
 
 
 #pragma region Converters
 
-LFX_POSITION DeviceLightPositionToLfxPosition(const DeviceLightPosition position) {
+LFX_POSITION DeviceLightPositionToLfxPosition(const VendorDeviceLightPosition position) {
     return LFX_POSITION{ position.x, position.y, position.z };
 }
 
@@ -68,7 +69,7 @@ extern "C" {
 
             lightFXExtender->Initialize();
             lightFXExtender->Start();
-            return lightFXExtender->GetDeviceManager()->GetChildrenCount() > 0 ? LFX_SUCCESS : LFX_ERROR_NODEVS;
+            return lightFXExtender->GetVendorManager()->GetChildrenCount() > 0 ? LFX_SUCCESS : LFX_ERROR_NODEVS;
 
         } catch (const exception& ex) {
             LOG_ERROR(L"Exception in LFX_Initialize: " + string_to_wstring(ex.what()));
@@ -95,13 +96,13 @@ extern "C" {
                 return LFX_ERROR_NOINIT;
             }
 
-            auto deviceManager = lightFXExtender->GetDeviceManager();
-            if (deviceManager->GetChildrenCount() == 0) {
+            auto vendorManager = lightFXExtender->GetVendorManager();
+            if (vendorManager->GetChildrenCount() == 0) {
                 return LFX_ERROR_NODEVS;
             }
 
-            for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
-                deviceManager->GetChildByIndex(i)->Reset();
+            for (size_t i = 0; i < vendorManager->GetChildrenCount(); ++i) {
+                vendorManager->GetChildByIndex(i)->Reset();
             }
 
             return LFX_SUCCESS;
@@ -119,12 +120,12 @@ extern "C" {
                 return LFX_ERROR_NOINIT;
             }
 
-            auto deviceManager = lightFXExtender->GetDeviceManager();
-            if (deviceManager->GetChildrenCount() == 0) {
+            auto vendorManager = lightFXExtender->GetVendorManager();
+            if (vendorManager->GetChildrenCount() == 0) {
                 return LFX_ERROR_NODEVS;
             }
 
-            deviceManager->UpdateDeviceLights();
+            vendorManager->UpdateLights();
             return LFX_SUCCESS;
 
         } catch (const exception& ex) {
@@ -145,8 +146,8 @@ extern "C" {
                 return LFX_ERROR_NOINIT;
             }
 
-            auto deviceManager = lightFXExtender->GetDeviceManager();
-            size_t numberOfDevices = deviceManager->GetChildrenCount();
+            auto vendorManager = lightFXExtender->GetVendorManager();
+            size_t numberOfDevices = vendorManager->GetChildrenCount();
             if (numberOfDevices == 0) {
                 return LFX_ERROR_NODEVS;
             } else if (numberOfDevices > numeric_limits<unsigned int>::max()) {
@@ -169,12 +170,12 @@ extern "C" {
                 return LFX_ERROR_NOINIT;
             }
 
-            auto deviceManager = lightFXExtender->GetDeviceManager();
-            if (devIndex >= deviceManager->GetChildrenCount()) {
+            auto vendorManager = lightFXExtender->GetVendorManager();
+            if (devIndex >= vendorManager->GetChildrenCount()) {
                 return LFX_ERROR_NODEVS;
             }
 
-            auto device = deviceManager->GetChildByIndex(devIndex);
+            auto device = vendorManager->GetChildByIndex(devIndex);
             string deviceName = wstring_to_string(device->GetDeviceName());
             if (deviceName.length() > devDescSize) {
                 return LFX_ERROR_BUFFSIZE;
@@ -198,12 +199,12 @@ extern "C" {
                 return LFX_ERROR_NOINIT;
             }
 
-            auto deviceManager = lightFXExtender->GetDeviceManager();
-            if (devIndex >= deviceManager->GetChildrenCount()) {
+            auto vendorManager = lightFXExtender->GetVendorManager();
+            if (devIndex >= vendorManager->GetChildrenCount()) {
                 return LFX_ERROR_NODEVS;
             }
 
-            size_t numberOfLights = deviceManager->GetChildByIndex(devIndex)->GetNumberOfLights();
+            size_t numberOfLights = vendorManager->GetChildByIndex(devIndex)->GetNumberOfLights();
             if (numberOfLights > numeric_limits<unsigned int>::max()) {
                 return LFX_FAILURE;
             }
@@ -224,17 +225,17 @@ extern "C" {
                 return LFX_ERROR_NOINIT;
             }
 
-            auto deviceManager = lightFXExtender->GetDeviceManager();
-            if (devIndex >= deviceManager->GetChildrenCount()) {
+            auto vendorManager = lightFXExtender->GetVendorManager();
+            if (devIndex >= vendorManager->GetChildrenCount()) {
                 return LFX_ERROR_NODEVS;
             }
 
-            auto device = deviceManager->GetChildByIndex(devIndex);
+            auto device = vendorManager->GetChildByIndex(devIndex);
             if (lightIndex >= device->GetNumberOfLights()) {
                 return LFX_ERROR_NOLIGHTS;
             }
 
-            string lightName = wstring_to_string(device->GetLightData(lightIndex).Name);
+            string lightName = wstring_to_string(device->GetLightData(lightIndex).name);
             if (lightName.length() > lightDescSize) {
                 return LFX_ERROR_BUFFSIZE;
             }
@@ -256,17 +257,17 @@ extern "C" {
                 return LFX_ERROR_NOINIT;
             }
 
-            auto deviceManager = lightFXExtender->GetDeviceManager();
-            if (devIndex >= deviceManager->GetChildrenCount()) {
+            auto vendorManager = lightFXExtender->GetVendorManager();
+            if (devIndex >= vendorManager->GetChildrenCount()) {
                 return LFX_ERROR_NODEVS;
             }
 
-            auto device = deviceManager->GetChildByIndex(devIndex);
+            auto device = vendorManager->GetChildByIndex(devIndex);
             if (lightIndex >= device->GetNumberOfLights()) {
                 return LFX_ERROR_NOLIGHTS;
             }
 
-            *lightLoc = DeviceLightPositionToLfxPosition(device->GetLightData(lightIndex).Position);
+            *lightLoc = DeviceLightPositionToLfxPosition(device->GetLightData(lightIndex).position);
 
             return LFX_SUCCESS;
 
@@ -283,17 +284,17 @@ extern "C" {
                 return LFX_ERROR_NOINIT;
             }
 
-            auto deviceManager = lightFXExtender->GetDeviceManager();
-            if (devIndex >= deviceManager->GetChildrenCount()) {
+            auto vendorManager = lightFXExtender->GetVendorManager();
+            if (devIndex >= vendorManager->GetChildrenCount()) {
                 return LFX_ERROR_NODEVS;
             }
 
-            auto device = deviceManager->GetChildByIndex(devIndex);
+            auto device = vendorManager->GetChildByIndex(devIndex);
             if (lightIndex >= device->GetNumberOfLights()) {
                 return LFX_ERROR_NOLIGHTS;
             }
 
-            *lightCol = LightColorToLfxColor(device->GetLightColor(lightIndex));
+            *lightCol = LightColorToLfxColor(device->GetCurrentLightColor(lightIndex));
 
             return LFX_SUCCESS;
 
@@ -310,12 +311,12 @@ extern "C" {
                 return LFX_ERROR_NOINIT;
             }
 
-            auto deviceManager = lightFXExtender->GetDeviceManager();
-            if (devIndex >= deviceManager->GetChildrenCount()) {
+            auto vendorManager = lightFXExtender->GetVendorManager();
+            if (devIndex >= vendorManager->GetChildrenCount()) {
                 return LFX_ERROR_NODEVS;
             }
 
-            auto device = deviceManager->GetChildByIndex(devIndex);
+            auto device = vendorManager->GetChildByIndex(devIndex);
             if (lightIndex >= device->GetNumberOfLights()) {
                 return LFX_ERROR_NOLIGHTS;
             }
@@ -324,7 +325,7 @@ extern "C" {
             LightColor color = LfxColorToLightColor(*lightCol);
 
             timeline.SetTimeline(lightIndex, LightTimeline::NewInstant(color));
-            device->QueueTimeline(timeline);
+            device->SetQueuedTimeline(timeline);
 
             return LFX_SUCCESS;
 
@@ -344,10 +345,10 @@ extern "C" {
                 return LFX_ERROR_NOINIT;
             }
 
-            auto deviceManager = lightFXExtender->GetDeviceManager();
-            for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
-                auto device = deviceManager->GetChildByIndex(i);
-                device->QueueTimeline(Timeline(device->GetNumberOfLights(), LightTimeline::NewInstant(color)));
+            auto vendorManager = lightFXExtender->GetVendorManager();
+            for (size_t i = 0; i < vendorManager->GetChildrenCount(); ++i) {
+                auto device = vendorManager->GetChildByIndex(i);
+                device->SetQueuedTimeline(Timeline(device->GetNumberOfLights(), LightTimeline::NewInstant(color)));
             }
 
             return LFX_SUCCESS;
@@ -365,18 +366,18 @@ extern "C" {
                 return LFX_ERROR_NOINIT;
             }
 
-            auto deviceManager = lightFXExtender->GetDeviceManager();
-            if (devIndex >= deviceManager->GetChildrenCount()) {
+            auto vendorManager = lightFXExtender->GetVendorManager();
+            if (devIndex >= vendorManager->GetChildrenCount()) {
                 return LFX_ERROR_NODEVS;
             }
 
-            auto device = deviceManager->GetChildByIndex(devIndex);
+            auto device = vendorManager->GetChildByIndex(devIndex);
             if (lightIndex >= device->GetNumberOfLights()) {
                 return LFX_ERROR_NOLIGHTS;
             }
 
             Timeline timeline = device->GetQueuedTimeline();
-            LFX_COLOR startColor = LightColorToLfxColor(device->GetLightColor(lightIndex));
+            LFX_COLOR startColor = LightColorToLfxColor(device->GetCurrentLightColor(lightIndex));
             return LFX_SetLightActionColorEx(devIndex, lightIndex, actionType, &startColor, primaryCol);
 
         } catch (const exception& ex) {
@@ -392,12 +393,12 @@ extern "C" {
                 return LFX_ERROR_NOINIT;
             }
 
-            auto deviceManager = lightFXExtender->GetDeviceManager();
-            if (devIndex >= deviceManager->GetChildrenCount()) {
+            auto vendorManager = lightFXExtender->GetVendorManager();
+            if (devIndex >= vendorManager->GetChildrenCount()) {
                 return LFX_ERROR_NODEVS;
             }
 
-            auto device = deviceManager->GetChildByIndex(devIndex);
+            auto device = vendorManager->GetChildByIndex(devIndex);
             if (lightIndex >= device->GetNumberOfLights()) {
                 return LFX_ERROR_NOLIGHTS;
             }
@@ -418,7 +419,7 @@ extern "C" {
                 timeline.SetTimeline(lightIndex, LightTimeline::NewInstant(endColor));
                 break;
             }
-            deviceManager->GetChildByIndex(devIndex)->QueueTimeline(timeline);
+            vendorManager->GetChildByIndex(devIndex)->SetQueuedTimeline(timeline);
 
             return LFX_SUCCESS;
 
@@ -435,13 +436,13 @@ extern "C" {
             LFX_COLOR color = IntToLfxColor(primaryCol);
 
             LFX_RESULT result;
-            auto deviceManager = lightFXExtender->GetDeviceManager();
-            for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
+            auto vendorManager = lightFXExtender->GetVendorManager();
+            for (size_t i = 0; i < vendorManager->GetChildrenCount(); ++i) {
                 if (i > numeric_limits<unsigned int>::max()) {
                     return LFX_FAILURE;
                 }
 
-                auto device = deviceManager->GetChildByIndex(i);
+                auto device = vendorManager->GetChildByIndex(i);
                 for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
                     if (j > numeric_limits<unsigned int>::max()) {
                         return LFX_FAILURE;
@@ -469,13 +470,13 @@ extern "C" {
             LFX_COLOR color2 = IntToLfxColor(secondaryCol);
 
             LFX_RESULT result;
-            auto deviceManager = lightFXExtender->GetDeviceManager();
-            for (size_t i = 0; i < deviceManager->GetChildrenCount(); ++i) {
+            auto vendorManager = lightFXExtender->GetVendorManager();
+            for (size_t i = 0; i < vendorManager->GetChildrenCount(); ++i) {
                 if (i > numeric_limits<unsigned int>::max()) {
                     return LFX_FAILURE;
                 }
 
-                auto device = deviceManager->GetChildByIndex(i);
+                auto device = vendorManager->GetChildByIndex(i);
                 for (size_t j = 0; j < device->GetNumberOfLights(); ++j) {
                     if (j > numeric_limits<unsigned int>::max()) {
                         return LFX_FAILURE;
