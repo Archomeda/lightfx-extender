@@ -77,30 +77,7 @@ namespace lightfx {
                 if (Device::Enable()) {
                     RZRESULT result = this->library->RzInit();
                     if (result == RZRESULT_SUCCESS) {
-                        //Check if any Razer device is connected
-                        if (IsDeviceConnected(BLACKWIDOW_CHROMA) ||
-                            IsDeviceConnected(BLACKWIDOW_CHROMA_TE) ||
-                            IsDeviceConnected(DEATHSTALKER_CHROMA) ||
-                            IsDeviceConnected(OVERWATCH_KEYBOARD) ||
-                            IsDeviceConnected(DEATHADDER_CHROMA) ||
-                            IsDeviceConnected(MAMBA_CHROMA_TE) ||
-                            IsDeviceConnected(DIAMONDBACK_CHROMA) ||
-                            IsDeviceConnected(MAMBA_CHROMA) ||
-                            IsDeviceConnected(NAGA_EPIC_CHROMA) ||
-                            IsDeviceConnected(OROCHI_CHROMA) ||
-                            IsDeviceConnected(KRAKEN71_CHROMA) ||
-                            IsDeviceConnected(FIREFLY_CHROMA) ||
-                            IsDeviceConnected(TARTARUS_CHROMA) ||
-                            IsDeviceConnected(ORBWEAVER_CHROMA)
-                            )
-                        {
                             this->Reset();
-                        } else {
-                            LOG_ERROR(L"No known Razer devices connected");
-                            this->library->RzUnInit();
-                            this->SetEnabled(false);
-                            return false;
-                        }
                     } else {
                         LOG_ERROR(L"Could not enable Razor device, initialization error: " + this->library->RzResultToString(result));
                         this->SetEnabled(false);
@@ -153,26 +130,20 @@ namespace lightfx {
             //Keyboard
             if (this->useWithKeyboard)
             {
-                ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE Effect = {};
-                for (UINT row = 0; row<ChromaSDK::Keyboard::MAX_ROW; row++)
-                    for (UINT col = 0; col<ChromaSDK::Keyboard::MAX_COLUMN; col++)
-                        Effect.Color[row][col] = Color;
+                ChromaSDK::Keyboard::STATIC_EFFECT_TYPE Effect = {};
+                Effect.Color = Color;
 
                 RZRESULT Result = this->library->RzCreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_STATIC, &Effect, NULL);
-
                 keyboardresult = Result == RZRESULT_SUCCESS;
             }
 
             //Mouse
             if (this->useWithMouse)
             {
-                ChromaSDK::Mouse::CUSTOM_EFFECT_TYPE2 Effect = {};
-                for (int i = 0; i<Mouse::MAX_ROW; i++)
-                    for (int j = 0; j<Mouse::MAX_COLUMN; j++)
-                        Effect.Color[i][j] = Color;
-
-                RZRESULT Result = this->library->RzCreateMouseEffect(ChromaSDK::Mouse::CHROMA_CUSTOM2, &Effect, NULL);
-
+                ChromaSDK::Mouse::STATIC_EFFECT_TYPE Effect = {};
+                Effect.Color = Color;
+                
+                RZRESULT Result = this->library->RzCreateMouseEffect(ChromaSDK::Mouse::CHROMA_STATIC, &Effect, NULL);
                 mouseresult = Result == RZRESULT_SUCCESS;
             }
 
@@ -199,28 +170,14 @@ namespace lightfx {
             //Keypadpad
             if (this->useWithKeypad)
             {
-                ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE Effect = {};
-
-                for (UINT i = 0; i<ChromaSDK::Keypad::MAX_ROW; i++)
-                    for (UINT j = 0; j<ChromaSDK::Keypad::MAX_COLUMN; j++)
-                        Effect.Color[i][j] = Color;
+                ChromaSDK::Keypad::STATIC_EFFECT_TYPE Effect = {};
+                Effect.Color = Color;
 
                 RZRESULT Result = this->library->RzCreateKeypadEffect(ChromaSDK::Keypad::CHROMA_STATIC, &Effect, NULL);
                 keypadresult = Result == RZRESULT_SUCCESS;
             }
 
             return keyboardresult && headsetresult && mouseresult && mousepadresult && keypadresult;
-        }
-
-        LFXE_API bool DeviceRazer::IsDeviceConnected(const RZDEVICEID DeviceId)
-        {
-            ChromaSDK::DEVICE_INFO_TYPE DeviceInfo = {};
-            RZRESULT Result = this->library->RzQueryDevice(DeviceId, DeviceInfo);
-
-            if (Result == RZRESULT_SUCCESS)
-                return DeviceInfo.Connected == TRUE;
-            else
-                return false;
         }
     }
 }
