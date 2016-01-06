@@ -38,8 +38,8 @@ namespace lightfx {
                     }
 
                     ++currentIndex;
-                    currentItem = this->items[currentIndex];
                     if (currentIndex < this->items.size()) {
+                        currentItem = this->items[currentIndex];
                         timeLeft -= currentItem.GetStartDelay();
                     }
                 }
@@ -47,7 +47,7 @@ namespace lightfx {
 
             LightTimelineItem prevItem = {};
             if (currentIndex > 0) {
-                LightTimelineItem prevItem = this->items[currentIndex - 1];
+                prevItem = this->items[currentIndex - 1];
             }
             if (currentIndex < this->items.size()) {
                 long timeRelative = time - timeStart - currentItem.GetStartDelay();

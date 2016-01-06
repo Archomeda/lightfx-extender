@@ -24,15 +24,15 @@ namespace lightfx {
             LightTimelineItem(const LightColor& color, const unsigned long duration = 1000, const long startDelay = 0)
                 : color(color), duration(duration), startDelay(startDelay) {}
 
-            LightColor GetColor();
-            unsigned long GetDuration();
-            long GetStartDelay();
+            LightColor GetColor() const;
+            unsigned long GetDuration() const;
+            long GetStartDelay() const;
 
             void SetColor(const LightColor& color);
             void SetDuration(const unsigned long duration);
             void SetStartDelay(const long startDelay);
 
-            std::wstring ToString();
+            std::wstring ToString() const;
 
             friend inline bool operator==(const LightTimelineItem& a, const LightTimelineItem& b) {
                 return a.color == b.color && a.startDelay == b.startDelay && a.duration == b.duration;
