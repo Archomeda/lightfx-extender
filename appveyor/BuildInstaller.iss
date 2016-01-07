@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "LightFX Extender"
-#define MyAppVersion "0.5.0-dev"
+#define MyAppVersion "0.5.2-dev"
 #define MyAppURL "https://github.com/Archomeda/lightfx-extender"
 
 [Setup]
@@ -19,7 +19,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
-OutputDir=../artifacts
+OutputDir=..\artifacts
 OutputBaseFilename={#MyAppName} v{#MyAppVersion} Setup
 UninstallDisplayName={#MyAppName}
 Compression=lzma/Max
@@ -30,14 +30,14 @@ ArchitecturesInstallIn64BitMode=x64
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "../artifacts/work/bin/LFXE.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "../artifacts/work/bin/LFXE.x64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "../artifacts/work/bin/CUESDK_2013.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "../artifacts/work/bin/CUESDK.x64_2013.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "../artifacts/work/x86/LightFX.dll"; DestDir: "{app}/x86"; Flags: ignoreversion
-Source: "../artifacts/work/x64/LightFX.dll"; DestDir: "{app}/x64"; Flags: ignoreversion
-Source: "../artifacts/work/x86/LightFX.dll"; DestDir: {code:GameDir}; Check: Game32Check; Flags: ignoreversion
-Source: "../artifacts/work/x64/LightFX.dll"; DestDir: {code:GameDir}; Check: Game64Check; Flags: ignoreversion
+Source: "..\artifacts\work\bin\LFXE.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\artifacts\work\bin\LFXE.x64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\artifacts\work\bin\CUESDK_2013.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\artifacts\work\bin\CUESDK.x64_2013.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\artifacts\work\x86\LightFX.dll"; DestDir: "{app}\x86"; Flags: ignoreversion
+Source: "..\artifacts\work\x64\LightFX.dll"; DestDir: "{app}\x64"; Flags: ignoreversion
+Source: "..\artifacts\work\x86\LightFX.dll"; DestDir: {code:GameDir}; Check: Game32Check; Flags: ignoreversion; BeforeInstall: BeforeInstallLightFxDll
+Source: "..\artifacts\work\x64\LightFX.dll"; DestDir: {code:GameDir}; Check: Game64Check; Flags: ignoreversion; BeforeInstall: BeforeInstallLightFxDll
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
@@ -82,6 +82,7 @@ var
     GamePagePlatformText: TNewStaticText;
     GamePagePlatformCheckListBox: TNewCheckListBox;
     GamePageExtraInfoText: TNewStaticText;
+    UninstallGameDir : String;
 
 procedure WizardFormNextButtonOnClickEvent(Sender: TObject);
 var
@@ -211,13 +212,39 @@ begin
     SetPreviousData(PreviousDataKey, 'Game64', IntToStr(Ord(GamePagePlatformCheckListBox.Checked[1])));
 end;
 
+procedure BeforeInstallLightFxDll();
+var
+    PrevGameDir : String;
+    CurrGameDir : String;
+begin
+    PrevGameDir := GetPreviousData('GameDir', '');
+    CurrGameDir := ExpandConstant('{code:GameDir}');
+    if PrevGameDir <> CurrGameDir then
+    begin
+        if PrevGameDir <> '' then
+        begin
+            DeleteFile(PrevGameDir + '\LightFX.dll');
+            if FileExists(PrevGameDir + '\LightFX_.dll') then
+                RenameFile(PrevGameDir + '\LightFX_.dll', PrevGameDir + '\LightFX.dll');
+        end;
+        if FileExists(CurrGameDir + '\LightFX.dll') then
+            RenameFile(CurrGameDir + '\LightFX.dll', CurrGameDir + '\LightFX_.dll');
+    end;
+end;
+
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
     mres : integer;
 begin
     case CurUninstallStep of
+        usUninstall:
+            begin
+                UninstallGameDir := GetPreviousData('GameDir', '');
+            end;
         usPostUninstall:
             begin
+                if FileExists(UninstallGameDir + '\LightFX_.dll') then
+                    RenameFile(UninstallGameDir + '\LightFX_.dll', UninstallGameDir + '\LightFX.dll');
                 mres := MsgBox(CustomMessage('RemoveAppDataFolderMsgBox'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2)
                 if mres = IDYES then
                     DelTree(ExpandConstant('{userappdata}\LightFX Extender'), True, True, True);
