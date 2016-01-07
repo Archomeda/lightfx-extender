@@ -8,6 +8,10 @@ It also adds some small extra features for specific games that have one or more 
 Go to releases, find the latest version and download the correct architecture (x86 for 32-bit and x64 for 64-bit) for the game you want to use LightFX Extender for.
 After downloading, extract LightFX.dll and CUESDK_2013.dll (for 32-bit) or CUESDK.x64_2013.dll (for 64-bit) to the game folder.
 
+Logitech users, make sure that "Allow games to control illumination" is enabled in the settings of Logitech Gaming Software.
+Razer users, make sure to enable "Chroma Apps" in the settings of your Razer Synapse.
+Corsair users, make sure that "Enable SDK" is checked in Corsair Utility Engine.
+
 When you start the game, LightFX Extender should be loaded automatically with the game.
 Sometimes you have to enable LightFX or AlienFX in the game first; this varies for each game.
 If LightFX Extender is loaded, you should see an icon in the notification area next to the clock on your taskbar.
