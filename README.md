@@ -1,5 +1,7 @@
 # LightFX Extender
 [![Build status](https://ci.appveyor.com/api/projects/status/ual57rxoe7wf0pm3/branch/master?svg=true)](https://ci.appveyor.com/project/Archomeda/lightfx-extender/branch/master)
+[![GitHub Latest Release](https://img.shields.io/github/release/Archomeda/lightfx-extender.svg)](https://github.com/Archomeda/lightfx-extender/releases/latest)
+[![GitHub All Releases](https://img.shields.io/github/downloads/Archomeda/lightfx-extender/total.svg)](https://github.com/Archomeda/lightfx-extender/releases)
 
 LightFX Extender allows gamers to take advantage of LightFX (or AlienFX) features in other hardware besides Alienware, such as Logitech keyboards and Lightpack devices.
 It also adds some small extra features for specific games that have one or more extra APIs.
@@ -8,9 +10,12 @@ It also adds some small extra features for specific games that have one or more 
 Go to releases, find the latest version and download the correct architecture (x86 for 32-bit and x64 for 64-bit) for the game you want to use LightFX Extender for.
 After downloading, extract LightFX.dll and CUESDK_2013.dll (for 32-bit) or CUESDK.x64_2013.dll (for 64-bit) to the game folder.
 
-Logitech users, make sure that "Allow games to control illumination" is enabled in the settings of Logitech Gaming Software.
-Razer users, make sure to enable "Chroma Apps" in the settings of your Razer Synapse.
-Corsair users, make sure that "Enable SDK" is checked in Corsair Utility Engine.
+Before you start the game, make sure you have enabled the SDK settings in the device software:
+- For Alienware Command Center, you have to enable *Enable 3rd Party AlienFX Access*
+- For Corsair Utility Engine, you have to enable *Enable SDK*
+- For Lightpack with Prismatik software, you have to enable *Enable API server*
+- For Logitech Gaming Software, you have to enable *Allow games to control illumination*
+- For Razer Synapse, you have to enable *Chroma Apps*
 
 When you start the game, LightFX Extender should be loaded automatically with the game.
 Sometimes you have to enable LightFX or AlienFX in the game first; this varies for each game.
