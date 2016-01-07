@@ -26,7 +26,7 @@ namespace lightfx {
 
         class VendorBase;
 
-        enum LFXE_API VendorDeviceType {
+        enum LFXE_API VendorDeviceType : unsigned int {
             DeviceUnknown = 0x00,
             DeviceNotebook,
             DeviceDesktop,
@@ -62,7 +62,7 @@ namespace lightfx {
         class LFXE_API VendorDevice : public managers::ChildOfManager<managers::VendorManager> {
 
         public:
-            VendorDevice(std::shared_ptr<VendorBase> vendor) :
+            VendorDevice(const std::shared_ptr<VendorBase>& vendor) :
                 vendor(vendor) {}
             virtual ~VendorDevice() {}
 
