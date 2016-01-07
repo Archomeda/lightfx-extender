@@ -16,15 +16,15 @@ namespace lightfx_tests {
 public:
 
     TEST_METHOD(GetRegKeyDwordWindowsDoesExist) {
-        // This assumes that the system runs Windows where we can query the current Windows version
+        // This assumes that the system runs Windows where we can query the install date
         unsigned long defaultDword = 1;
-        unsigned long result = GetRegKeyDword(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", L"CurrentMajorVersionNumber", defaultDword);
+        unsigned long result = GetRegKeyDword(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", L"InstallDate", defaultDword);
         Assert::AreNotEqual(defaultDword, result);
     }
 
     TEST_METHOD(GetRegKeyDwordWindowsDoesNotExist) {
         unsigned long defaultDword = 1;
-        unsigned long result = GetRegKeyDword(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion2", L"CurrentMajorVersionNumber", defaultDword);
+        unsigned long result = GetRegKeyDword(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion2", L"InstallDate", defaultDword);
         Assert::AreEqual(defaultDword, result);
     }
 
