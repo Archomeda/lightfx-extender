@@ -8,7 +8,6 @@
 #include "../LightFXExtender.h"
 #include "ConfigManager.h"
 #include "../Config/MainConfigFile.h"
-#include "../Devices/DeviceLightFX.h"
 #include "../Devices/DeviceCorsair.h"
 #include "../Devices/DeviceRazer.h"
 #include "../Utils/FileIO.h"
@@ -43,53 +42,6 @@ namespace lightfx {
             this->AddChild(L"Razer", razer);
             if (razer->Initialize()) {
                 ++i;
-            }
-
-            // Load native LightFX devices
-            this->lightFXLibrary = unique_ptr<LightFX2Proxy>(new LightFX2Proxy(config->AlienwareDllName, config->AlienwareBackupDllName));
-            if (this->lightFXLibrary->Load()) {
-                LOG_DEBUG(L"Alienware LightFX library found");
-                LFX_RESULT result;
-
-                result = this->lightFXLibrary->LFX_Initialize();
-                if (result == LFX_SUCCESS) {
-                    unsigned int numDevices = 0;
-                    result = this->lightFXLibrary->LFX_GetNumDevices(&numDevices);
-                    if (result == LFX_SUCCESS) {
-                        LOG_DEBUG(to_wstring(numDevices) + L" LightFX devices found");
-
-                        for (unsigned int j = 0; j < numDevices; ++j) {
-                            auto lightFX = make_shared<DeviceLightFX>();
-                            lightFX->SetDeviceIndex(j);
-
-                            // Get device name first so we can properly add it to the list of devices
-                            char* devDesc = new char[LFX_MAX_STRING_SIZE];
-                            unsigned char devType = 0;
-                            if (this->lightFXLibrary->LFX_GetDeviceDescription(j, devDesc, LFX_MAX_STRING_SIZE, &devType) == LFX_SUCCESS) {
-                                wstring deviceName = string_to_wstring(devDesc);
-                                if (deviceName == L"") {
-                                    deviceName = L"LightFX " + to_wstring(j);
-                                }
-                                this->AddChild(deviceName, lightFX);                                
-                                if (lightFX->Initialize()) {
-                                    ++i;
-                                }
-                                lightFX->SetDeviceName(deviceName);
-                            } else {
-                                LOG_ERROR(L"Failed to get the device name of LightFX device " + to_wstring(j));
-                            }
-                            LFX_SAFE_DELETE_ARRAY(devDesc);
-                        }
-
-                        //TODO: Periodically check for changes (e.g. when a device gets connected or disconnected)
-                    } else {
-                        LOG_ERROR(L"Failed to check the number of LightFX devices: " + this->lightFXLibrary->LfxResultToString(result));
-                    }
-                } else {
-                    LOG_ERROR(L"Failed to initialize LightFX: " + this->lightFXLibrary->LfxResultToString(result));
-                }
-            } else {
-                LOG_DEBUG(L"Alienware LightFX library not found");
             }
 
             LOG_INFO(L"Successfully initialized " + to_wstring(i) + L" devices");
@@ -142,20 +94,6 @@ namespace lightfx {
                 auto device = this->GetChildByIndex(j);
                 if (device->IsEnabled() && device->Release()) {
                     ++i;
-                }
-            }
-
-            // Unload native LightFX devices if needed
-            if (this->lightFXLibrary->IsLoaded()) {
-                LFX_RESULT result = this->lightFXLibrary->LFX_Release();
-                if (result == LFX_SUCCESS) {
-                    if (this->lightFXLibrary->Unload()) {
-                        LOG_DEBUG(L"Alienware LightFX library unloaded");
-                    } else {
-                        LOG_ERROR(L"Could not unload Alienware LightFX library");
-                    }
-                } else {
-                    LOG_ERROR(L"Failed to release LightFX: " + to_wstring(result));
                 }
             }
 

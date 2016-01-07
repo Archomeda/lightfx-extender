@@ -7,7 +7,6 @@
 // Project includes
 #include "ManagerWithChildren.h"
 #include "../Devices/Device.h"
-#include "../Devices/Proxies/LightFX2Proxy.h"
 #include "../Utils/NotifyEvent.h"
 
 // API exports
@@ -40,8 +39,6 @@ namespace lightfx {
             void UpdateDevicesWorker();
 
         private:
-            std::unique_ptr<devices::proxies::LightFX2Proxy> lightFXLibrary;
-            
             bool flushQueue = false;
 
             bool updateDevicesWorkerActive = false;

@@ -31,6 +31,17 @@ namespace lightfx {
                 auto config = this->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
                 this->updateWorkerInterval = config->TimelineUpdateInterval;
 
+                // Initialize Alienware
+                this->vendorAlienware = make_shared<VendorAlienware>();
+                this->vendorAlienware->SetBackupFilename(config->AlienwareBackupDllName);
+                if (this->vendorAlienware->IsLibraryAvailable()) {
+                    this->vendorAlienware->InitializeDevices();
+                    count += this->EnableVendorDevices(this->vendorAlienware);
+                    this->vendors.push_back(this->vendorAlienware);
+                } else {
+                    LOG_INFO(L"Alienware library not found; if you do have Alienware devices, make sure you correctly set the backup filename of the Alienware DLL file if the game provides a LightFX.dll of its own, and make sure that Alienware Command Center is installed correctly");
+                }
+
                 // Initialize Lightpack
                 this->vendorLightpack = make_shared<VendorLightpack>();
                 this->vendorLightpack->SetHostname(config->LightpackHost);
@@ -40,6 +51,8 @@ namespace lightfx {
                     this->vendorLightpack->InitializeDevices();
                     count += this->EnableVendorDevices(this->vendorLightpack);
                     this->vendors.push_back(this->vendorLightpack);
+                } else {
+                    LOG_INFO(L"Lightpack library not found; if you do have a Lightpack device, make sure you have installed Prismatik 5.11.1 or higher and have enabled the API socket in the settings");
                 }
 
                 // Initialize Logitech
@@ -51,6 +64,8 @@ namespace lightfx {
                     this->vendorLogitech->InitializeDevices();
                     count += this->EnableVendorDevices(this->vendorLogitech);
                     this->vendors.push_back(this->vendorLogitech);
+                } else {
+                    LOG_INFO(L"Logitech library not found; if you do have Logitech devices, make sure you have installed Logitech Gaming Software 8.70.315 or higher and have allowed third party access to the illumination SDK in the settings");
                 }
 
                 this->isInitialized = true;

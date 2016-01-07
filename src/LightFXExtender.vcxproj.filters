@@ -93,9 +93,6 @@
     <ClInclude Include="Timelines\Timeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Devices\DeviceLightFX.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Utils\Log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -112,9 +109,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Devices\Proxies\DeviceLibraryProxy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Devices\Proxies\LightFX2Proxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Devices\Proxies\CUESDKProxy.h">
@@ -148,6 +142,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vendors\VendorLightpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendors\Libraries\LibraryAlienware.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendors\VendorAlienware.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -216,9 +216,6 @@
     <ClCompile Include="Timelines\Timeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Devices\DeviceLightFX.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Utils\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -226,9 +223,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Devices\Proxies\DeviceLibraryProxy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Devices\Proxies\LightFX2Proxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Devices\DeviceRazer.cpp">
@@ -259,6 +253,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Vendors\VendorLightpack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendors\Libraries\LibraryAlienware.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendors\VendorAlienware.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
