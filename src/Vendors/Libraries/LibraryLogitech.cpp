@@ -53,7 +53,7 @@ namespace lightfx {
                     this->isInitialized = false;
                     LOG_INFO(L"Logitech library released");
                 }
-                return true;
+                return !this->isInitialized;
             }
 
             LFXE_API Version LibraryLogitech::GetLibraryVerion() const {

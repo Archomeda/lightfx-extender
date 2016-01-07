@@ -31,6 +31,17 @@ namespace lightfx {
                 auto config = this->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
                 this->updateWorkerInterval = config->TimelineUpdateInterval;
 
+                // Initialize Lightpack
+                this->vendorLightpack = make_shared<VendorLightpack>();
+                this->vendorLightpack->SetHostname(config->LightpackHost);
+                this->vendorLightpack->SetPort(config->LightpackPort);
+                this->vendorLightpack->SetKey(config->LightpackKey);
+                if (this->vendorLightpack->IsLibraryAvailable()) {
+                    this->vendorLightpack->InitializeDevices();
+                    count += this->EnableVendorDevices(this->vendorLightpack);
+                    this->vendors.push_back(this->vendorLightpack);
+                }
+
                 // Initialize Logitech
                 this->vendorLogitech = make_shared<VendorLogitech>();
                 this->vendorLogitech->SetRange(config->LogitechColorRangeOutMin, config->LogitechColorRangeOutMax, config->LogitechColorRangeInMin, config->LogitechColorRangeInMax);

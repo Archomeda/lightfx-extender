@@ -8,6 +8,7 @@
 // Project includes
 #include "ManagerWithChildren.h"
 #include "../Vendors/VendorDevice.h"
+#include "../Vendors/VendorLightpack.h"
 #include "../Vendors/VendorLogitech.h"
 #include "../Utils/NotifyEvent.h"
 
@@ -47,6 +48,7 @@ namespace lightfx {
             // Vendors
             std::vector<std::shared_ptr<vendors::VendorBase>> vendors;
             std::shared_ptr<vendors::VendorLogitech> vendorLogitech;
+            std::shared_ptr<vendors::VendorLightpack> vendorLightpack;
 
             bool isInitialized = false;
 

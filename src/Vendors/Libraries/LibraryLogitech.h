@@ -5,7 +5,6 @@
 
 // Project includes
 #include "LibraryBase.h"
-#include "../../Utils/Log.h"
 
 // 3rd party includes
 #include "LogitechLEDLib.h"

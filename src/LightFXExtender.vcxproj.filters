@@ -75,9 +75,6 @@
     <ClInclude Include="Utils\Windows.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Devices\DeviceLightpack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Games\MumbleLink.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -147,6 +144,12 @@
     <ClInclude Include="Managers\VendorManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Vendors\Libraries\LibraryLightpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendors\VendorLightpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LightFXExtender.rc">
@@ -196,9 +199,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Utils\Windows.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Devices\DeviceLightpack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Games\GameGw2.cpp">
@@ -253,6 +253,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Managers\VendorManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendors\Libraries\LibraryLightpack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendors\VendorLightpack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

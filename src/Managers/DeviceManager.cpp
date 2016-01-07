@@ -9,7 +9,6 @@
 #include "ConfigManager.h"
 #include "../Config/MainConfigFile.h"
 #include "../Devices/DeviceLightFX.h"
-#include "../Devices/DeviceLightpack.h"
 #include "../Devices/DeviceCorsair.h"
 #include "../Devices/DeviceRazer.h"
 #include "../Utils/FileIO.h"
@@ -32,13 +31,6 @@ namespace lightfx {
 
             auto config = this->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
             this->updateDevicesInterval = config->TimelineUpdateInterval;
-
-            auto lightpack = make_shared<DeviceLightpack>(config->LightpackHost, config->LightpackPort, config->LightpackKey);
-            this->AddChild(L"Lightpack", lightpack);
-            if (lightpack->Initialize()) {
-                ++i;
-            }
-
 
             auto corsair = make_shared<DeviceCorsair>();
             this->AddChild(L"Corsair", corsair);
