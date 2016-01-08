@@ -70,6 +70,12 @@ namespace lightfx {
         }
 
 
+        LFXE_API void TrayManager::ResetNotification() {
+            this->trayIconData.dwInfoFlags = NIIF_INFO | NIIF_LARGE_ICON | 0x80;
+            StringCchCopyW(this->trayIconData.szInfo, ARRAYSIZE(this->trayIconData.szInfo), L"");
+            Shell_NotifyIconW(NIM_MODIFY, &this->trayIconData);
+        }
+
         LFXE_API bool TrayManager::HasUpdateNotification() {
             return !this->updateVersionString.empty() && !this->updateVersionUrl.empty();
         }
@@ -78,7 +84,7 @@ namespace lightfx {
             this->updateVersionString = versionString;
             this->updateVersionUrl = downloadUrl;
 
-            this->trayIconData.dwInfoFlags = NIIF_INFO | 0x80;
+            this->trayIconData.dwInfoFlags = NIIF_USER | NIIF_LARGE_ICON | 0x80;
             StringCchCopyW(this->trayIconData.szInfoTitle, ARRAYSIZE(this->trayIconData.szInfoTitle), TRAY_BALLOON_TITLE);
             StringCchCopyW(this->trayIconData.szInfo, ARRAYSIZE(this->trayIconData.szInfo), (L"Version " + versionString + TRAY_BALLOON_UPDATE_TEXT).c_str());
             Shell_NotifyIconW(NIM_MODIFY, &this->trayIconData);
@@ -102,6 +108,7 @@ namespace lightfx {
             if (!this->GetLightFXExtender()->GetConfigManager()->GetMainConfig()->TrayIconUseGameIcon) {
                 this->trayIconData.hIcon = (HICON)LoadImageW(this->hModuleInstance, MAKEINTRESOURCEW(this->GetCurrentIconIndex()), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0);
                 if (callShellModify) {
+                    this->ResetNotification();
                     Shell_NotifyIconW(NIM_MODIFY, &this->trayIconData);
                 }
             }
@@ -136,6 +143,7 @@ namespace lightfx {
             if (this->trayIconData.hIcon == NULL) {
                 // Fall back to our default icon if the executable icon cannot be found or is not configured to be used
                 this->UpdateIcon(false);
+                this->trayIconData.hBalloonIcon = (HICON)LoadImageW(this->hModuleInstance, MAKEINTRESOURCEW(IDI_TRAYICON1), IMAGE_ICON, GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), 0);
             }
 
             this->isTrayIconAdded = Shell_NotifyIconW(NIM_ADD, &this->trayIconData) == TRUE;

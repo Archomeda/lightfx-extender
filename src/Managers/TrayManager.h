@@ -35,6 +35,7 @@ namespace lightfx {
             void AddTrayIcon();
             void RemoveTrayIcon();
 
+            void ResetNotification();
             bool HasUpdateNotification();
             void SetUpdateNotification(const std::wstring& versionString, const std::wstring& downloadUrl);
 
