@@ -19,7 +19,7 @@ namespace lightfx_tests {
                 virtual bool InitializeLibrary() override { return false; }
                 virtual bool ReleaseLibrary() override { return false; }
 
-                virtual lightfx::Version GetLibraryVerion() const override { return{}; }
+                virtual lightfx::Version GetLibraryVersion() const override { return{}; }
 
             };
 

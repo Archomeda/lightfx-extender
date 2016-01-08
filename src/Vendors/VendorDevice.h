@@ -36,6 +36,7 @@ namespace lightfx {
             DeviceKeyboard,
             DeviceGamepad,
             DeviceSpeaker,
+            DeviceHeadset,
             DeviceOther = 0xFF
         };
 

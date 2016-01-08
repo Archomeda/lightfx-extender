@@ -56,7 +56,7 @@ namespace lightfx {
                 return !this->isInitialized;
             }
 
-            LFXE_API Version LibraryLogitech::GetLibraryVerion() const {
+            LFXE_API Version LibraryLogitech::GetLibraryVersion() const {
                 // Sadly, we have to initialize before we can query the SDK version
                 // So if we aren't initialized, let's do that first and shut down afterwards
                 if (!this->isInitialized) {

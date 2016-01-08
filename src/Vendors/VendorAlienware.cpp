@@ -42,7 +42,7 @@ namespace lightfx {
                             device->SetDeviceName(deviceName);
                             device->SetDeviceType(this->AlienwareDeviceTypeToVendorDeviceType(deviceType));
                         } else {
-                            LOG_WARNING(L"Could not get name of device " + to_wstring(i) + L": " + this->library->AlienwareResultToString(result));
+                            LOG_WARNING(L"Could not get description of device " + to_wstring(i) + L": " + this->library->AlienwareResultToString(result));
                         }
 
                         unsigned int numLights = 0;

@@ -141,22 +141,31 @@ namespace lightfx {
                 return true;
             }
 
-            LFXE_API Version LibraryAlienware::GetLibraryVerion() const {
+            LFXE_API Version LibraryAlienware::GetLibraryVersion() const {
                 // We have to load the library before we can query the SDK version
                 // So if we aren't loaded, let's do that first and shut down afterwards
+                Version version;
                 if (!this->isInitialized) {
                     bool result = this->LoadDll();
-                    if (!result) {
+                    if (result) {
+                        LFX2GETVERSION getVersion = (LFX2GETVERSION)GetProcAddress(this->hInstance, LFX_DLL_GETVERSION);
+                        if (getVersion) {
+                            char buff[LFX_MAX_STRING_SIZE];
+                            AlienwareResult result = static_cast<AlienwareResult>(getVersion(buff, sizeof(buff)));
+                            if (result == AlienwareResult::AlienwareSuccess) {
+                                version = Version::FromString(buff);
+                            }
+                        }
+                        this->UnloadDll();
+                    } else {
+                        this->UnloadDll();
                         return{};
                     }
-                }
-                wstring buff;
-                Version version;
-                if (this->Aw_GetVersion(&buff) == AlienwareResult::AlienwareSuccess) {
-                    version = Version::FromString(buff);
-                }
-                if (!this->isInitialized) {
-                    this->UnloadDll();
+                } else {
+                    wstring buff;
+                    if (this->Aw_GetVersion(&buff) == AlienwareResult::AlienwareSuccess) {
+                        version = Version::FromString(buff);
+                    }
                 }
                 return version;
             }

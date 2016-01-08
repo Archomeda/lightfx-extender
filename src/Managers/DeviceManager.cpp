@@ -8,7 +8,6 @@
 #include "../LightFXExtender.h"
 #include "ConfigManager.h"
 #include "../Config/MainConfigFile.h"
-#include "../Devices/DeviceCorsair.h"
 #include "../Devices/DeviceRazer.h"
 #include "../Utils/FileIO.h"
 #include "../Utils/Log.h"
@@ -31,12 +30,6 @@ namespace lightfx {
             auto config = this->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
             this->updateDevicesInterval = config->TimelineUpdateInterval;
 
-            auto corsair = make_shared<DeviceCorsair>();
-            this->AddChild(L"Corsair", corsair);
-            if (corsair->Initialize()) {
-                ++i;
-            }
-            
             auto razer = make_shared<DeviceRazer>();
             razer->SetHardware(config->RazerUseWithKeyboard, config->RazerUseWithMouse, config->RazerUseWithHeadset, config->RazerUseWithMousepad, config->RazerUseWithKeypad);
             this->AddChild(L"Razer", razer);

@@ -68,7 +68,7 @@ namespace lightfx {
                 return !this->isInitialized;
             }
 
-            LFXE_API Version LibraryLightpack::GetLibraryVerion() const {
+            LFXE_API Version LibraryLightpack::GetLibraryVersion() const {
                 // Sadly, we have to initialize before we can get the API version
                 // So if we aren't initialized, let's do that first and shut down afterwards
                 if (this->apiVersion != Version()) {

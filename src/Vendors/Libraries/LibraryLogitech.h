@@ -27,7 +27,7 @@ namespace lightfx {
                 virtual bool InitializeLibrary() override;
                 virtual bool ReleaseLibrary() override;
 
-                virtual lightfx::Version GetLibraryVerion() const override;
+                virtual lightfx::Version GetLibraryVersion() const override;
 
                 // Library functions
                 bool Logi_Init() const;

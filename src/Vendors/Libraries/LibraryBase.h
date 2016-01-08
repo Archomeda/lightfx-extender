@@ -24,7 +24,7 @@ namespace lightfx {
                 virtual bool InitializeLibrary() = 0;
                 virtual bool ReleaseLibrary() = 0;
 
-                virtual lightfx::Version GetLibraryVerion() const = 0;
+                virtual lightfx::Version GetLibraryVersion() const = 0;
 
             protected:
                 bool isInitialized = false;

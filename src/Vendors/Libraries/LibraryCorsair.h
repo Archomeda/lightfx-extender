@@ -11,7 +11,7 @@
 #include "CUESDK.h"
 
 // Project includes
-#include "DeviceLibraryProxy.h"
+#include "LibraryBase.h"
 
 // API exports
 #include "../../Common/ApiExports.h"
@@ -33,9 +33,9 @@ typedef CorsairProtocolDetails(*CORSAIRPERFORMPROTOCOLHANDSHAKE)();
 typedef CorsairError(*CORSAIRGETLASTERROR)();
 
 #ifdef _WIN64
-#define CORSAIR_DLL_NAME "CUESDK.x64_2013.dll"
+#define CORSAIR_DLL_NAME L"CUESDK.x64_2013.dll"
 #else
-#define CORSAIR_DLL_NAME "CUESDK_2013.dll"
+#define CORSAIR_DLL_NAME L"CUESDK_2013.dll"
 #endif
 
 #define CORSAIR_DLL_SETLEDSCOLORS "CorsairSetLedsColors"
@@ -53,22 +53,43 @@ typedef CorsairError(*CORSAIRGETLASTERROR)();
 #pragma warning(disable : 4251)
 
 namespace lightfx {
-    namespace devices {
-        namespace proxies {
+    namespace vendors {
+        namespace libraries {
 
-            class LFXE_API CUESDKProxy : DeviceLibraryProxy {
+            class LFXE_API LibraryCorsair : public LibraryBase {
 
             public:
-                CUESDKProxy() {}
+                LibraryCorsair() {}
+                virtual ~LibraryCorsair();
 
-                virtual bool Load() override;
-                virtual bool Unload() override;
+                virtual bool IsLibraryAvailable() const override;
+                virtual bool InitializeLibrary() override;
+                virtual bool ReleaseLibrary() override;
 
-                using DeviceLibraryProxy::IsLoaded;
+                virtual lightfx::Version GetLibraryVersion() const override;
 
-                std::wstring CorsairErrorToString(const CorsairError error);
-                
-                // CUESDK function declarations
+                // Library functions
+                bool Cs_SetLedsColors(int size, CorsairLedColor* ledsColors) const;
+                bool Cs_SetLedsColorsAsync(int size, CorsairLedColor* ledsColors, void(*CallbackType)(void*, bool, CorsairError), void* context) const;
+                int Cs_GetDeviceCount() const;
+                CorsairDeviceInfo* Cs_GetDeviceInfo(int deviceIndex) const;
+                CorsairLedPositions* Cs_GetLedPositions() const;
+                CorsairLedId Cs_GetLedIdForKeyName(char keyName) const;
+                bool Cs_RequestControl(CorsairAccessMode accessMode) const;
+                CorsairProtocolDetails Cs_PerformProtocolHandshake() const;
+                CorsairError Cs_GetLastError() const;
+
+                std::wstring CorsairErrorToString(const CorsairError error) const;
+            
+            protected:
+                bool LoadDll() const;
+                bool LoadExports();
+                bool UnloadDll() const;
+                bool UnloadExports();
+            
+            private:
+                mutable HINSTANCE hInstance = NULL;
+
                 CORSAIRSETLEDSCOLORS CorsairSetLedsColors;
                 CORSAIRSETLEDSCOLORSASYNC CorsairSetLedsColorsAsync;
                 CORSAIRGETDEVICECOUNT CorsairGetDeviceCount;
@@ -78,12 +99,6 @@ namespace lightfx {
                 CORSAIRREQUESTCONTROL CorsairRequestControl;
                 CORSAIRPERFORMPROTOCOLHANDSHAKE CorsairPerformProtocolHandshake;
                 CORSAIRGETLASTERROR CorsairGetLastError;
-
-            protected:
-                bool ReleaseLibrary();
-
-            private:
-                HINSTANCE hInstance = NULL;
 
             };
 
