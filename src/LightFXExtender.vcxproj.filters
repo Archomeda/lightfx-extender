@@ -139,9 +139,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="tray.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="..\resources\lights_active.ico">
       <Filter>Resource Files</Filter>
     </Image>

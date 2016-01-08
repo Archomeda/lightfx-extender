@@ -342,7 +342,6 @@
   <ItemGroup>
     <Image Include="..\resources\lights_active.ico" />
     <Image Include="..\resources\lights_inactive.ico" />
-    <Image Include="tray.ico" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Config\ConfigFile.cpp" />
