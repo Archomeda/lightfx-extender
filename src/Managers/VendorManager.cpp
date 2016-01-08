@@ -42,6 +42,16 @@ namespace lightfx {
                     LOG_INFO(L"Alienware library not found; if you do have Alienware devices, make sure you correctly set the backup filename of the Alienware DLL file if the game provides a LightFX.dll of its own, and make sure that Alienware Command Center is installed correctly");
                 }
 
+                // Initialize Corsair
+                this->vendorCorsair = make_shared<VendorCorsair>();
+                if (this->vendorCorsair->IsLibraryAvailable()) {
+                    this->vendorCorsair->InitializeDevices();
+                    count += this->EnableVendorDevices(this->vendorCorsair);
+                    this->vendors.push_back(this->vendorCorsair);
+                } else {
+                    LOG_INFO(L"Corsair library not found; if you do have Corsair devices, make sure you installed Corsair Utility Engine 1.10 or higher and have enabled SDK access in the settings");
+                }
+
                 // Initialize Lightpack
                 this->vendorLightpack = make_shared<VendorLightpack>();
                 this->vendorLightpack->SetHostname(config->LightpackHost);

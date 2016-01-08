@@ -8,6 +8,7 @@
 // Project includes
 #include "ManagerWithChildren.h"
 #include "../Vendors/VendorAlienware.h"
+#include "../Vendors/VendorCorsair.h"
 #include "../Vendors/VendorDevice.h"
 #include "../Vendors/VendorLightpack.h"
 #include "../Vendors/VendorLogitech.h"
@@ -49,6 +50,7 @@ namespace lightfx {
             // Vendors
             std::vector<std::shared_ptr<vendors::VendorBase>> vendors;
             std::shared_ptr<vendors::VendorAlienware> vendorAlienware;
+            std::shared_ptr<vendors::VendorCorsair> vendorCorsair;
             std::shared_ptr<vendors::VendorLightpack> vendorLightpack;
             std::shared_ptr<vendors::VendorLogitech> vendorLogitech;
 
