@@ -213,37 +213,41 @@ namespace lightfx {
             chrono::milliseconds timeTick;
 
             while (!this->stopUpdateDevicesWorker) {
-                bool flushQueue = false;
-                if (isUpdating && !this->updateDevicesNotifyEvent.IsNotified()) {
-                    // Still updating from previous iterations without new updates coming in, sleep for a while to prevent unneeded CPU usage
-                    this_thread::sleep_for(chrono::milliseconds(this->updateDevicesInterval));
-                } else {
-                    // Wait for when we get signaled to update or stop
-                    this->updateDevicesNotifyEvent.Wait();
+                try {
+                    bool flushQueue = false;
+                    if (isUpdating && !this->updateDevicesNotifyEvent.IsNotified()) {
+                        // Still updating from previous iterations without new updates coming in, sleep for a while to prevent unneeded CPU usage
+                        this_thread::sleep_for(chrono::milliseconds(this->updateDevicesInterval));
+                    } else {
+                        // Wait for when we get signaled to update or stop
+                        this->updateDevicesNotifyEvent.Wait();
 
-                    // Reset certain variables since we should have a new timeline here
-                    flushQueue = this->flushQueue;
-                    this->flushQueue = false;
-                    isUpdating = false;
-                }
-
-                // Stop worker if it has been signaled to stop
-                if (this->stopUpdateDevicesWorker) {
-                    break;
-                }
-
-                // Update every device
-                bool done = true;
-                timeTick = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
-                for (size_t i = 0; i < this->GetChildrenCount(); ++i) {
-                    if (!isUpdating) {
-                        // This update is done for the first time, commit queued timeline and optionally flush the queue
-                        this->GetChildByIndex(i)->CommitQueuedTimeline(flushQueue);
+                        // Reset certain variables since we should have a new timeline here
+                        flushQueue = this->flushQueue;
+                        this->flushQueue = false;
+                        isUpdating = false;
                     }
-                    done &= this->GetChildByIndex(i)->Update(timeTick);
-                }
 
-                isUpdating = !done;
+                    // Stop worker if it has been signaled to stop
+                    if (this->stopUpdateDevicesWorker) {
+                        break;
+                    }
+
+                    // Update every device
+                    bool done = true;
+                    timeTick = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
+                    for (size_t i = 0; i < this->GetChildrenCount(); ++i) {
+                        if (!isUpdating) {
+                            // This update is done for the first time, commit queued timeline and optionally flush the queue
+                            this->GetChildByIndex(i)->CommitQueuedTimeline(flushQueue);
+                        }
+                        done &= this->GetChildByIndex(i)->Update(timeTick);
+                    }
+
+                    isUpdating = !done;
+                } catch (const exception& ex) {
+                    LOG_ERROR(L"Caught exception in DeviceManager thread: " + string_to_wstring(ex.what()));
+                }
             }
         }
 

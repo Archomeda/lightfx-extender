@@ -18,6 +18,7 @@
 #include "../Config/MainConfigFile.h"
 #include "../Utils/FileIO.h"
 #include "../Utils/Log.h"
+#include "../Utils/String.h"
 #include "../Utils/Windows.h"
 #include "../resource.h"
 
@@ -86,58 +87,62 @@ namespace lightfx {
 
 
         void TrayManager::AddTrayIconThreaded() {
-            this->hModuleInstance = GetCurrentModule();
-            this->trayIconWindowClass.lpfnWndProc = &TrayManager::WndProc;
-            this->trayIconWindowClass.hInstance = this->hModuleInstance;
-            this->trayIconWindowClass.lpszClassName = WINDOW_CLASSNAME;
-            this->trayIconWindowClass.cbWndExtra = sizeof(TrayManager*);
-            RegisterClassW(&this->trayIconWindowClass);
-            this->hTrayIconWindow = CreateWindowExW(0, WINDOW_CLASSNAME, L"LightFX Extender Tray Icon", 0, 0, 0, 0, 0, NULL, NULL, this->hModuleInstance, static_cast<LPVOID>(this));
+            try {
+                this->hModuleInstance = GetCurrentModule();
+                this->trayIconWindowClass.lpfnWndProc = &TrayManager::WndProc;
+                this->trayIconWindowClass.hInstance = this->hModuleInstance;
+                this->trayIconWindowClass.lpszClassName = WINDOW_CLASSNAME;
+                this->trayIconWindowClass.cbWndExtra = sizeof(TrayManager*);
+                RegisterClassW(&this->trayIconWindowClass);
+                this->hTrayIconWindow = CreateWindowExW(0, WINDOW_CLASSNAME, L"LightFX Extender Tray Icon", 0, 0, 0, 0, 0, NULL, NULL, this->hModuleInstance, static_cast<LPVOID>(this));
 
-            wstring fname, ext;
-            wstring filename = GetProcessName(nullptr, nullptr, &fname, &ext);
+                wstring fname, ext;
+                wstring filename = GetProcessName(nullptr, nullptr, &fname, &ext);
 
-            wstring currentVersion = this->GetLightFXExtender()->GetUpdateManager()->GetCurrentVersion().ToString();
-            this->trayIconData = {};
-            this->trayIconData.cbSize = sizeof(NOTIFYICONDATAW);
-            this->trayIconData.hWnd = this->hTrayIconWindow;
-            this->trayIconData.uID = TRAYID;
-            this->trayIconData.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP | NIF_INFO;
-            StringCchCopyW(this->trayIconData.szTip, ARRAYSIZE(this->trayIconData.szTip), (L"LightFX for " + fname + ext + L" (v" + currentVersion + L")").c_str());
-            this->trayIconData.uVersion = NOTIFYICON_VERSION_4;
-            this->trayIconData.uCallbackMessage = WM_TRAYICON;
+                wstring currentVersion = this->GetLightFXExtender()->GetUpdateManager()->GetCurrentVersion().ToString();
+                this->trayIconData = {};
+                this->trayIconData.cbSize = sizeof(NOTIFYICONDATAW);
+                this->trayIconData.hWnd = this->hTrayIconWindow;
+                this->trayIconData.uID = TRAYID;
+                this->trayIconData.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP | NIF_INFO;
+                StringCchCopyW(this->trayIconData.szTip, ARRAYSIZE(this->trayIconData.szTip), (L"LightFX for " + fname + ext + L" (v" + currentVersion + L")").c_str());
+                this->trayIconData.uVersion = NOTIFYICON_VERSION_4;
+                this->trayIconData.uCallbackMessage = WM_TRAYICON;
 
-            // Not sure if taking the icon from an EXE file is desired by some companies,
-            // as it can cause confusion to users who might think it's officially supported by those companies.
-            // Therefore, it is an advanced option which is disabled by default
-            if (this->GetLightFXExtender()->GetConfigManager()->GetMainConfig()->TrayIconUseGameIcon) {
-                this->trayIconData.hIcon = ExtractIconW(GetModuleHandle(NULL), filename.c_str(), 0);
-            }
-            if (this->trayIconData.hIcon == NULL) {
-                // Fall back to our default (somewhat crappy) icon if the executable icon cannot be found or is not configured to be used
-                this->trayIconData.hIcon = (HICON)LoadImageW(this->hModuleInstance, MAKEINTRESOURCEW(IDI_TRAYICON), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0);
-            }
-
-            this->isTrayIconAdded = Shell_NotifyIconW(NIM_ADD, &this->trayIconData) == TRUE;
-            if (this->isTrayIconAdded) {
-                LOG_DEBUG(L"Tray icon added");
-            } else {
-                LOG_DEBUG(L"Failed to add tray icon");
-            }
-
-
-            // Process the message loop until we remove the icon
-            MSG msg;
-            BOOL hasMsg;
-            while ((hasMsg = GetMessage(&msg, NULL, 0, 0)) != 0) {
-                if (hasMsg == -1) {
-                    // Error
-                    LOG_ERROR(L"Error in processing tray icon message loop");
-                    break;
-                } else {
-                    TranslateMessage(&msg);
-                    DispatchMessage(&msg);
+                // Not sure if taking the icon from an EXE file is desired by some companies,
+                // as it can cause confusion to users who might think it's officially supported by those companies.
+                // Therefore, it is an advanced option which is disabled by default
+                if (this->GetLightFXExtender()->GetConfigManager()->GetMainConfig()->TrayIconUseGameIcon) {
+                    this->trayIconData.hIcon = ExtractIconW(GetModuleHandle(NULL), filename.c_str(), 0);
                 }
+                if (this->trayIconData.hIcon == NULL) {
+                    // Fall back to our default (somewhat crappy) icon if the executable icon cannot be found or is not configured to be used
+                    this->trayIconData.hIcon = (HICON)LoadImageW(this->hModuleInstance, MAKEINTRESOURCEW(IDI_TRAYICON), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0);
+                }
+
+                this->isTrayIconAdded = Shell_NotifyIconW(NIM_ADD, &this->trayIconData) == TRUE;
+                if (this->isTrayIconAdded) {
+                    LOG_DEBUG(L"Tray icon added");
+                } else {
+                    LOG_DEBUG(L"Failed to add tray icon");
+                }
+
+
+                // Process the message loop until we remove the icon
+                MSG msg;
+                BOOL hasMsg;
+                while ((hasMsg = GetMessage(&msg, NULL, 0, 0)) != 0) {
+                    if (hasMsg == -1) {
+                        // Error
+                        LOG_ERROR(L"Error in processing tray icon message loop");
+                        break;
+                    } else {
+                        TranslateMessage(&msg);
+                        DispatchMessage(&msg);
+                    }
+                }
+            } catch (const exception& ex) {
+                LOG_ERROR(L"Caught exception in TrayManager thread: " + string_to_wstring(ex.what()));
             }
         }
 

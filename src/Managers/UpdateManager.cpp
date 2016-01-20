@@ -211,32 +211,36 @@ namespace lightfx {
 
 
         LFXE_API void UpdateManager::CheckForUpdate() {
-            Version currentVersion = this->GetCurrentVersion();
-            LOG_DEBUG(L"Checking for updates...");
+            try {
+                Version currentVersion = this->GetCurrentVersion();
+                LOG_DEBUG(L"Checking for updates...");
 
-            auto live = this->GetLiveVersion();
-            Version liveVersion = live.first;
-            wstring downloadUrl = live.second;
-            if (liveVersion > currentVersion) {
-                wstring newVersionString = liveVersion.ToString();
-                LOG_INFO(L"A newer version is available: " + newVersionString);
-                if (this->GetLightFXExtender()->GetConfigManager()->GetMainConfig()->AutoUpdatesEnabled) {
-                    if (this->UpdateLightFX(downloadUrl)) {
-                        LOG_INFO(L"LightFX Extender has been updated automatically to " + newVersionString);
-                        LOG_INFO(L"The changes will be applied the next time you run LightFX Extender");
-                        LOG_INFO(L"If, for some reason, the newer version will not start, please restore LightFX.dll.bak to LightFX.dll (and disable auto updates in the config and wait for a fix if this keeps on happening)");
+                auto live = this->GetLiveVersion();
+                Version liveVersion = live.first;
+                wstring downloadUrl = live.second;
+                if (liveVersion > currentVersion) {
+                    wstring newVersionString = liveVersion.ToString();
+                    LOG_INFO(L"A newer version is available: " + newVersionString);
+                    if (this->GetLightFXExtender()->GetConfigManager()->GetMainConfig()->AutoUpdatesEnabled) {
+                        if (this->UpdateLightFX(downloadUrl)) {
+                            LOG_INFO(L"LightFX Extender has been updated automatically to " + newVersionString);
+                            LOG_INFO(L"The changes will be applied the next time you run LightFX Extender");
+                            LOG_INFO(L"If, for some reason, the newer version will not start, please restore LightFX.dll.bak to LightFX.dll (and disable auto updates in the config and wait for a fix if this keeps on happening)");
+                        } else {
+                            wstring newVersionUrl = this->GetDownloadPageUrl();
+                            LOG_INFO(L"LightFX Extender could not be updated automatically, see " + newVersionUrl + L" for downloads");
+                            this->GetLightFXExtender()->GetTrayManager()->SetUpdateNotification(newVersionString, newVersionUrl);
+                        }
                     } else {
                         wstring newVersionUrl = this->GetDownloadPageUrl();
-                        LOG_INFO(L"LightFX Extender could not be updated automatically, see " + newVersionUrl + L" for downloads");
+                        LOG_INFO(L"Auto updates are disabled, see " + newVersionUrl + L" for downloads");
                         this->GetLightFXExtender()->GetTrayManager()->SetUpdateNotification(newVersionString, newVersionUrl);
                     }
                 } else {
-                    wstring newVersionUrl = this->GetDownloadPageUrl();
-                    LOG_INFO(L"Auto updates are disabled, see " + newVersionUrl + L" for downloads");
-                    this->GetLightFXExtender()->GetTrayManager()->SetUpdateNotification(newVersionString, newVersionUrl);
+                    LOG_INFO(L"No update available");
                 }
-            } else {
-                LOG_INFO(L"No update available");
+            } catch (const exception& ex) {
+                LOG_ERROR(L"Caught exception in UpdateManager thread: " + string_to_wstring(ex.what()));
             }
         }
 

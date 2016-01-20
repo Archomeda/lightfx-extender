@@ -16,6 +16,7 @@
 #include "../Managers/ConfigManager.h"
 #include "../Managers/DeviceManager.h"
 #include "../Utils/Log.h"
+#include "../Utils/String.h"
 
 
 using namespace std;
@@ -143,34 +144,37 @@ namespace lightfx {
         LFXE_API void GameGw2::MumbleLinkLoop() {
             LOG_DEBUG(L"Mumble Link started");
 
-            while (this->mumbleLinkLoopRunning) {
-                if (this->lastTick != this->mumbleLinkedMem->uiTick) {
-                    this->lastTick = this->mumbleLinkedMem->uiTick;
-                    wstring name = wstring(this->mumbleLinkedMem->name);
-                    if (name == this->GetGameName()) {
-                        wchar_t* identity = this->mumbleLinkedMem->identity;
+            try {
+                while (this->mumbleLinkLoopRunning) {
+                    if (this->lastTick != this->mumbleLinkedMem->uiTick) {
+                        this->lastTick = this->mumbleLinkedMem->uiTick;
+                        wstring name = wstring(this->mumbleLinkedMem->name);
+                        if (name == this->GetGameName()) {
+                            wchar_t* identity = this->mumbleLinkedMem->identity;
 
-                        try {
-                            GenericDocument<UTF16<>> doc;
-                            doc.Parse<0>(identity);
+                            try {
+                                GenericDocument<UTF16<>> doc;
+                                doc.Parse<0>(identity);
 
-                            // Check the team color (if setting is enabled)
-                            auto config = this->GetManager()->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
-                            if (config->GuildWars2TeamColorEnabled) {
-                                if (doc.HasMember(L"team_color_id") && doc[L"team_color_id"].IsUint()) {
-                                    this->UpdateLightsWithTeamColor(doc[L"team_color_id"].GetUint());
+                                // Check the team color (if setting is enabled)
+                                auto config = this->GetManager()->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
+                                if (config->GuildWars2TeamColorEnabled) {
+                                    if (doc.HasMember(L"team_color_id") && doc[L"team_color_id"].IsUint()) {
+                                        this->UpdateLightsWithTeamColor(doc[L"team_color_id"].GetUint());
+                                    }
                                 }
+                            } catch (...) {
+                                LOG_ERROR(L"Error when parsing Mumble Link identity: " + wstring(identity));
                             }
-                        } catch (...) {
-                            LOG_ERROR(L"Error when parsing Mumble Link identity: " + wstring(identity));
                         }
                     }
-                }
 
-                this_thread::sleep_for(chrono::milliseconds(20)); // Update rate: 50/s
+                    this_thread::sleep_for(chrono::milliseconds(20)); // Update rate: 50/s
+                }
+            } catch (const exception& ex){
+                LOG_ERROR(L"Caught exception in GameGw2 thread: " + string_to_wstring(ex.what()));
             }
         }
-
 
     }
 }
