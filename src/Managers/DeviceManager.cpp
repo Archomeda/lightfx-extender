@@ -13,6 +13,7 @@
 #include "../Devices/DeviceLogitech.h"
 #include "../Devices/DeviceCorsair.h"
 #include "../Devices/DeviceRazer.h"
+#include "../Devices/DeviceClevo.h"
 #include "../Utils/FileIO.h"
 #include "../Utils/Log.h"
 #include "../Utils/String.h"
@@ -34,13 +35,21 @@ namespace lightfx {
             auto config = this->GetLightFXExtender()->GetConfigManager()->GetMainConfig();
             this->updateDevicesInterval = config->TimelineUpdateInterval;
 
+			// Clevo Device
+			auto clevo = make_shared<DeviceClevo>(); // TODO: Add Touchpad Configuration
+			this->AddChild(L"Clevo", clevo);
+			if (clevo->Initialize()) {
+				++i;
+			}
+
+			// LightPack Device
             auto lightpack = make_shared<DeviceLightpack>(config->LightpackHost, config->LightpackPort, config->LightpackKey);
             this->AddChild(L"Lightpack", lightpack);
             if (lightpack->Initialize()) {
                 ++i;
             }
 
-
+			// Logitech Device
             auto logitech = make_shared<DeviceLogitech>();
             logitech->SetRange(config->LogitechColorRangeOutMin, config->LogitechColorRangeOutMax, config->LogitechColorRangeInMin, config->LogitechColorRangeInMax);
             this->AddChild(L"Logitech", logitech);
@@ -50,13 +59,14 @@ namespace lightfx {
                 ++i;
             }
 
-            
+            // Corsair Device
             auto corsair = make_shared<DeviceCorsair>();
             this->AddChild(L"Corsair", corsair);
             if (corsair->Initialize()) {
                 ++i;
             }
             
+			// Razer Device
             auto razer = make_shared<DeviceRazer>();
             razer->SetHardware(config->RazerUseWithKeyboard, config->RazerUseWithMouse, config->RazerUseWithHeadset, config->RazerUseWithMousepad, config->RazerUseWithKeypad);
             this->AddChild(L"Razer", razer);

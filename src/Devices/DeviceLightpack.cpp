@@ -47,8 +47,8 @@ namespace lightfx {
                         for (size_t i = 0; i < this->GetNumberOfLights(); ++i) {
                             LightData light;
                             light.Name = to_wstring(leds[i].index);
-                            int posX = int(((leds[i].x - screen.x) + (leds[i].width / 2)) / divider);
-                            int posY = int(((screen.height - leds[i].y - screen.y) + (leds[i].height / 2)) / divider);
+                            unsigned int posX = int(((leds[i].x - screen.x) + (leds[i].width / 2)) / divider);
+                            unsigned int posY = int(((screen.height - leds[i].y - screen.y) + (leds[i].height / 2)) / divider);
                             light.Position = { posX, posY, 0 };
                             LOG_DEBUG(L"Get LED " + to_wstring(i) + L" pos: (" + to_wstring(posX) + L"," + to_wstring(posY) + L")");
                             this->SetLightData(i, light);

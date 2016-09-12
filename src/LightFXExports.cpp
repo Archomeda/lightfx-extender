@@ -29,11 +29,11 @@ using namespace lightfx::utils;
 #pragma region Converters
 
 LFX_POSITION DeviceLightPositionToLfxPosition(const DeviceLightPosition position) {
-    return LFX_POSITION{ position.x, position.y, position.z };
+    return LFX_POSITION{ static_cast<unsigned char>(position.x), static_cast<unsigned char>(position.y), static_cast<unsigned char>(position.z) };
 }
 
 LFX_COLOR LightColorToLfxColor(const LightColor color) {
-    return LFX_COLOR{ color.red, color.green, color.blue, color.brightness };
+    return LFX_COLOR{ static_cast<unsigned char>(color.red), static_cast<unsigned char>(color.green), static_cast<unsigned char>(color.blue), static_cast<unsigned char>(color.brightness) };
 }
 
 LFX_COLOR IntToLfxColor(const unsigned int color) {
