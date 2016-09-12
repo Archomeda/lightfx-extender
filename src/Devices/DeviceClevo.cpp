@@ -34,6 +34,13 @@ namespace lightfx {
 				thread clevo_wmi_thread(&ClevoSetKBLEDThread, color, this->useTouchpad);
 				clevo_wmi_thread.detach();
 
+				// Gather Initialized Status
+				if (color.getInitialized() == false) {
+					// Mark as uninitialized
+					this->SetInitialized(false);
+					return false;
+				}
+
 				// Set up number of lights
 				unsigned int numLights = 3; // 3 = Only Keyboard - 4 = Keyboard + Touchpad
 
@@ -69,7 +76,6 @@ namespace lightfx {
 
 				// Mark as initialized
 				this->SetInitialized(true);
-				// this->Reset(); // TODO: Is this required or not? Unsure..
 
 			}
 			return true;
@@ -112,7 +118,11 @@ namespace lightfx {
 			ClevoKBLED clevo = ClevoKBLED();
 
 			// Initialize COM
-			clevo.Initialize();
+			if (clevo.Initialize() != 0) {
+				blocking_color.setInitialized(false);
+			}else {
+				blocking_color.setInitialized(true);
+			}
 
 			while (true) {
 

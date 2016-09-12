@@ -21,6 +21,10 @@ namespace lightfx {
 			void setLightColor(const vector<LightColor>& colors);
 			const vector<LightColor> getLightColor();
 
+			void setInitialized(bool initialized);
+			bool getInitialized();
+			void resetInitialized();
+
 			void releaseThread();
 			bool getReleaseThreadState();
 
