@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug_Tests|Win32">
       <Configuration>Debug_Tests</Configuration>
@@ -42,52 +42,52 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Tests|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Tests|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Tests|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Tests|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -301,11 +301,13 @@
     <ClInclude Include="Config\ConfigFile.h" />
     <ClInclude Include="Config\MainConfigFile.h" />
     <ClInclude Include="Devices\Device.h" />
+    <ClInclude Include="Devices\DeviceClevo.h" />
     <ClInclude Include="Devices\DeviceCorsair.h" />
     <ClInclude Include="Devices\DeviceLightFX.h" />
     <ClInclude Include="Devices\DeviceLightpack.h" />
     <ClInclude Include="Devices\DeviceLogitech.h" />
     <ClInclude Include="Devices\DeviceRazer.h" />
+    <ClInclude Include="Devices\Libraries\ClevoKBLED.h" />
     <ClInclude Include="Devices\Proxies\CUESDKProxy.h" />
     <ClInclude Include="Devices\Proxies\DeviceLibraryProxy.h" />
     <ClInclude Include="Devices\Proxies\LightFX2Proxy.h" />
@@ -328,6 +330,7 @@
     <ClInclude Include="Timelines\LightTimeline.h" />
     <ClInclude Include="Timelines\LightTimelineItem.h" />
     <ClInclude Include="Timelines\Timeline.h" />
+    <ClInclude Include="Utils\BlockingLightColor.h" />
     <ClInclude Include="Utils\FileIO.h" />
     <ClInclude Include="Utils\Log.h" />
     <ClInclude Include="Utils\String.h" />
@@ -346,11 +349,13 @@
     <ClCompile Include="Config\ConfigFile.cpp" />
     <ClCompile Include="Config\MainConfigFile.cpp" />
     <ClCompile Include="Devices\Device.cpp" />
+    <ClCompile Include="Devices\DeviceClevo.cpp" />
     <ClCompile Include="Devices\DeviceCorsair.cpp" />
     <ClCompile Include="Devices\DeviceLightFX.cpp" />
     <ClCompile Include="Devices\DeviceLightpack.cpp" />
     <ClCompile Include="Devices\DeviceLogitech.cpp" />
     <ClCompile Include="Devices\DeviceRazer.cpp" />
+    <ClCompile Include="Devices\Libraries\ClevoKBLED.cpp" />
     <ClCompile Include="Devices\Proxies\CUESDKProxy.cpp" />
     <ClCompile Include="Devices\Proxies\DeviceLibraryProxy.cpp" />
     <ClCompile Include="Devices\Proxies\LightFX2Proxy.cpp" />
@@ -368,6 +373,7 @@
     <ClCompile Include="Timelines\LightTimeline.cpp" />
     <ClCompile Include="Timelines\LightTimelineItem.cpp" />
     <ClCompile Include="Timelines\Timeline.cpp" />
+    <ClCompile Include="Utils\BlockingLightColor.cpp" />
     <ClCompile Include="Utils\FileIO.cpp" />
     <ClCompile Include="Utils\Log.cpp" />
     <ClCompile Include="Utils\String.cpp" />

@@ -132,6 +132,15 @@
     <ClInclude Include="Devices\Proxies\RzChromaSDKProxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Devices\DeviceClevo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Devices\Libraries\ClevoKBLED.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\BlockingLightColor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LightFXExtender.rc">
@@ -229,6 +238,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Devices\Proxies\RzChromaSDKProxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Devices\DeviceClevo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Devices\Libraries\ClevoKBLED.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\BlockingLightColor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
