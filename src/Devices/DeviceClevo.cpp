@@ -54,23 +54,23 @@ namespace lightfx {
 				// Set Light Data
 				LightData lightDataKBLeft;
 				lightDataKBLeft.Name = L"KBLeft";
-				lightDataKBLeft.Position = { 1, 1, 2 };
+				lightDataKBLeft.Position = { 13, 2, 10 };
 				this->SetLightData(0, lightDataKBLeft); // Keyboard Left
 
 				LightData lightDataKBCenter;
 				lightDataKBCenter.Name = L"KBCenter";
-				lightDataKBCenter.Position = { 2, 1, 2 };
+				lightDataKBCenter.Position = { 26, 2, 10 };
 				this->SetLightData(1, lightDataKBCenter); // Keyboard Center
 
 				LightData lightDataKBRight;
 				lightDataKBRight.Name = L"KBRight";
-				lightDataKBRight.Position = { 3, 1, 2 };
+				lightDataKBRight.Position = { 40, 2, 10 };
 				this->SetLightData(2, lightDataKBRight); // Keyboard Right
 
 				if (this->useTouchpad) {
 					LightData lightDataTouchpad;
 					lightDataTouchpad.Name = L"TouchPad";
-					lightDataTouchpad.Position = { 2, 1, 4 };
+					lightDataTouchpad.Position = { 20, 2, 20 };
 					this->SetLightData(3, lightDataTouchpad); // Touchpad
 				}
 
@@ -124,6 +124,27 @@ namespace lightfx {
 				blocking_color.setInitialized(true);
 			}
 
+			// Optimization Variables
+			int kbleft_r =		-1;
+			int kbleft_g =		-1;
+			int kbleft_b =		-1;
+			int kbleft_a =		-1;
+			int kbcenter_r =	-1;
+			int kbcenter_g =	-1;
+			int kbcenter_b =	-1;
+			int kbcenter_a =	-1;
+			int kbright_r =		-1;
+			int kbright_g =		-1;
+			int kbright_b =		-1;
+			int kbright_a =		-1;
+			//if (useTouchpad) {
+				int tp_r =		-1;
+				int tp_g =		-1;
+				int tp_b =		-1;
+				int tp_a =		-1;
+			//}
+
+			// Main Loop
 			while (true) {
 
 				const vector<LightColor> colors = blocking_color.getLightColor(); // Blocking structure blocks the thread execution till it receives a new color
@@ -133,19 +154,44 @@ namespace lightfx {
 					clevo.Release(); // Release
 					return; // Close Thread
 				}
-				
-				// Left KB Colors
-				clevo.SetKBLED(ColorKBLeft, colors[0].red, colors[0].green, colors[0].blue, (colors[0].brightness / 255.0));
 
-				// Middle KB Colors
-				clevo.SetKBLED(ColorKBCenter, colors[1].red, colors[1].green, colors[1].blue, (colors[1].brightness / 255.0));
+				// Left KB Colors
+				if (kbleft_r != colors[0].red || kbleft_g != colors[0].green || kbleft_b != colors[0].blue || kbleft_a != colors[0].brightness) {
+					clevo.SetKBLED(ColorKBLeft, colors[0].red, colors[0].green, colors[0].blue, (colors[0].brightness / 255.0));
+					kbleft_r = colors[0].red;
+					kbleft_g = colors[0].green;
+					kbleft_b = colors[0].blue;
+					kbleft_a = colors[0].brightness;
+				}
+				
+
+				// Center KB Colors
+				if (kbcenter_r != colors[1].red || kbcenter_g != colors[1].green || kbcenter_b != colors[1].blue || kbcenter_a != colors[1].brightness) {
+					clevo.SetKBLED(ColorKBCenter, colors[1].red, colors[1].green, colors[1].blue, (colors[1].brightness / 255.0));
+					kbcenter_r = colors[1].red;
+					kbcenter_g = colors[1].green;
+					kbcenter_b = colors[1].blue;
+					kbcenter_a = colors[1].brightness;
+				}
 
 				// Right KB Colors
-				clevo.SetKBLED(ColorKBRight, colors[2].red, colors[2].green, colors[2].blue, (colors[2].brightness / 255.0));
+				if (kbright_r != colors[2].red || kbright_g != colors[2].green || kbright_b != colors[2].blue || kbright_a != colors[2].brightness) {
+					clevo.SetKBLED(ColorKBRight, colors[2].red, colors[2].green, colors[2].blue, (colors[2].brightness / 255.0));
+					kbright_r = colors[2].red;
+					kbright_g = colors[2].green;
+					kbright_b = colors[2].blue;
+					kbright_a = colors[2].brightness;
+				}
 
 				// Touchpad Colors
 				if (useTouchpad) {
-					clevo.SetKBLED(ColorTouchpad, colors[3].red, colors[3].green, colors[3].blue, (colors[3].brightness / 255.0));
+					if (tp_r != colors[3].red || tp_g != colors[3].green || tp_b != colors[3].blue || tp_a != colors[3].brightness) {
+						clevo.SetKBLED(ColorTouchpad, colors[3].red, colors[3].green, colors[3].blue, (colors[3].brightness / 255.0));
+						tp_r = colors[3].red;
+						tp_g = colors[3].green;
+						tp_b = colors[3].blue;
+						tp_a = colors[3].brightness;
+					}
 				}
 			}
 		}
